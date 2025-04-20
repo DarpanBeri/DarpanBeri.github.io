@@ -1,3 +1,13 @@
 # Project Brief
 
-This document defines the core requirements and goals of the project. It serves as the foundation for all other Memory Bank files and is the source of truth for project scope.
+## Core Requirements
+- Adapt portfolio to rabbit-master_template structure
+- Integrate capstone PDF documents and resume
+- Ensure GitHub Pages compatibility
+- Maintain content integrity during migration
+
+## Success Criteria
+- Full template feature parity
+- Mobile-responsive design
+- Accessible PDF viewing
+- Preservation of existing project content
