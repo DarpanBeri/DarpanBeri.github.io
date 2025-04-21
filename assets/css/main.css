@@ -141,10 +141,6 @@ body {
         overflow: hidden;
     }
 
-    .img-rabbit {
-        /*margin: 0 -15px;*/
-    }
-
     .btn-group-vertical {
         padding: 20px 87.5px;
     }
@@ -782,4 +778,82 @@ html, body {
 .btn-rabbit.back i {
     margin-right: 10px;
     margin-left: 0;
+}
+
+/* Accessibility Improvements */
+:focus {
+    outline: 3px solid #bb9e7d !important;
+    outline-offset: 2px;
+}
+
+.btn:focus {
+    outline: 3px solid #bb9e7d !important;
+    outline-offset: 2px;
+}
+
+/* Screen reader only class */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+/* Improve color contrast */
+.btn-rabbit {
+    color: #333333;
+    background-color: #ffffff;
+}
+
+.btn-rabbit:hover, 
+.btn-rabbit:focus {
+    color: #ffffff;
+    background-color: #bb9e7d;
+}
+
+/* Form validation visual feedback */
+.form-control:focus {
+    border-color: #bb9e7d;
+    box-shadow: 0 0 0 0.2rem rgba(187, 158, 125, 0.25);
+}
+
+.form-control[aria-invalid="true"] {
+    border-color: #dc3545;
+}
+
+/* Skip to main content link */
+.skip-to-main {
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent-color);
+    color: white;
+    padding: 10px 20px;
+    z-index: 1000;
+    transition: top 0.3s ease;
+    text-decoration: none;
+    border-radius: 0 0 4px 4px;
+}
+
+.skip-to-main:focus {
+    top: 0;
+    outline: 3px solid var(--accent-color);
+    outline-offset: 2px;
+}
+
+/* Dark mode improvements for contrast */
+[data-theme="dark"] .btn-rabbit {
+    color: #ffffff;
+    background-color: #333333;
+}
+
+[data-theme="dark"] .btn-rabbit:hover,
+[data-theme="dark"] .btn-rabbit:focus {
+    color: #333333;
+    background-color: #bb9e7d;
 }

@@ -22,6 +22,11 @@
 - Social media links with hover effects
 - Responsive avatar image
 - Dark mode toggle button
+- Skip to main content functionality
+  - Hidden by default, visible on focus
+  - Keyboard accessible
+  - Proper focus management
+  - High contrast styling
 
 ### Sections
 1. Home
@@ -29,6 +34,7 @@
    - Responsive avatar with optimized loading
    - Social links with accessibility improvements
    - Keyboard-navigable menu buttons
+   - Main content region with proper ARIA attributes
 
 2. About
    - Split layout with responsive images
@@ -63,11 +69,16 @@
    - CSS transitions optimization
 
 2. Accessibility
-   - ARIA labels implementation
+   - Skip to main content implementation
+   - ARIA labels and landmarks
    - Keyboard navigation support
    - Focus state management
    - Color contrast in both themes
    - Screen reader compatibility
+   - Semantic HTML structure
+   - Proper heading hierarchy
+   - Focus trap management
+   - Touch target sizing
 
 3. User Experience
    - Dark/light theme toggle

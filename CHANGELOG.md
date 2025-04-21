@@ -31,10 +31,17 @@
   - Added error handling and success messages
   - Added custom styling for form alerts
 - Accessibility improvements
+  - Added skip to main content functionality
+    - Added keyboard-accessible skip link
+    - Added focus management for main content
+    - Styled skip link for visibility on focus
   - Added ARIA labels to navigation buttons
   - Added ARIA labels to social media links
   - Added alt attributes to all images
   - Improved semantic HTML structure
+  - Enhanced keyboard navigation support
+  - Added proper focus management
+  - Improved color contrast ratios
 - Google Analytics integration
   - Added GA4 tracking code (requires setup)
   - Prepared for user behavior tracking

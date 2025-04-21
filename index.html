@@ -50,10 +50,15 @@
     </head>
 
     <body>
-        <button class="theme-toggle" aria-label="Toggle dark mode">
+        <a href="#index" class="skip-to-main">Skip to main content</a>
+        <button class="theme-toggle" 
+            aria-label="Toggle dark mode" 
+            aria-pressed="false" 
+            role="switch">
             <i class="fa fa-moon-o" aria-hidden="true"></i>
+            <span class="sr-only">Switch to dark mode</span>
         </button>
-        <div id="index">                                           <!-- Index starts here -->
+        <div id="index" role="main">                                           <!-- Index starts here -->
             <div class="container main">
                 <div class="row home">
                     <div id = "index_left" class="col-md-6 left">
@@ -61,7 +66,7 @@
                     </div>
                     <div id = "index_right" class="col-md-6 text-center right"> <!-- Fixed typo 'tex' to 'text' -->
                         <div class="logo">
-                            <img src="assets/images/avatar.png" alt="Darpan Beri's profile photo" loading="lazy">
+                            <img src="assets/images/avatar.png" alt="Darpan Beri's profile photo." loading="lazy">
                             <h4>Darpan Beri</h4>
                         </div>
                         <p class="home-description">
@@ -85,17 +90,17 @@
             </div>
         </div>                                                      <!-- index ends here -->
 
-        <div id="about_scroll" class="pages ">                      <!-- about strats here  -->
+        <div id="about_scroll" class="pages" role="region" aria-labelledby="about-title">                      <!-- about strats here  -->
             <div class="container main">
                 <div class="row">
                     <div class="col-md-6 left" id="about_left">
-                        <img class="img-responsive img-rabbit" src="assets/images/about.jpg" alt="About section background" loading="lazy">
+                        <img class="img-responsive img-rabbit" src="assets/images/about.jpg" alt="Darpan Beri at a Big Tech campus having lunch, looking at the camera. About section image." loading="lazy">
                     </div>
 
                     <div class="col-md-6 right" id="about_right">
                         <a href="#index" class="btn btn-rabbit back" aria-label="Back to Home"> <i class="fa fa-angle-left" aria-hidden="true"></i> Back to home </a>
                         <div id="watermark">
-                            <h2 class="page-title" text-center>About</h2>
+                            <h2 id="about-title" class="page-title" text-center>About</h2>
                             <div class="marker">a</div>
                         </div>
                         <p class='subtitle'>I am currently studying Master of Science in Applied Modeling and Quantitative Methods – Big Data Analytics at Trent University.
@@ -121,21 +126,27 @@
 
 
         
-        <div id="work_scroll" class="pages">                                  <!-- Work starts here -->
+        <div id="work_scroll" class="pages" role="region" aria-labelledby="work-title">                                  <!-- Work starts here -->
             <div class="container main">
                 <div class="row">
                     <div class="col-md-6" id="work_left">
-                        <div id="owl-demo" class="owl-carousel owl-theme">
-                            <div class="item"><img class="img-responsive img-rabbit" src="assets/images/work_pic_1.jpg" alt="Project showcase 1" loading="lazy"></div>
-                            <div class="item"><img class="img-responsive img-rabbit" src="assets/images/work_pic_2.jpg" alt="Project showcase 2" loading="lazy"></div>
-                            <div class="item"><img class="img-responsive img-rabbit" src="assets/images/work_pic_3.jpg" alt="Project showcase 3" loading="lazy"></div>
+                        <div id="owl-demo" class="owl-carousel owl-theme" role="region" aria-label="Work portfolio images">
+                            <div class="item" role="tabpanel" aria-label="Capstone Poster Session">
+                                <img class="img-responsive img-rabbit" src="assets/images/work_pic_1.jpg" alt="Darpan Beri during his Master's Capstone Poster Session." loading="lazy">
+                            </div>
+                            <div class="item" role="tabpanel" aria-label="SANDAG Workspace">
+                                <img class="img-responsive img-rabbit" src="assets/images/work_pic_2.jpg" alt="Darpan Beri's workspace in his previous role at SANDAG." loading="lazy">
+                            </div>
+                            <div class="item" role="tabpanel" aria-label="Conference with Colleagues">
+                                <img class="img-responsive img-rabbit" src="assets/images/work_pic_3.jpg" alt="Darpan Beri and his colleagues at a conference." loading="lazy">
+                            </div>
                         </div>
                     </div>
 
                     <div class="col-md-6" id="work_right">
                         <a href="#index" class="btn btn-rabbit back" aria-label="Back to Home"> <i class="fa fa-angle-left" aria-hidden="true"></i> Back to Home </a>
                         <div id="watermark">
-                            <h2 class="page-title" text-center>Work</h2>
+                            <h2 id="work-title" class="page-title" text-center>Work</h2>
                             <div class="marker">w</div>
                         </div>
                         <p class='subtitle'>A selection of my projects and academic achievements.</p>
@@ -190,13 +201,13 @@
             </div>
         </div>                                                                 <!-- Work ends here  -->
 
-        <div id="resources_scroll" class="pages">                             <!-- Resources starts here -->
+        <div id="resources_scroll" class="pages" role="region" aria-labelledby="resources-title">                             <!-- Resources starts here -->
             <div class="container main">
                 <div class="row">
                     <div class="col-md-12">
                         <a href="#index" class="btn btn-rabbit back" aria-label="Back to Home"> <i class="fa fa-angle-left" aria-hidden="true"></i> Back to Home </a>
                         <div id="watermark">
-                            <h2 class="page-title" text-center>Resources</h2>
+                            <h2 id="resources-title" class="page-title" text-center>Resources</h2>
                             <div class="marker">r</div>
                         </div>
                         <div class="info">
@@ -243,39 +254,42 @@
             </div>
         </div>
 
-        <div id="contact_scroll" class="pages">                             <!-- Contact starts here -->
+        <div id="contact_scroll" class="pages" role="region" aria-labelledby="contact-title">                             <!-- Contact starts here -->
             <div class="container main">
                 <div class="row">
                     <div class="col-md-6 left" id="contact_left">
-                        <img class="img-responsive img-rabbit" src="assets/images/contact.GIF" alt="Contact section background" loading="lazy">
+                        <img class="img-responsive img-rabbit" src="assets/images/contact.GIF" alt="Animation of a cat curiously looking at the user. Contact section animation." loading="lazy">
                     </div>
 
                     <div class="col-md-6 right" id="contact_right">
                         <a href="#index" class="btn btn-rabbit back" aria-label="Back to Home"> <i class="fa fa-angle-left" aria-hidden="true"></i> Back to Home </a>
                         <div id="watermark">
-                            <h2 class="page-title" text-center>Contact</h2>
+                            <h2 id="contact-title" class="page-title" text-center>Contact</h2>
                             <div class="marker">c</div>
                         </div>
                         <p class='subtitle'>I'm currently based in Ontario. Feel free to reach out to me for any opportunities or collaborations.
                         </p>
                         <!-- Contact form using Formspree -->
-                        <form action="https://formspree.io/f/xbjnzpep" method="POST" class="form_edit" id="contactForm">
+                        <form action="https://formspree.io/f/xbjnzpep" method="POST" class="form_edit" id="contactForm" role="form" aria-label="Contact form">
                             <div class="form-group">
-                                <input type="text" name="name" class="form-control" placeholder="Name" required>
-                                <div class="invalid-feedback">Please enter your name</div>
+                                <label for="name" class="sr-only">Name</label>
+                                <input type="text" name="name" id="name" class="form-control" placeholder="Name" required aria-required="true">
+                                <div class="invalid-feedback" role="alert">Please enter your name</div>
                             </div>
                             <div class="form-group">
-                                <input type="email" name="_replyto" class="form-control" placeholder="Email" required>
-                                <div class="invalid-feedback">Please enter a valid email address</div>
+                                <label for="email" class="sr-only">Email</label>
+                                <input type="email" name="_replyto" id="email" class="form-control" placeholder="Email" required aria-required="true">
+                                <div class="invalid-feedback" role="alert">Please enter a valid email address</div>
                             </div>
                             <div class="form-group">
-                                <textarea name="message" class="form-control" rows="5" placeholder="Message" required></textarea>
-                                <div class="invalid-feedback">Please enter your message</div>
+                                <label for="message" class="sr-only">Message</label>
+                                <textarea name="message" id="message" class="form-control" rows="5" placeholder="Message" required aria-required="true"></textarea>
+                                <div class="invalid-feedback" role="alert">Please enter your message</div>
                             </div>
                             <input type="hidden" name="_subject" value="Portfolio Contact Form Submission">
                             <input type="text" name="_gotcha" style="display:none">
-                            <div id="form-status" class="alert" style="display: none;"></div>
-                            <button type="submit" class="btn btn-rabbit submit">Send Message</button>
+                            <div id="form-status" class="alert" role="alert" style="display: none;"></div>
+                            <button type="submit" class="btn btn-rabbit submit" aria-label="Send message">Send Message</button>
                         </form>
                     </div>
                 </div>

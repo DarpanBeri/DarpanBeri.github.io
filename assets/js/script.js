@@ -63,26 +63,38 @@ $(document).ready(function() {
         $submitBtn.addClass('btn-loading');
     });
 
-    // Theme toggle functionality
-    const themeToggle = $('.theme-toggle');
-    const themeIcon = themeToggle.find('i');
+    // Theme toggle functionality with keyboard and ARIA support
+    const themeToggle = document.querySelector('.theme-toggle');
+    const themeIcon = $('.theme-toggle i');
     
-    // Check for saved theme preference
+    // Check for saved theme preference and initialize
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
         document.documentElement.setAttribute('data-theme', savedTheme);
         updateThemeIcon(savedTheme === 'dark');
+        themeToggle.setAttribute('aria-pressed', savedTheme === 'dark');
     }
     
-    // Theme toggle click handler
-    themeToggle.click(function() {
+    // Theme toggle handlers
+    themeToggle.addEventListener('click', toggleTheme);
+    themeToggle.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggleTheme();
+        }
+    });
+
+    function toggleTheme() {
         const currentTheme = document.documentElement.getAttribute('data-theme');
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
         
         document.documentElement.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme);
         updateThemeIcon(newTheme === 'dark');
-    });
+        themeToggle.setAttribute('aria-pressed', newTheme === 'dark');
+        themeToggle.querySelector('.sr-only').textContent = 
+            newTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+    }
     
     function updateThemeIcon(isDark) {
         themeIcon.removeClass('fa-moon-o fa-sun-o').addClass(isDark ? 'fa-sun-o' : 'fa-moon-o');
@@ -231,4 +243,79 @@ $(document).ready(function() {
             setTimeout(() => statusDiv.fadeOut(), 5000);
         }
     }
+
+    // Carousel keyboard navigation
+    $('#owl-demo').on('keydown', function(e) {
+        if (e.key === 'ArrowLeft') {
+            $(this).trigger('prev.owl.carousel');
+        } else if (e.key === 'ArrowRight') {
+            $(this).trigger('next.owl.carousel');
+        }
+    });
+
+    // Form validation with ARIA support
+    const form = document.getElementById('contactForm');
+    form.addEventListener('submit', function(e) {
+        let isValid = true;
+        const inputs = form.querySelectorAll('input[required], textarea[required]');
+        
+        inputs.forEach(input => {
+            if (!input.value.trim()) {
+                isValid = false;
+                input.setAttribute('aria-invalid', 'true');
+                input.classList.add('is-invalid');
+            } else {
+                input.setAttribute('aria-invalid', 'false');
+                input.classList.remove('is-invalid');
+            }
+        });
+
+        const email = document.getElementById('email');
+        if (email.value && !isValidEmail(email.value)) {
+            isValid = false;
+            email.setAttribute('aria-invalid', 'true');
+            email.classList.add('is-invalid');
+        }
+
+        if (!isValid) {
+            e.preventDefault();
+            const firstInvalid = form.querySelector('[aria-invalid="true"]');
+            firstInvalid.focus();
+        }
+    });
+
+    function isValidEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    // Add focus management for navigation
+    const navButtons = document.querySelectorAll('.btn-rabbit');
+    navButtons.forEach(button => {
+        button.setAttribute('tabindex', '0');
+        button.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                button.click();
+            }
+        });
+    });
+
+    // Skip to main content functionality
+    $('.skip-to-main').on('click', function(e) {
+        e.preventDefault();
+        const mainContent = $('#index');
+        mainContent.attr('tabindex', '-1');
+        mainContent.focus();
+        
+        // Ensure the main content is visible
+        $(".pages").fadeOut();
+        mainContent.fadeIn();
+        $('#index_left').addClass('animated slideInLeft');
+        $('#index_right').addClass('animated slideInRight');
+
+        // Remove tabindex after focus
+        setTimeout(() => {
+            mainContent.removeAttr('tabindex');
+        }, 100);
+    });
 });
