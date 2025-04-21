@@ -1,16 +1,19 @@
 $(document).ready(function() {
-    // Show loading spinner for images
+    // Fix for carousel image loading issue
     $('.img-rabbit').each(function() {
         const $img = $(this);
         const $parent = $img.parent();
-        
+
         if (!$img[0].complete) {
             $parent.append('<div class="loading-spinner carousel-loading"></div>');
             $img.addClass('fade-in').hide();
-            
+
             $img.on('load', function() {
                 $parent.find('.loading-spinner').remove();
                 $img.show();
+            }).on('error', function() {
+                $parent.find('.loading-spinner').remove();
+                $img.replaceWith('<p class="error-message">Image failed to load</p>');
             });
         }
     });
@@ -46,17 +49,31 @@ $(document).ready(function() {
         themeIcon.removeClass('fa-moon-o fa-sun-o').addClass(isDark ? 'fa-sun-o' : 'fa-moon-o');
     }
 
-    // Initialize Owl Carousel with keyboard navigation
+    // Initialize Owl Carousel with proper configuration
     $("#owl-demo").owlCarousel({
         items: 1,
         loop: true,
+        margin: 0,
+        nav: true,
+        navText: ['<i class="fa fa-angle-left"></i>', '<i class="fa fa-angle-right"></i>'],
+        dots: true,
         autoplay: true,
         autoplayTimeout: 3000,
         autoplayHoverPause: true,
-        nav: true,
-        dots: true,
+        smartSpeed: 1000,
         animateOut: 'fadeOut',
-        animateIn: 'fadeIn'
+        animateIn: 'fadeIn',
+        responsiveClass: true,
+        responsive: {
+            0: {
+                items: 1,
+                nav: false
+            },
+            768: {
+                items: 1,
+                nav: true
+            }
+        }
     });
     
     // Keyboard navigation for carousel
