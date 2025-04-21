@@ -32,6 +32,98 @@ $(document).ready(function() {
         });
     }
 
+    // Improved image loading handler
+    function handleImageLoad(img, isImmediate = false) {
+        const $img = $(img);
+        const $parent = $img.parent();
+        
+        // Skip if already handled or is a GIF
+        if ($img.hasClass('loaded') || $img.attr('src').toLowerCase().endsWith('.gif')) {
+            return;
+        }
+
+        // For avatar image or immediate loading, load right away
+        if (isImmediate || $img.closest('.logo').length > 0) {
+            if (!img.complete) {
+                $parent.append('<div class="loading-spinner"></div>');
+                $img.hide();
+            }
+
+            $img.on('load', function() {
+                $parent.find('.loading-spinner').remove();
+                $img.addClass('loaded').fadeIn(300);
+            }).on('error', function() {
+                $parent.find('.loading-spinner').remove();
+                $img.replaceWith('<p class="error-message">Image failed to load</p>');
+            });
+
+            // Handle already loaded images (e.g. from cache)
+            if (img.complete) {
+                $img.addClass('loaded').show();
+            }
+        } else {
+            // For other images, use Intersection Observer for lazy loading
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        if (!img.complete && !$parent.find('.loading-spinner').length) {
+                            $parent.append('<div class="loading-spinner"></div>');
+                            $img.hide();
+                        }
+
+                        img.addEventListener('load', () => {
+                            $parent.find('.loading-spinner').remove();
+                            $(img).addClass('loaded').fadeIn(300);
+                        });
+
+                        img.addEventListener('error', () => {
+                            $parent.find('.loading-spinner').remove();
+                            $(img).replaceWith('<p class="error-message">Image failed to load</p>');
+                        });
+
+                        // Start loading the image
+                        if (img.dataset.src) {
+                            img.src = img.dataset.src;
+                            img.removeAttribute('data-src');
+                        }
+
+                        // Stop observing once loading starts
+                        observer.unobserve(img);
+                    }
+                });
+            }, {
+                rootMargin: '50px 0px', // Start loading when image is 50px from viewport
+                threshold: 0.1
+            });
+
+            observer.observe(img);
+        }
+    }
+
+    // Handle avatar image immediately
+    $('.logo img').each(function() {
+        handleImageLoad(this, true);
+    });
+
+    // Handle other images with lazy loading
+    $('.img-rabbit:not(.logo img)').each(function() {
+        // Convert src to data-src for lazy loading
+        const img = $(this);
+        if (!img.attr('data-src')) {
+            img.attr('data-src', img.attr('src'));
+            img.removeAttr('src'); // Remove src to prevent immediate loading
+        }
+        handleImageLoad(this);
+    });
+
+    // Handle Owl Carousel images specially
+    $("#owl-demo").on('initialized.owl.carousel', function() {
+        $(this).find('.img-rabbit').each(function() {
+            handleImageLoad(this, true); // Load carousel images immediately once carousel is ready
+        });
+    });
+
     // Initialize Owl Carousel with better mobile handling
     const owl = $("#owl-demo").owlCarousel({
         items: 1,
@@ -62,41 +154,6 @@ $(document).ready(function() {
             $('#work_left .loading-spinner').remove();
             $('.owl-carousel .img-rabbit').show();
         }
-    });
-
-    // Improve image loading with better error handling
-    function handleImageLoad(img) {
-        const $img = $(img);
-        const $parent = $img.parent();
-        
-        // Skip if already handled or is a GIF
-        if ($img.hasClass('loaded') || $img.attr('src').toLowerCase().endsWith('.gif')) {
-            return;
-        }
-
-        // Add loading spinner if image isn't cached
-        if (!img.complete) {
-            $parent.append('<div class="loading-spinner"></div>');
-            $img.hide();
-        }
-
-        $img.on('load', function() {
-            $parent.find('.loading-spinner').remove();
-            $img.addClass('loaded').fadeIn(300);
-        }).on('error', function() {
-            $parent.find('.loading-spinner').remove();
-            $img.replaceWith('<p class="error-message">Image failed to load</p>');
-        });
-
-        // Handle already loaded images (e.g. from cache)
-        if (img.complete) {
-            $img.addClass('loaded').show();
-        }
-    }
-
-    // Handle all images
-    $('.img-rabbit').each(function() {
-        handleImageLoad(this);
     });
 
     // Add loading state to form submit button
