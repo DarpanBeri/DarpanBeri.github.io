@@ -188,8 +188,29 @@ ul.icons li .icon:before {
 }
 
 .logo img {
-    width: 100px;
-    height: 100px;
+    width: 200px;
+    height: auto;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+}
+
+@media (max-width: 767px) {
+    .logo img {
+        width: 150px;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+    .logo img {
+        width: 175px;
+    }
+}
+
+@media (min-width: 992px) {
+    .logo img {
+        width: 200px;
+    }
 }
 
 footer {

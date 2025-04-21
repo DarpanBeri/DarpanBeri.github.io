@@ -4,18 +4,44 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <!-- SEO Meta Tags -->
+        <meta name="description" content="Darpan Beri - Data Science and Software Engineering Portfolio. MSc student at Trent University specializing in Big Data Analytics and AI.">
+        <meta name="keywords" content="data science, software engineering, big data analytics, AI, machine learning, Trent University">
+        <meta name="author" content="Darpan Beri">
+        
+        <!-- Open Graph Meta Tags -->
+        <meta property="og:title" content="Darpan Beri | Data Science & Software Engineering">
+        <meta property="og:description" content="Portfolio showcasing data science projects, software engineering work, and academic achievements.">
+        <meta property="og:image" content="assets/images/avatar.png">
+        <meta property="og:url" content="https://darpanberi.github.io">
+        
+        <!-- Twitter Card Meta Tags -->
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:title" content="Darpan Beri | Data Science & Software Engineering">
+        <meta name="twitter:description" content="Portfolio showcasing data science projects, software engineering work, and academic achievements.">
+        <meta name="twitter:image" content="assets/images/avatar.png">
 
-        <title>Rabbit : Home</title>
-        <link rel="icon" type="image/icon" href="assets/images/tabicon.ico">
+        <title>Darpan Beri | Data Science & Software Engineering</title>
+        
+        <!-- Favicons -->
+        <link rel="apple-touch-icon" sizes="180x180" href="assets/images/logo.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="assets/images/logo.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="assets/images/logo.png">
+        <link rel="shortcut icon" href="assets/images/logo.png">
+        
+        <!-- Theme Color -->
+        <meta name="theme-color" content="#3498db">
 
-        <link rel="stylesheet" type="text/css" href="">
+        <!-- Dependencies -->
         <link href="assets/css/bootstrap.min.css" rel="stylesheet">
         <link href="assets/css/bootstrap-theme.min.css" rel="stylesheet">
         <link href="assets/css/font-awesome.min.css" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,600,700,700i" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css?family=Crimson+Text:400,700,700i|Josefin+Sans:700" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css" rel="stylesheet">
         <link href="assets/css/main.css" rel="stylesheet">
-        <link rel="icon" href="assets/images/logo.png">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
         
     </head>
@@ -38,7 +64,7 @@
                         <div class="social">
                             <a href="https://www.linkedin.com/in/darpanberi/"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
                             <a href="https://github.com/DarpanBeri"><i class="fa fa-github" aria-hidden="true"></i></a>
-                            <a href="emailto: darpanberi@trentu.edu"><i class="fa fa-envelope" aria-hidden="true"></i></a>
+                            <a href="mailto:darpanberi@trentu.edu"><i class="fa fa-envelope" aria-hidden="true"></i></a>
                         </div>
                         <div class="btn-group-vertical custom_btn animated slideinright">
                             <div id="about" class="btn btn-rabbit">About</div>
@@ -115,7 +141,7 @@
 
                         <h3 class="info">Previous Personal Projects</h3>
                         <div class="info">
-                            <a href="https://github.com/DarpanBeri/Analysis-of-top-20-words-used-in-English-Language">Explainable AI Clinical Decision Support System</a>
+                            <a href="https://github.com/DarpanBeri/Explainable-AI-Clinical-Decision-Support-System">Explainable AI Clinical Decision Support System</a>
                             <p>This study created an explainable clinical decision support system to provide transparent and interpretable predictions on admission of a paitent into an ER based on current and previous medical history.</p>
                         </div>
                         <div class="info">
@@ -171,21 +197,21 @@
                             <h2 class="page-title" text-center>Contact</h2>
                             <div class="marker">c</div>
                         </div>
-                        <p class='subtitle'>I'm based in cheltenham in the UK, not far from Bristol, Birmingham, Oxford and Swindom. Drop me a line.
+                        <p class='subtitle'>I'm currently based in Peterborough, Ontario at Trent University. Feel free to reach out to me for any opportunities or collaborations.
                         </p>
-                        <!-- form -->
-                        <form class="form_edit"> 
+                        <!-- Contact form using Formspree -->
+                        <form action="https://formspree.io/f/darpanberi@trentu.edu" method="POST" class="form_edit">
                             <div class="form-group">
-                                <input type="name" class="form-control" id="exampleInputName" placeholder="Name">
+                                <input type="text" name="name" class="form-control" placeholder="Name" required>
                             </div>
-
                             <div class="form-group">
-                            <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Email">
+                                <input type="email" name="_replyto" class="form-control" placeholder="Email" required>
                             </div>
-
                             <div class="form-group">
-                            <textarea class="form-control" rows="5" placeholder="Message"></textarea>
+                                <textarea name="message" class="form-control" rows="5" placeholder="Message" required></textarea>
                             </div>
+                            <input type="hidden" name="_subject" value="Portfolio Contact Form Submission">
+                            <input type="text" name="_gotcha" style="display:none">
                             <button type="submit" class="btn btn-rabbit submit">Send Message</button>
                         </form>
                     </div>
@@ -205,7 +231,8 @@
         </div>                                                              <!-- Contact ends here -->
         
     </body>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
     <script src="assets/js/bootstrap.min.js"></script>
     <script src="assets/js/script.js"></script>
 </html>
