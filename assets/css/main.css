@@ -167,15 +167,11 @@ body {
 
 /* Image handling and loading states */
 .img-rabbit {
-    width: 100%;
+    max-width: 100%;
     height: auto;
     display: block;
-    opacity: 0;
-    -webkit-transition: opacity 0.3s ease;
-    transition: opacity 0.3s ease;
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-    will-change: opacity;
+    opacity: 1;
+    margin: 0;
 }
 
 .img-rabbit.loaded {
@@ -782,25 +778,29 @@ html, body {
 
 .container.main {
     min-height: 100vh;
-    padding: 30px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    -webkit-overflow-scrolling: touch;
+    padding: 15px;
+    overflow-x: hidden;
+}
+
+.pages {
+    display: none;
+    min-height: 100vh;
+    position: relative;
+}
+
+#index {
+    display: block;
 }
 
 /* Mobile-specific container adjustments */
 @media (max-width: 767px) {
     .container.main {
         height: auto;
-        min-height: 100vh;
         overflow-y: visible;
-        padding: 15px;
     }
 
     .pages {
-        min-height: 100vh;
-        position: relative;
         overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
         padding-bottom: 50px;
     }
 
@@ -812,6 +812,19 @@ html, body {
     
     .left, .right {
         overflow: visible;
+    }
+
+    /* Fix image display on mobile */
+    .img-rabbit {
+        margin: 0 auto;
+        max-width: 100%;
+        height: auto !important;
+    }
+
+    /* Ensure proper section spacing */
+    .row {
+        margin: 0;
+        padding: 15px 0;
     }
 }
 

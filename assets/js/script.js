@@ -8,11 +8,31 @@
 
 $(document).ready(function() {
     // Hide all pages except index initially
-    $("#about_scroll").hide();   
-    $("#work_scroll").hide();
-    $("#resources_scroll").hide();
-    $("#contact_scroll").hide();
-    $("#where_to_find_me").hide();
+    $("#about_scroll, #work_scroll, #resources_scroll, #contact_scroll, #where_to_find_me").hide();
+
+    // Initialize Owl Carousel first
+    const owl = $("#owl-demo").owlCarousel({
+        items: 1,
+        loop: false, // Disable loop to prevent loading issues
+        margin: 0,
+        nav: true,
+        navText: ['<i class="fa fa-angle-left"></i>', '<i class="fa fa-angle-right"></i>'],
+        dots: true,
+        autoplay: false, // Disable autoplay
+        lazyLoad: false, // Disable lazy loading
+        smartSpeed: 450,
+        responsiveClass: true,
+        responsive: {
+            0: {
+                items: 1,
+                nav: false
+            },
+            768: {
+                items: 1,
+                nav: true
+            }
+        }
+    });
 
     // Helper function for GA4 event tracking
     function trackEvent(eventName, params = {}) {
@@ -39,77 +59,22 @@ $(document).ready(function() {
         });
     }
 
-    // Simple image loading handler - optimized for mobile Safari
+    // Basic image loading handler
     function handleImageLoad(img) {
         const $img = $(img);
-        const $parent = $img.parent();
-        
-        // Skip if already handled or is a GIF
-        if ($img.hasClass('loaded') || $img.attr('src').toLowerCase().endsWith('.gif')) {
-            return;
-        }
-
-        // Show loading spinner if image isn't cached
-        if (!img.complete) {
-            $img.css('opacity', '0');
-            $parent.append('<div class="loading-spinner"></div>');
-        }
-
-        function showImage() {
-            $parent.find('.loading-spinner').remove();
-            $img.addClass('loaded')
-                .css({
-                    'opacity': '1',
-                    'transition': 'opacity 0.3s ease'
-                });
-        }
-
-        function handleError() {
-            $parent.find('.loading-spinner').remove();
-            $img.replaceWith('<p class="error-message">Image failed to load</p>');
-        }
-
-        // Handle load event
-        $img.on('load', showImage);
-        $img.on('error', handleError);
-
-        // Handle already loaded images
-        if (img.complete) {
-            showImage();
+        if (!$img.hasClass('loaded')) {
+            $img.addClass('loaded');
         }
     }
 
     // Initialize all images
     $('.img-rabbit').each(function() {
-        handleImageLoad(this);
-    });
-
-    // Initialize Owl Carousel with simplified config
-    const owl = $("#owl-demo").owlCarousel({
-        items: 1,
-        loop: true,
-        margin: 0,
-        nav: true,
-        navText: ['<i class="fa fa-angle-left"></i>', '<i class="fa fa-angle-right"></i>'],
-        dots: true,
-        autoplay: false, // Disable autoplay to prevent loading issues
-        responsiveClass: true,
-        responsive: {
-            0: {
-                items: 1,
-                nav: false
-            },
-            768: {
-                items: 1,
-                nav: true
-            }
-        },
-        onInitialize: function() {
-            $('#work_left').append('<div class="loading-spinner carousel-loading"></div>');
-        },
-        onInitialized: function() {
-            $('#work_left .loading-spinner').remove();
-            $('.owl-carousel .img-rabbit').show();
+        if (this.complete) {
+            handleImageLoad(this);
+        } else {
+            $(this).on('load', function() {
+                handleImageLoad(this);
+            });
         }
     });
 
@@ -215,6 +180,8 @@ $(document).ready(function() {
         switchSection($("#index"), $("#work_scroll"));
         $('#work_left').addClass('animated slideInLeft');
         $('#work_right').addClass('animated slideInRight');
+        // Force carousel refresh
+        owl.trigger('refresh.owl.carousel');
     });
 
     $("#resources").click(function() {
