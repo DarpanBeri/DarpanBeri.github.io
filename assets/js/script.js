@@ -7,6 +7,13 @@
 })();
 
 $(document).ready(function() {
+    // Hide all pages except index initially
+    $("#about_scroll").hide();   
+    $("#work_scroll").hide();
+    $("#resources_scroll").hide();
+    $("#contact_scroll").hide();
+    $("#where_to_find_me").hide();
+
     // Helper function for GA4 event tracking
     function trackEvent(eventName, params = {}) {
         if (typeof gtag === 'function') {

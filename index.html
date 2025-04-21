@@ -65,23 +65,25 @@
     </head>
 
     <body>
-        <a href="#index" class="skip-to-main">Skip to main content</a>
-        <button class="theme-toggle" 
-            aria-label="Toggle dark mode" 
-            aria-pressed="false" 
-            role="switch">
-            <i class="fa fa-moon-o" aria-hidden="true"></i>
-            <span class="sr-only">Switch to dark mode</span>
-        </button>
-        <div id="index" role="main">                                           <!-- Index starts here -->
-            <div class="container main">
+        <div class="container main">
+            <a href="#index" class="skip-to-main">Skip to main content</a>
+            <button class="theme-toggle" 
+                aria-label="Toggle dark mode" 
+                aria-pressed="false" 
+                role="switch">
+                <i class="fa fa-moon-o" aria-hidden="true"></i>
+                <span class="sr-only">Switch to dark mode</span>
+            </button>
+            
+            <!-- Index starts here -->
+            <div id="index" role="main">
                 <div class="row home">
-                    <div id = "index_left" class="col-md-6 left">
-                        <img class="img-rabbit" data-src="assets/images/home.png" alt="Darpan Beri as a child smiling at the camera with his elder sister." loading="lazy">
+                    <div id="index_left" class="col-md-6 left">
+                        <img class="img-rabbit" src="assets/images/home.png" alt="Darpan Beri as a child smiling at the camera with his elder sister.">
                     </div>
-                    <div id = "index_right" class="col-md-6 text-center right"> <!-- Fixed typo 'tex' to 'text' -->
+                    <div id="index_right" class="col-md-6 text-center right">
                         <div class="logo">
-                            <img src="assets/images/avatar.png" alt="Darpan Beri's profile photo." loading="eager" fetchpriority="high">
+                            <img src="assets/images/avatar.png" alt="Darpan Beri's profile photo.">
                             <h4>Darpan Beri</h4>
                         </div>
                         <p class="home-description">
@@ -100,18 +102,13 @@
                         </div>
                     </div>
                 </div>
-
-                
             </div>
-        </div>                                                      <!-- index ends here -->
 
-        <div id="about_scroll" class="pages" role="region" aria-labelledby="about-title"> <!-- about starts here -->
-            <div class="container main">
+            <!-- About starts here -->
+            <div id="about_scroll" class="pages" role="region" aria-labelledby="about-title">
                 <div class="row">
                     <div class="col-md-6 left" id="about_left">
-                        <div class="img-container">
-                            <img src="assets/images/about.jpg" alt="About Me" class="img-rabbit">
-                        </div>
+                        <img src="assets/images/about.jpg" alt="About Me" class="img-rabbit">
                     </div>
                     <div class="col-md-6 right" id="about_right">
                         <a href="#index" class="btn btn-rabbit back" aria-label="Back to Home"> <i class="fa fa-angle-left" aria-hidden="true"></i> Back to Home </a>
@@ -170,12 +167,9 @@
                     </div>
                 </div>
             </div>
-        </div>                                                                <!-- About ends here -->
 
-
-        
-        <div id="work_scroll" class="pages" role="region" aria-labelledby="work-title">                                  <!-- Work starts here -->
-            <div class="container main">
+            <!-- Work starts here -->
+            <div id="work_scroll" class="pages" role="region" aria-labelledby="work-title">
                 <div class="row">
                     <div class="col-md-6" id="work_left">
                         <div id="owl-demo" class="owl-carousel owl-theme" role="region" aria-label="Work portfolio images">
@@ -281,10 +275,9 @@
                     </div>
                 </div>
             </div>
-        </div>                                                                 <!-- Work ends here  -->
 
-        <div id="resources_scroll" class="pages" role="region" aria-labelledby="resources-title">                             <!-- Resources starts here -->
-            <div class="container main">
+            <!-- Resources starts here -->
+            <div id="resources_scroll" class="pages" role="region" aria-labelledby="resources-title">
                 <div class="row">
                     <div class="col-md-12">
                         <a href="#index" class="btn btn-rabbit back" aria-label="Back to Home"> <i class="fa fa-angle-left" aria-hidden="true"></i> Back to Home </a>
@@ -305,11 +298,9 @@
                     </div>
                 </div>
             </div>
-        </div>                                                               <!-- Resources ends here -->
 
-        <!-- Hidden page content for the easter egg -->
-        <div id="where_to_find_me" class="pages" style="display: none;">
-            <div class="container main">
+            <!-- Hidden page content for the easter egg -->
+            <div id="where_to_find_me" class="pages" style="display: none;">
                 <div class="row">
                     <div class="col-md-12">
                         <a href="#resources_scroll" class="btn btn-rabbit back"><i class="fa fa-angle-left" aria-hidden="true"></i> Back to Resources</a>
@@ -335,15 +326,12 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div id="contact_scroll" class="pages" role="region" aria-labelledby="contact-title">                             <!-- Contact starts here -->
-            <div class="container main">
+            <!-- Contact starts here -->
+            <div id="contact_scroll" class="pages" role="region" aria-labelledby="contact-title">
                 <div class="row">
                     <div class="col-md-6 left" id="contact_left">
-                        <div class="img-container">
-                            <img src="assets/images/contact.GIF" alt="Contact Me" class="img-rabbit">
-                        </div>
+                        <img src="assets/images/contact.GIF" alt="Contact Me" class="img-rabbit">
                     </div>
 
                     <div class="col-md-6 right" id="contact_right">
@@ -379,7 +367,6 @@
                     </div>
                 </div>
             </div>
-        </div>                                                              <!-- Contact ends here -->
-        
+        </div>
     </body>
 </html>
