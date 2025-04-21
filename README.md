@@ -1,25 +1,24 @@
 # Darpan Beri - Portfolio Website
 
 ## Description
-Personal portfolio website showcasing my work in Data Science and Software Engineering. Features a responsive design with dark mode support, interactive project carousel, secure contact form, and comprehensive analytics tracking.
+Personal portfolio website showcasing my projects, skills, and professional experience. Features a responsive design with dark mode support, interactive sections, and a contact form.
 
 ## Features
 - Responsive mobile-first design
 - Dark/light theme toggle
-- Interactive project carousel
-- Secure contact form with validation
-- Keyboard navigation support
-- Optimized image loading
-- Comprehensive accessibility features
-- Resources section with downloadable content
-- Full analytics tracking
+- Interactive project showcase
+- Contact form with validation
+- Document downloads section
+- Google Analytics 4 tracking
+- Easter egg content
+- Accessibility optimizations
 
 ## Technologies Used
 - HTML5, CSS3, JavaScript
+- Bootstrap 3.3.7
 - jQuery 3.7.1
-- Bootstrap for responsive design
+- Font Awesome
 - Owl Carousel 2.3.4
-- Font Awesome for icons
 - Formspree for form handling
 - Google Analytics 4
 
@@ -47,8 +46,8 @@ DarpanBeri.github.io/
 3. For local development:
    - Use a local server (e.g., Live Server VS Code extension)
    - Enable JavaScript for full functionality
-   - Test form submissions in development mode
-   - Check analytics tracking in debug mode
+   - Contact form requires production deployment to work
+   - Check Google Analytics in debug mode
 
 ## Resources
 - [Resume](https://drive.google.com/file/d/10iwzb8ozByW5ceRHkb1m6lqpoq2UXtJo/view?usp=sharing)
@@ -64,6 +63,13 @@ The website uses Google Analytics 4 to track:
 - Theme preference usage
 - Carousel interactions
 - Easter egg discoveries
+
+## Production Notes
+- Contact form uses Formspree.
+- Form includes validation and error handling
+- All external links use noopener for security
+- Cross-browser tested and optimized
+- Accessibility features implemented
 
 ## Future Improvements
 - Implement image optimization pipeline

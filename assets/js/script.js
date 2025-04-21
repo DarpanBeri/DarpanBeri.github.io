@@ -214,7 +214,7 @@ $(document).ready(function() {
         
         // Get form values
         const name = $('input[name="name"]').val().trim();
-        const email = $('input[name="_replyto"]').val().trim();
+        const email = $('input[name="email"]').val().trim();
         const message = $('textarea[name="message"]').val().trim();
         
         // Basic validation
@@ -235,7 +235,7 @@ $(document).ready(function() {
         
         // Submit form using Formspree
         $.ajax({
-            url: this.action,
+            url: 'https://formspree.io/f/xkgrwpbr',
             method: 'POST',
             data: $(this).serialize(),
             dataType: 'json',

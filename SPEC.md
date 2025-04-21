@@ -68,7 +68,7 @@
    - Education info with custom styling
    - Skills list with scrollable table
    - Personal description
-   - Document download buttons
+   - Document download buttons with tracking
 
 3. Work
    - Owl Carousel slider with autoplay
@@ -76,6 +76,7 @@
    - Academic achievements section
    - Current and previous projects
    - Project links with tracking
+   - Custom button styling for actions
 
 4. Resources
    - Document links with visual feedback
@@ -84,12 +85,13 @@
    - Secure external links with noopener
 
 5. Contact
-   - Formspree-powered contact form
-   - Client-side validation
+   - Formspree integration (endpoint: xkgrwpbr)
+   - Client-side validation with error messages
    - Loading states and animations
    - Success/error feedback
    - Location information
    - ARIA-compliant form fields
+   - Rate limiting protection
 
 ## Technical Improvements
 1. Performance
@@ -97,6 +99,7 @@
    - Optimized GIF loading behavior
    - Loading state animations
    - CSS transitions optimization
+   - Button styling refinements
 
 2. Accessibility
    - Skip to main content implementation
@@ -116,6 +119,7 @@
    - Loading state indicators
    - Smooth transitions
    - Mobile-first responsive design
+   - Consistent button behavior
 
 ## Browser Support
 - Modern Chromium browsers (Chrome, Edge, Opera)
@@ -134,12 +138,13 @@
 - Protected email addresses
 - Secure file downloads
 - Form submission rate limiting
+- Production endpoint configuration
 
 ## Analytics & Tracking
 - Google Analytics 4 integration
   - Event tracking implementation
     - Document downloads
-    - Form interactions
+    - Form submissions and interactions
     - Navigation patterns
     - Theme preferences
     - Carousel usage
@@ -161,3 +166,4 @@
 - Mobile-first development
 - Accessibility-first design
 - Analytics-driven improvements
+- Regular documentation updates
