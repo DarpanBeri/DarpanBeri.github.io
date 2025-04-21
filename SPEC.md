@@ -15,6 +15,32 @@
 - Owl Carousel 2.3.4 for image slider
 - Formspree for contact form handling
 
+### Typography System
+- Primary Fonts
+  - Headings: "Josefin Sans", sans-serif
+  - Body: "Crimson", serif
+  - UI Elements: "Josefin Sans", sans-serif
+  - Fallback: "Lato", sans-serif
+- Font Sizes
+  - Base size: 16px
+  - Mobile base size: 14px
+  - Page title: 36px (28px mobile)
+  - Headings scale: 2em to 0.9em
+  - Buttons and interactive elements: 16px
+  - Home description: 19px (17px mobile)
+  - Subtitle: 20px (18px mobile)
+- Line Heights
+  - Body text: 1.75
+  - Headings: 1.2
+  - Interactive elements: 1.5
+- Letter Spacing
+  - Buttons and links: 0.5px
+  - Normal text: default
+- Font Weights
+  - Headings: 700 (bold)
+  - Body: 400 (regular)
+  - Special elements: 600 (semi-bold)
+
 ## Component Analysis
 
 ### Header/Navigation

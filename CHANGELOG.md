@@ -80,6 +80,16 @@
   - Added lazy loading for images
   - Added loading animations for better UX
   - Optimized CSS transitions
+- Typography Standardization
+  - Standardized fonts across all sections
+    - Headings: Josefin Sans
+    - Body text: Crimson at 16px
+    - Buttons/interactive elements: Josefin Sans at 16px
+  - Improved typography hierarchy
+  - Added consistent mobile font sizing
+  - Enhanced readability with proper line heights
+  - Standardized letter spacing for buttons
+  - Added responsive font size adjustments
 
 ### Fixed
 - Updated website title from "Rabbit : Home" to "Darpan Beri | Data Science & Software Engineering"

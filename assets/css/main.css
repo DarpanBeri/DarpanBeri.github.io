@@ -82,7 +82,7 @@ body {
     background-color: var(--side-bg-color);
     font-family: "Lato", sans-serif;
     color: var(--text-color);
-    font-size: 16pt;
+    font-size: 16px;
     font-weight: 400;
     line-height: 1.75em;
 }
@@ -94,11 +94,11 @@ body {
 .home-description {
     font-style: italic;
     font-weight: 600;
-    font-family: "Crimson";
+    font-family: "Crimson", serif;
     font-size: 19px;
     padding-top: 15px;
     padding-bottom: 25px;
-    line-height: 29px;
+    line-height: 1.75;
 }
 
 .social a i {
@@ -146,7 +146,7 @@ body {
     }
 
     .info {
-        font-family: "Crimson";
+        font-family: "Crimson", serif;
         line-height: 28px;
         font-size: 16px;
         padding-top: 15px;
@@ -187,8 +187,9 @@ body {
     -o-transition: all 0.4s ease-in-out;
     transition: all 0.4s ease-in-out;
     margin-bottom: 20px;
-    font-family: "Crimson";
-    font-size: 13px;
+    font-family: "Josefin Sans", sans-serif;
+    font-size: 16px;
+    letter-spacing: 0.5px;
 }
 
 .btn-rabbit:hover {
@@ -273,7 +274,9 @@ ul.icons li .icon:before {
 
 .page-title {
     text-transform: uppercase;
-    font-family: 'Josefin Sans';
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 36px;
+    margin-bottom: 1em;
 }
 
 /*Home Style*/
@@ -284,7 +287,7 @@ ul.icons li .icon:before {
 }
 
 .logo h4 {
-    font-family: 'Josefin Sans';
+    font-family: 'Josefin Sans', sans-serif;
 }
 
 /*Home Style */
@@ -328,7 +331,7 @@ footer {
 
 .back {
     width: 170px;
-    font-family: "Crimson";
+    font-family: "Crimson", serif;
     font-size: 17px;
     font-style: italic;
     text-align: center;
@@ -348,6 +351,8 @@ footer {
 .form-control {
     margin-top: 30px;
     width: 75%;
+    font-family: "Crimson", serif;
+    font-size: 16px;
 }
 
 .btn {
@@ -357,11 +362,11 @@ footer {
 }
 
 .btn-group-vertical {
-    font-family: "Josefin Sans";
+    font-family: "Josefin Sans", sans-serif;
 }
 
 .about {
-    font-family: "Josefin Sans";
+    font-family: "Josefin Sans", sans-serif;
     /*margin-top: 35px;*/
     /*margin-bottom: 25px;*/
     font-size: 32px;
@@ -370,7 +375,7 @@ footer {
 .form-control {
     font-style: italic;
     border-radius: 0;
-    font-family: "Crimson";
+    font-family: "Crimson", serif;
     font-size: 16px;
     background-color: var(--bg-color);
     color: var(--text-color);
@@ -384,7 +389,7 @@ footer {
 
 .page-title {
     font-size: 32px;
-    font-family: "Josefin Sans";
+    font-family: "Josefin Sans", sans-serif;
 }
 
 .fa-heartbeat {
@@ -420,7 +425,7 @@ footer {
 }
 
 .submit {
-    font-family: "Crimson";
+    font-family: "Crimson", serif;
     font-size: 16px;
 }
 
@@ -429,8 +434,8 @@ footer {
     font-weight: 600;
     font-size: 20px;
     color: var(--subtitle-color);
-    line-height: 28px;
-    font-family: "Crimson";
+    line-height: 1.5;
+    font-family: "Crimson", serif;
     margin-top: 15px;
     margin-bottom: 20px;
     padding-right: 40px;
@@ -450,7 +455,7 @@ footer {
     position: absolute;
     font-size: 60px;
     opacity: 0.1;
-    font-family: "Josefin Sans";
+    font-family: "Josefin Sans", sans-serif;
     text-transform: uppercase;
     left: 0;
     top: -5px;
@@ -541,7 +546,7 @@ footer {
     color: #dc3545;
     font-size: 14px;
     margin-top: 5px;
-    font-family: "Crimson";
+    font-family: "Crimson", serif;
 }
 
 .form-control.is-invalid {
@@ -557,7 +562,7 @@ footer {
     margin-bottom: 20px;
     border: 1px solid transparent;
     border-radius: 4px;
-    font-family: "Crimson";
+    font-family: "Crimson", serif;
 }
 
 .alert-success {
@@ -588,31 +593,36 @@ footer {
 .resources-list {
     list-style: none;
     padding: 0;
+    margin: 2em 0;
 }
 
 .resources-list li {
-    margin-bottom: 15px;
+    margin-bottom: 1.5em;
 }
 
 .resources-list a {
     display: inline-block;
     color: var(--text-color);
     text-decoration: none;
-    padding: 10px 15px;
+    padding: 12px 20px;
     border: 1px solid var(--border-color);
     border-radius: 4px;
     transition: all 0.3s ease;
     position: relative;
-    padding-left: 40px;
+    padding-left: 50px;
     background-color: var(--bg-color);
+    font-family: "Josefin Sans", sans-serif;
+    font-size: 16px;
+    letter-spacing: 0.5px;
 }
 
 .resources-list a:before {
     content: '\f1c1';
     font-family: 'FontAwesome';
     position: absolute;
-    left: 15px;
+    left: 20px;
     color: var(--accent-color);
+    font-size: 20px;
 }
 
 .resources-list a:hover,
@@ -624,8 +634,19 @@ footer {
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-.resources-list a:hover:before {
+.resources-list a:hover:before,
+.resources-list a:focus:before {
     color: white;
+}
+
+#resources_scroll .info {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+#resources_scroll .page-title {
+    font-size: 36px;
+    margin-bottom: 1em;
 }
 
 /* Loading Animations */
@@ -856,4 +877,295 @@ html, body {
 [data-theme="dark"] .btn-rabbit:focus {
     color: #333333;
     background-color: #bb9e7d;
+}
+
+/* About Section Styles */
+.skills-table {
+    width: 100%;
+    margin: 2em 0;
+    border-collapse: separate;
+    border-spacing: 0 0.5em;
+}
+
+.skills-table th {
+    color: var(--accent-color);
+    font-family: "Josefin Sans", sans-serif;
+    font-weight: bold;
+    padding: 0.5em;
+    text-align: left;
+    border-bottom: 2px solid var(--accent-color);
+}
+
+.skills-table td {
+    padding: 0.5em;
+    vertical-align: top;
+    color: var(--text-color);
+    font-family: "Crimson", serif;
+    font-size: 0.9em;
+}
+
+.skills-table tr:hover td {
+    background-color: rgba(187, 158, 125, 0.1);
+}
+
+.docs-buttons {
+    margin-top: 3em;
+    display: flex;
+    gap: 1em;
+    flex-wrap: wrap;
+}
+
+.docs-buttons .btn-rabbit {
+    flex: 1;
+    min-width: 200px;
+    text-align: center;
+    margin: 0;
+}
+
+#about_right h3 {
+    color: var(--accent-color);
+    font-family: "Josefin Sans", sans-serif;
+    margin-top: 2em;
+    margin-bottom: 1em;
+}
+
+#about_right {
+    padding-right: 2em;
+}
+
+@media (max-width: 768px) {
+    .skills-table {
+        font-size: 0.9em;
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .skills-table th,
+    .skills-table td {
+        white-space: nowrap;
+        min-width: 160px;
+    }
+
+    .docs-buttons {
+        flex-direction: column;
+    }
+
+    .docs-buttons .btn-rabbit {
+        width: 100%;
+    }
+
+    #about_right {
+        padding-right: 1em;
+    }
+}
+
+/* Dark mode adjustments for About section */
+[data-theme="dark"] .skills-table th {
+    border-bottom-color: var(--accent-color);
+}
+
+[data-theme="dark"] .skills-table tr:hover td {
+    background-color: rgba(187, 158, 125, 0.15);
+}
+
+/* Work Section Styles */
+.case-study {
+    margin-bottom: 2em;
+}
+
+.case-study h4 {
+    color: var(--accent-color);
+    font-family: "Josefin Sans", sans-serif;
+    margin-bottom: 1em;
+}
+
+.case-study h5 {
+    color: var(--heading-color);
+    font-family: "Josefin Sans", sans-serif;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+}
+
+.case-study ul {
+    margin-bottom: 1.5em;
+}
+
+.case-study li {
+    margin-bottom: 0.5em;
+}
+
+.project-links {
+    display: flex;
+    gap: 1em;
+    flex-wrap: wrap;
+    margin-top: 2em;
+}
+
+.project-links .btn-rabbit {
+    flex: 1;
+    min-width: 200px;
+    text-align: center;
+}
+
+.section-divider {
+    height: 1px;
+    background-color: var(--border-color);
+    margin: 3em 0;
+    opacity: 0.5;
+}
+
+.project {
+    margin-bottom: 2em;
+}
+
+.project h4 {
+    color: var(--heading-color);
+    font-family: "Josefin Sans", sans-serif;
+    margin-bottom: 0.5em;
+}
+
+.project p {
+    margin-bottom: 0.5em;
+}
+
+.project a {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-style: italic;
+}
+
+.project a:hover {
+    text-decoration: underline;
+}
+
+.experience {
+    margin-bottom: 2em;
+}
+
+.experience h4 {
+    color: var(--heading-color);
+    font-family: "Josefin Sans", sans-serif;
+    margin-bottom: 0.5em;
+}
+
+.experience ul {
+    margin-bottom: 1em;
+}
+
+.experience li {
+    margin-bottom: 0.5em;
+}
+
+.academics ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.academics li {
+    margin-bottom: 0.5em;
+}
+
+/* Dark mode adjustments for Work section */
+[data-theme="dark"] .project a {
+    color: var(--accent-color);
+}
+
+[data-theme="dark"] .section-divider {
+    background-color: var(--border-color);
+    opacity: 0.3;
+}
+
+/* Responsive adjustments for Work section */
+@media (max-width: 768px) {
+    .project-links {
+        flex-direction: column;
+    }
+
+    .project-links .btn-rabbit {
+        width: 100%;
+    }
+
+    .case-study h4 {
+        font-size: 1.4em;
+    }
+
+    .case-study h5 {
+        font-size: 1.1em;
+    }
+}
+
+/* Base typography */
+body {
+    font-family: "Lato", sans-serif;
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--text-color);
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6, .page-title {
+    font-family: "Josefin Sans", sans-serif;
+    color: var(--heading-color);
+    line-height: 1.2;
+}
+
+.page-title {
+    font-size: 36px;
+    margin-bottom: 1em;
+}
+
+/* Regular text content */
+p, .info, li {
+    font-family: "Crimson", serif;
+    font-size: 16px;
+    line-height: 1.75;
+}
+
+/* Buttons and interactive elements */
+.btn-rabbit, .resources-list a {
+    font-family: "Josefin Sans", sans-serif;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+}
+
+/* Section specific styles */
+.home-description {
+    font-family: "Crimson", serif;
+    font-size: 19px;
+    line-height: 1.75;
+    font-style: italic;
+}
+
+.subtitle {
+    font-family: "Crimson", serif;
+    font-size: 20px;
+    line-height: 1.5;
+    font-style: italic;
+}
+
+/* Form elements */
+.form-control {
+    font-family: "Crimson", serif;
+    font-size: 16px;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    body {
+        font-size: 14px;
+    }
+    
+    .page-title {
+        font-size: 28px;
+    }
+    
+    .home-description {
+        font-size: 17px;
+    }
+    
+    .subtitle {
+        font-size: 18px;
+    }
 }
