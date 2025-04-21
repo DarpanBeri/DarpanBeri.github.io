@@ -165,13 +165,17 @@ body {
     }
 }
 
+/* Image handling and loading states */
 .img-rabbit {
     width: 100%;
     height: auto;
-    display: inline-block;
-    margin-top: 40px; /* Add space to move image south */
+    display: block;
     opacity: 0;
+    -webkit-transition: opacity 0.3s ease;
     transition: opacity 0.3s ease;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    will-change: opacity;
 }
 
 .img-rabbit.loaded {
@@ -674,32 +678,50 @@ footer {
     display: inline-block;
     width: 40px;
     height: 40px;
-    border: 3px solid var(--border-color);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin: -20px 0 0 -20px;
+    border: 3px solid rgba(187, 158, 125, 0.3);
     border-radius: 50%;
     border-top-color: var(--accent-color);
-    animation: spin 1s ease-in-out infinite;
-    margin: 20px auto;
+    animation: spin 1s linear infinite;
+    -webkit-animation: spin 1s linear infinite;
+    z-index: 1;
+}
+
+@-webkit-keyframes spin {
+    to { -webkit-transform: rotate(360deg); }
 }
 
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
 
-.carousel-loading {
+/* Image container positioning */
+.img-container {
+    position: relative;
+    min-height: 200px;
+    background-color: var(--bg-color);
+}
+
+/* Fix Safari image opacity transition */
+.img-rabbit {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    perspective: 1000px;
+    transform: translate3d(0, 0, 0);
+}
+
+/* Error message styling */
+.error-message {
     position: absolute;
-    top: 50%;
     left: 50%;
+    top: 50%;
     transform: translate(-50%, -50%);
-    z-index: 1;
-}
-
-.fade-in {
-    animation: fadeIn 0.5s ease-in;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    color: var(--text-color);
+    font-family: "Crimson", serif;
+    font-style: italic;
 }
 
 /* Loading state for buttons */

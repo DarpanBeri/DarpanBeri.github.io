@@ -32,8 +32,8 @@ $(document).ready(function() {
         });
     }
 
-    // Improved image loading handler
-    function handleImageLoad(img, isImmediate = false) {
+    // Simple image loading handler - optimized for mobile Safari
+    function handleImageLoad(img) {
         const $img = $(img);
         const $parent = $img.parent();
         
@@ -42,89 +42,42 @@ $(document).ready(function() {
             return;
         }
 
-        // For avatar image or immediate loading, load right away
-        if (isImmediate || $img.closest('.logo').length > 0) {
-            if (!img.complete) {
-                $parent.append('<div class="loading-spinner"></div>');
-                $img.hide();
-            }
+        // Show loading spinner if image isn't cached
+        if (!img.complete) {
+            $img.css('opacity', '0');
+            $parent.append('<div class="loading-spinner"></div>');
+        }
 
-            $img.on('load', function() {
-                $parent.find('.loading-spinner').remove();
-                $img.addClass('loaded').fadeIn(300);
-            }).on('error', function() {
-                $parent.find('.loading-spinner').remove();
-                $img.replaceWith('<p class="error-message">Image failed to load</p>');
-            });
-
-            // Handle already loaded images (e.g. from cache)
-            if (img.complete) {
-                $img.addClass('loaded').show();
-            }
-        } else {
-            // For other images, use Intersection Observer for lazy loading
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const img = entry.target;
-                        if (!img.complete && !$parent.find('.loading-spinner').length) {
-                            $parent.append('<div class="loading-spinner"></div>');
-                            $img.hide();
-                        }
-
-                        img.addEventListener('load', () => {
-                            $parent.find('.loading-spinner').remove();
-                            $(img).addClass('loaded').fadeIn(300);
-                        });
-
-                        img.addEventListener('error', () => {
-                            $parent.find('.loading-spinner').remove();
-                            $(img).replaceWith('<p class="error-message">Image failed to load</p>');
-                        });
-
-                        // Start loading the image
-                        if (img.dataset.src) {
-                            img.src = img.dataset.src;
-                            img.removeAttribute('data-src');
-                        }
-
-                        // Stop observing once loading starts
-                        observer.unobserve(img);
-                    }
+        function showImage() {
+            $parent.find('.loading-spinner').remove();
+            $img.addClass('loaded')
+                .css({
+                    'opacity': '1',
+                    'transition': 'opacity 0.3s ease'
                 });
-            }, {
-                rootMargin: '50px 0px', // Start loading when image is 50px from viewport
-                threshold: 0.1
-            });
+        }
 
-            observer.observe(img);
+        function handleError() {
+            $parent.find('.loading-spinner').remove();
+            $img.replaceWith('<p class="error-message">Image failed to load</p>');
+        }
+
+        // Handle load event
+        $img.on('load', showImage);
+        $img.on('error', handleError);
+
+        // Handle already loaded images
+        if (img.complete) {
+            showImage();
         }
     }
 
-    // Handle avatar image immediately
-    $('.logo img').each(function() {
-        handleImageLoad(this, true);
-    });
-
-    // Handle other images with lazy loading
-    $('.img-rabbit:not(.logo img)').each(function() {
-        // Convert src to data-src for lazy loading
-        const img = $(this);
-        if (!img.attr('data-src')) {
-            img.attr('data-src', img.attr('src'));
-            img.removeAttr('src'); // Remove src to prevent immediate loading
-        }
+    // Initialize all images
+    $('.img-rabbit').each(function() {
         handleImageLoad(this);
     });
 
-    // Handle Owl Carousel images specially
-    $("#owl-demo").on('initialized.owl.carousel', function() {
-        $(this).find('.img-rabbit').each(function() {
-            handleImageLoad(this, true); // Load carousel images immediately once carousel is ready
-        });
-    });
-
-    // Initialize Owl Carousel with better mobile handling
+    // Initialize Owl Carousel with simplified config
     const owl = $("#owl-demo").owlCarousel({
         items: 1,
         loop: true,
@@ -132,10 +85,7 @@ $(document).ready(function() {
         nav: true,
         navText: ['<i class="fa fa-angle-left"></i>', '<i class="fa fa-angle-right"></i>'],
         dots: true,
-        autoplay: true,
-        autoplayTimeout: 3000,
-        autoplayHoverPause: true,
-        smartSpeed: 1000,
+        autoplay: false, // Disable autoplay to prevent loading issues
         responsiveClass: true,
         responsive: {
             0: {
