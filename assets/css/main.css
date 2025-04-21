@@ -11,6 +11,8 @@
     --social-border: #111;
     --social-icon: #111;
     --subtitle-color: #3b3b3b;
+    --btn-bg: #fff;
+    --btn-text: #333;
 }
 
 /* CSS Resets and Base Styles */
@@ -43,6 +45,8 @@ img {
     --social-border: #fff;
     --social-icon: #111;
     --subtitle-color: #e0e0e0;
+    --btn-bg: #333;
+    --btn-text: #fff;
 }
 
 /* Theme Toggle Button */
@@ -912,14 +916,18 @@ html, body {
     margin-top: 3em;
     display: flex;
     gap: 1em;
+    justify-content: flex-start;
     flex-wrap: wrap;
 }
 
 .docs-buttons .btn-rabbit {
-    flex: 1;
+    flex: 0 1 auto;
     min-width: 200px;
     text-align: center;
     margin: 0;
+    padding: 10px 30px;
+    width: auto;
+    display: inline-block;
 }
 
 #about_right h3 {
@@ -949,11 +957,12 @@ html, body {
     }
 
     .docs-buttons {
-        flex-direction: column;
+        flex-direction: row;
+        justify-content: flex-start;
     }
 
     .docs-buttons .btn-rabbit {
-        width: 100%;
+        width: auto;
     }
 
     #about_right {
@@ -999,14 +1008,18 @@ html, body {
 .project-links {
     display: flex;
     gap: 1em;
+    justify-content: flex-start;
     flex-wrap: wrap;
     margin-top: 2em;
 }
 
 .project-links .btn-rabbit {
-    flex: 1;
+    flex: 0 1 auto;
     min-width: 200px;
     text-align: center;
+    padding: 10px 30px;
+    width: auto;
+    display: inline-block;
 }
 
 .section-divider {
@@ -1080,11 +1093,12 @@ html, body {
 /* Responsive adjustments for Work section */
 @media (max-width: 768px) {
     .project-links {
-        flex-direction: column;
+        flex-direction: row;
+        justify-content: flex-start;
     }
 
     .project-links .btn-rabbit {
-        width: 100%;
+        width: auto;
     }
 
     .case-study h4 {

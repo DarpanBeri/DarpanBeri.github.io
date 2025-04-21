@@ -1,4 +1,19 @@
+// Initialize theme handling before DOM ready
+(function initializeTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+})();
+
 $(document).ready(function() {
+    // Helper function for GA4 event tracking
+    function trackEvent(eventName, params = {}) {
+        if (typeof gtag === 'function') {
+            gtag('event', eventName, params);
+        }
+    }
+
     // Initialize Owl Carousel first
     const owl = $("#owl-demo").owlCarousel({
         items: 1,
@@ -65,17 +80,38 @@ $(document).ready(function() {
 
     // Theme toggle functionality with keyboard and ARIA support
     const themeToggle = document.querySelector('.theme-toggle');
-    const themeIcon = $('.theme-toggle i');
+    const themeIcon = themeToggle.querySelector('i');
     
-    // Check for saved theme preference and initialize
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-        document.documentElement.setAttribute('data-theme', savedTheme);
-        updateThemeIcon(savedTheme === 'dark');
-        themeToggle.setAttribute('aria-pressed', savedTheme === 'dark');
+    // Theme toggle handler
+    function toggleTheme() {
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        
+        // Update icon and ARIA attributes
+        themeIcon.className = newTheme === 'dark' ? 'fa fa-sun-o' : 'fa fa-moon-o';
+        themeToggle.setAttribute('aria-pressed', newTheme === 'dark');
+        themeToggle.querySelector('.sr-only').textContent = 
+            newTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+            
+        // Track theme change if GA is available
+        if (typeof gtag === 'function') {
+            gtag('event', 'theme_toggle', {
+                'theme': newTheme
+            });
+        }
     }
-    
-    // Theme toggle handlers
+
+    // Initialize theme toggle state
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    themeIcon.className = currentTheme === 'dark' ? 'fa fa-sun-o' : 'fa fa-moon-o';
+    themeToggle.setAttribute('aria-pressed', currentTheme === 'dark');
+    themeToggle.querySelector('.sr-only').textContent = 
+        currentTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+
+    // Add theme toggle event listeners
     themeToggle.addEventListener('click', toggleTheme);
     themeToggle.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -83,22 +119,6 @@ $(document).ready(function() {
             toggleTheme();
         }
     });
-
-    function toggleTheme() {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-        updateThemeIcon(newTheme === 'dark');
-        themeToggle.setAttribute('aria-pressed', newTheme === 'dark');
-        themeToggle.querySelector('.sr-only').textContent = 
-            newTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
-    }
-    
-    function updateThemeIcon(isDark) {
-        themeIcon.removeClass('fa-moon-o fa-sun-o').addClass(isDark ? 'fa-sun-o' : 'fa-moon-o');
-    }
 
     // Keyboard navigation for carousel
     $(document).keydown(function(e) {
@@ -219,12 +239,34 @@ $(document).ready(function() {
             method: 'POST',
             data: $(this).serialize(),
             dataType: 'json',
+            beforeSend: function() {
+                // Track form submission attempt
+                trackEvent('form_submission_attempt', {
+                    'form_name': 'contact'
+                });
+                
+                const $submitBtn = $("#contactForm button[type='submit']");
+                $submitBtn.addClass('btn-loading');
+            },
             success: function(response) {
                 showFormStatus('Message sent successfully!', 'success');
+                // Track successful form submission
+                trackEvent('form_submission_success', {
+                    'form_name': 'contact'
+                });
                 $("#contactForm")[0].reset();
             },
             error: function(err) {
                 showFormStatus('Error sending message. Please try again.', 'error');
+                // Track form submission error
+                trackEvent('form_submission_error', {
+                    'form_name': 'contact',
+                    'error_message': err.message
+                });
+            },
+            complete: function() {
+                const $submitBtn = $("#contactForm button[type='submit']");
+                $submitBtn.removeClass('btn-loading');
             }
         });
     });
@@ -317,5 +359,36 @@ $(document).ready(function() {
         setTimeout(() => {
             mainContent.removeAttr('tabindex');
         }, 100);
+    });
+
+    // Document downloads tracking
+    $('.docs-buttons a, .resources-list a').on('click', function(e) {
+        const docName = $(this).text().trim();
+        trackEvent('document_download', {
+            'document_name': docName,
+            'document_url': $(this).attr('href')
+        });
+    });
+
+    // Navigation tracking
+    $("#about, #work, #resources, #contact").click(function() {
+        const section = $(this).attr('id');
+        trackEvent('navigation', {
+            'section': section
+        });
+    });
+
+    // Easter egg interaction tracking
+    $("#where-to-find-me").click(function() {
+        trackEvent('easter_egg_click', {
+            'name': 'where_to_find_me'
+        });
+    });
+
+    // Carousel interaction tracking
+    $("#owl-demo").on('changed.owl.carousel', function(event) {
+        trackEvent('carousel_slide', {
+            'slide_index': event.item.index
+        });
     });
 });
