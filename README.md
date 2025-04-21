@@ -1,23 +1,26 @@
 # Darpan Beri - Portfolio Website
 
 ## Description
-Personal portfolio website showcasing projects, skills, and academic achievements. Built with modern web technologies and featuring a responsive design.
+Personal portfolio website showcasing my work in Data Science and Software Engineering. Features a responsive design with dark mode support, interactive project carousel, and a secure contact form.
 
 ## Features
-- Interactive sections: About, Work, Resources, Contact
-- Carousel-based project showcase
-- Responsive design for all devices
-- Contact form with validation
-- Direct links to Resume, Capstone Poster, and Capstone Report
-- Social media integration (LinkedIn, GitHub, Email)
+- Responsive mobile-first design
+- Dark/light theme toggle
+- Interactive project carousel
+- Secure contact form with validation
+- Keyboard navigation support
+- Optimized image loading
+- Accessibility improvements
+- Resources section with downloadable content
 
 ## Technologies Used
 - HTML5, CSS3, JavaScript
-- Bootstrap 3.3.7
 - jQuery 3.7.1
-- Font Awesome
+- Bootstrap for responsive design
 - Owl Carousel 2.3.4
-- Formspree for contact form handling
+- Font Awesome for icons
+- Formspree for form handling
+- Google Analytics 4 (pending setup)
 
 ## Project Structure
 ```
@@ -39,19 +42,31 @@ DarpanBeri.github.io/
    ```bash
    git clone https://github.com/DarpanBeri/DarpanBeri.github.io.git
    ```
-2. Open `index.html` in a web browser.
+2. Open `index.html` in a web browser
+3. For local development:
+   - Use a local server (e.g., Live Server VS Code extension)
+   - Enable JavaScript for full functionality
+   - Test form submissions in development mode
 
 ## Resources
-- [Resume](https://drive.google.com/file/d/1T8aYkr089OUiVGXVVgofw95aikcy5Qm7/view?usp=drive_link)
+- [Resume](https://drive.google.com/file/d/1tOX4LFwgNvzyWAah90STwCrPhn_2mSBQ/view?usp=sharing)
 - [Capstone Poster](https://drive.google.com/file/d/1WyMcFZaHDOcC9xkAh8VggRbmTfmtzV_k/view?usp=drive_link)
 - [Capstone Report](https://drive.google.com/file/d/1ZUx-jpPcDKeLZZMVJCRz5k9ipT5hy2m0/view?usp=drive_link)
 
+## Development Workflow
+1. Make changes in a feature branch
+2. Test thoroughly across browsers
+3. Update documentation if needed
+4. Commit with clear messages
+5. Push to GitHub to deploy
+
 ## Future Improvements
-- Add project thumbnails for carousel
-- Implement image optimization
-- Add Google Analytics
-- Enhance accessibility features
-- Add dark mode support
+- Implement image optimization pipeline
+- Complete Google Analytics integration
+- Add project filtering capabilities
+- Enhance PWA features
+- Add blog/articles section
+- Implement CI/CD pipeline
 
 ## Contributing
 This is a personal portfolio website, but if you find any bugs or have suggestions, feel free to open an issue.

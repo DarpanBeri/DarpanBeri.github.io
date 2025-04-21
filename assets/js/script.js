@@ -1,8 +1,47 @@
 $(document).ready(function() {
-    // Fix for carousel image loading issue
-    $('.img-rabbit').each(function() {
+    // Initialize Owl Carousel first
+    const owl = $("#owl-demo").owlCarousel({
+        items: 1,
+        loop: true,
+        margin: 0,
+        nav: true,
+        navText: ['<i class="fa fa-angle-left"></i>', '<i class="fa fa-angle-right"></i>'],
+        dots: true,
+        autoplay: true,
+        autoplayTimeout: 3000,
+        autoplayHoverPause: true,
+        smartSpeed: 1000,
+        responsiveClass: true,
+        responsive: {
+            0: {
+                items: 1,
+                nav: false
+            },
+            768: {
+                items: 1,
+                nav: true
+            }
+        },
+        onInitialize: function() {
+            // Show loading spinner while carousel initializes
+            $('#work_left').append('<div class="loading-spinner carousel-loading"></div>');
+        },
+        onInitialized: function() {
+            // Remove loading spinner once carousel is ready
+            $('#work_left .loading-spinner').remove();
+            $('.owl-carousel .img-rabbit').show();
+        }
+    });
+
+    // Handle image loading for non-carousel images
+    $('.img-rabbit:not(.owl-carousel .img-rabbit)').each(function() {
         const $img = $(this);
         const $parent = $img.parent();
+        
+        // Skip GIF files
+        if ($img.attr('src').toLowerCase().endsWith('.gif')) {
+            return;
+        }
 
         if (!$img[0].complete) {
             $parent.append('<div class="loading-spinner carousel-loading"></div>');
@@ -49,33 +88,6 @@ $(document).ready(function() {
         themeIcon.removeClass('fa-moon-o fa-sun-o').addClass(isDark ? 'fa-sun-o' : 'fa-moon-o');
     }
 
-    // Initialize Owl Carousel with proper configuration
-    $("#owl-demo").owlCarousel({
-        items: 1,
-        loop: true,
-        margin: 0,
-        nav: true,
-        navText: ['<i class="fa fa-angle-left"></i>', '<i class="fa fa-angle-right"></i>'],
-        dots: true,
-        autoplay: true,
-        autoplayTimeout: 3000,
-        autoplayHoverPause: true,
-        smartSpeed: 1000,
-        animateOut: 'fadeOut',
-        animateIn: 'fadeIn',
-        responsiveClass: true,
-        responsive: {
-            0: {
-                items: 1,
-                nav: false
-            },
-            768: {
-                items: 1,
-                nav: true
-            }
-        }
-    });
-    
     // Keyboard navigation for carousel
     $(document).keydown(function(e) {
         if ($("#work_scroll").is(":visible")) {
@@ -148,6 +160,20 @@ $(document).ready(function() {
         $("#index").fadeIn();
         $('#index_left').addClass('animated slideInLeft');
         $('#index_right').addClass('animated slideInRight');
+    });
+
+    // Handle navigation to the 'Where to find me' page
+    $("#where-to-find-me").click(function(e) {
+        e.preventDefault();
+        $(".pages").fadeOut(); // Hide all other pages
+        $("#where_to_find_me").fadeIn(); // Show the hidden page
+    });
+
+    // Handle back button navigation from the hidden page
+    $("#where_to_find_me .back").click(function(e) {
+        e.preventDefault();
+        $("#where_to_find_me").fadeOut(); // Hide the hidden page
+        $("#resources_scroll").fadeIn(); // Show the resources page
     });
 
     // Form validation and submission
