@@ -14,7 +14,25 @@ $(document).ready(function() {
         }
     }
 
-    // Initialize Owl Carousel first
+    // Prevent scroll leaking between sections
+    let isAnimating = false;
+    
+    function switchSection($hideSection, $showSection) {
+        if (isAnimating) return;
+        isAnimating = true;
+        
+        $hideSection.fadeOut(400, function() {
+            $showSection.fadeIn(400, function() {
+                isAnimating = false;
+                // Scroll to top of new section on mobile
+                if (window.innerWidth <= 767) {
+                    window.scrollTo(0, 0);
+                }
+            });
+        });
+    }
+
+    // Initialize Owl Carousel with better mobile handling
     const owl = $("#owl-demo").owlCarousel({
         items: 1,
         loop: true,
@@ -38,38 +56,47 @@ $(document).ready(function() {
             }
         },
         onInitialize: function() {
-            // Show loading spinner while carousel initializes
             $('#work_left').append('<div class="loading-spinner carousel-loading"></div>');
         },
         onInitialized: function() {
-            // Remove loading spinner once carousel is ready
             $('#work_left .loading-spinner').remove();
             $('.owl-carousel .img-rabbit').show();
         }
     });
 
-    // Handle image loading for non-carousel images
-    $('.img-rabbit:not(.owl-carousel .img-rabbit)').each(function() {
-        const $img = $(this);
+    // Improve image loading with better error handling
+    function handleImageLoad(img) {
+        const $img = $(img);
         const $parent = $img.parent();
         
-        // Skip GIF files
-        if ($img.attr('src').toLowerCase().endsWith('.gif')) {
+        // Skip if already handled or is a GIF
+        if ($img.hasClass('loaded') || $img.attr('src').toLowerCase().endsWith('.gif')) {
             return;
         }
 
-        if (!$img[0].complete) {
-            $parent.append('<div class="loading-spinner carousel-loading"></div>');
-            $img.addClass('fade-in').hide();
-
-            $img.on('load', function() {
-                $parent.find('.loading-spinner').remove();
-                $img.show();
-            }).on('error', function() {
-                $parent.find('.loading-spinner').remove();
-                $img.replaceWith('<p class="error-message">Image failed to load</p>');
-            });
+        // Add loading spinner if image isn't cached
+        if (!img.complete) {
+            $parent.append('<div class="loading-spinner"></div>');
+            $img.hide();
         }
+
+        $img.on('load', function() {
+            $parent.find('.loading-spinner').remove();
+            $img.addClass('loaded').fadeIn(300);
+        }).on('error', function() {
+            $parent.find('.loading-spinner').remove();
+            $img.replaceWith('<p class="error-message">Image failed to load</p>');
+        });
+
+        // Handle already loaded images (e.g. from cache)
+        if (img.complete) {
+            $img.addClass('loaded').show();
+        }
+    }
+
+    // Handle all images
+    $('.img-rabbit').each(function() {
+        handleImageLoad(this);
     });
 
     // Add loading state to form submit button
@@ -164,48 +191,100 @@ $(document).ready(function() {
         }
     });
 
-    $("#about").click(function(){
-        $("#index").fadeOut();
-        $("#about_scroll").fadeIn();
+    $("#about").click(function() {
+        switchSection($("#index"), $("#about_scroll"));
         $('#about_left').addClass('animated slideInLeft');
         $('#about_right').addClass('animated slideInRight');
     });
-    $("#work").click(function(){
-        $("#index").fadeOut();
-        $("#work_scroll").fadeIn();
+
+    $("#work").click(function() {
+        switchSection($("#index"), $("#work_scroll"));
         $('#work_left').addClass('animated slideInLeft');
         $('#work_right').addClass('animated slideInRight');
     });
-    $("#resources").click(function(){
-        $("#index").fadeOut();
-        $("#resources_scroll").fadeIn();
+
+    $("#resources").click(function() {
+        switchSection($("#index"), $("#resources_scroll"));
     });
-    $("#contact").click(function(){
-        $("#index").fadeOut();
-        $("#contact_scroll").fadeIn();
+
+    $("#contact").click(function() {
+        switchSection($("#index"), $("#contact_scroll"));
         $('#contact_left').addClass('animated slideInLeft');
         $('#contact_right').addClass('animated slideInRight');
     });
-    
-    $(".back").click(function(){
-        $(".pages").fadeOut();
-        $("#index").fadeIn();
+
+    $(".back").click(function() {
+        const currentSection = $(".pages:visible");
+        switchSection(currentSection, $("#index"));
         $('#index_left').addClass('animated slideInLeft');
         $('#index_right').addClass('animated slideInRight');
     });
 
-    // Handle navigation to the 'Where to find me' page
-    $("#where-to-find-me").click(function(e) {
-        e.preventDefault();
-        $(".pages").fadeOut(); // Hide all other pages
-        $("#where_to_find_me").fadeIn(); // Show the hidden page
+    // Prevent multiple section transitions
+    $(".pages").on('scroll touchmove mousewheel', function(e) {
+        if (isAnimating) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        }
     });
 
-    // Handle back button navigation from the hidden page
-    $("#where_to_find_me .back").click(function(e) {
-        e.preventDefault();
-        $("#where_to_find_me").fadeOut(); // Hide the hidden page
-        $("#resources_scroll").fadeIn(); // Show the resources page
+    // Add touch event handling for mobile
+    let touchStartY;
+    
+    $(document).on('touchstart', function(e) {
+        touchStartY = e.originalEvent.touches[0].clientY;
+    });
+
+    $(document).on('touchend', function(e) {
+        if (isAnimating) return;
+        
+        const touchEndY = e.originalEvent.changedTouches[0].clientY;
+        const deltaY = touchEndY - touchStartY;
+        
+        // If significant vertical swipe
+        if (Math.abs(deltaY) > 50) {
+            const $currentSection = $(".pages:visible");
+            
+            // Swipe up - go to next section
+            if (deltaY < 0 && $currentSection.is("#index")) {
+                $("#about").click();
+            }
+            // Swipe down - go back to home
+            else if (deltaY > 0 && !$currentSection.is("#index")) {
+                $(".back").click();
+            }
+        }
+    });
+
+    // Handle orientation change
+    window.addEventListener('orientationchange', function() {
+        // Wait for orientation change to complete
+        setTimeout(function() {
+            // Reset any ongoing animations
+            isAnimating = false;
+            
+            // Force redraw of current section
+            const $currentSection = $(".pages:visible");
+            $currentSection.hide().show(0);
+            
+            // Ensure proper scroll position
+            window.scrollTo(0, 0);
+        }, 200);
+    });
+
+    // Handle window resize
+    let resizeTimer;
+    $(window).on('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function() {
+            // Reset any ongoing animations
+            isAnimating = false;
+            
+            // Force redraw of current section
+            const $currentSection = $(".pages:visible");
+            $currentSection.hide().show(0);
+        }, 250);
     });
 
     // Form validation and submission
