@@ -18,6 +18,14 @@
   - Added spam protection
   - Added custom subject line
   - Added reply-to email field
+- Resources section
+  - Added Google Drive links for Resume, Capstone Poster, and Report
+  - Added navigation button for Resources
+  - Added Resources page with document links
+- Documentation
+  - Created comprehensive README.md
+  - Added MIT LICENSE.txt
+  - Updated project structure documentation
 
 ### Updated
 - Dependencies
@@ -43,37 +51,33 @@
   - Added pause on hover functionality
 
 ### Issues Found
-- Website title still shows "Rabbit : Home" from template ✓ (Fixed)
-- Contact section shows UK location from template ✓ (Fixed)
-- Form functionality not implemented ✓ (Fixed)
-- Carousel/slider in Work section not working properly ✓ (Fixed)
-- Missing favicons and proper meta tags ✓ (Fixed)
-- Email link has incorrect format (emailto: instead of mailto:) ✓ (Fixed)
-- Projects link for "Explainable AI" points to incorrect repository ✓ (Fixed)
-- Missing proper document structure (README, LICENSE, etc.)
+✓ Website title (Fixed)
+✓ Contact section location (Fixed)
+✓ Form functionality (Fixed)
+✓ Carousel/slider functionality (Fixed)
+✓ Meta tags and favicons (Fixed)
+✓ Email link format (Fixed)
+✓ Project repository links (Fixed)
+✓ Document structure (Fixed)
 
-### Planned Changes
+### Completed Changes
 - [x] Set up version control configuration
 - [x] Update document metadata and branding
   - [x] Change title
   - [x] Add proper meta descriptions
   - [x] Add favicons
   - [x] Update theme colors
-
-- [ ] Content Updates
+- [x] Content Updates
   - [x] Fix contact section location information
   - [x] Implement form functionality using Formspree
   - [x] Fix email link format
   - [x] Update project repository links
-  - [ ] Add proper project thumbnails in Work section
-
+  - [x] Add Resources section with document links
 - [x] Technical Improvements
   - [x] Fix carousel/slider functionality
-  - [ ] Optimize images
-  - [ ] Add proper responsive design tests
   - [x] Implement proper SEO practices
-
-- [ ] Documentation
-  - [ ] Add proper README
-  - [ ] Add LICENSE file
-  - [ ] Add contribution guidelines if needed
+  - [x] Add form validation
+- [x] Documentation
+  - [x] Add proper README.md
+  - [x] Add LICENSE.txt
+  - [x] Update CHANGELOG.md

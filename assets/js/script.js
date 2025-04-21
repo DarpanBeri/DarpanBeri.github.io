@@ -14,6 +14,7 @@ $(document).ready(function() {
                 
     $("#about_scroll").fadeOut();   
     $("#work_scroll").fadeOut();
+    $("#resources_scroll").fadeOut();
     $("#contact_scroll").fadeOut();
 
     $("#about").click(function(){
@@ -27,6 +28,10 @@ $(document).ready(function() {
         $("#work_scroll").fadeIn();
         $('#work_left').addClass('animated slideInLeft');
         $('#work_right').addClass('animated slideInRight');
+    });
+    $("#resources").click(function(){
+        $("#index").fadeOut();
+        $("#resources_scroll").fadeIn();
     });
     $("#contact").click(function(){
         $("#index").fadeOut();

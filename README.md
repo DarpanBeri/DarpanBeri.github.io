@@ -1,6 +1,15 @@
 # Darpan Beri - Portfolio Website
 
-Personal portfolio website built using HTML, CSS, and JavaScript. The site showcases my projects, skills, and professional experience.
+## Description
+Personal portfolio website showcasing my projects, skills, and academic achievements in Data Science and Software Engineering.
+
+## Features
+- Interactive sections: About, Work, Resources, Contact
+- Functional contact form using Formspree
+- Project showcase with image carousel
+- Responsive design for all devices
+- Integration with Google Drive for document hosting
+- Social media and professional profile links
 
 ## Project Structure
 
@@ -18,21 +27,26 @@ DarpanBeri.github.io/
 └── README.md          # This file
 ```
 
-## Development
+## Resources
+- [Resume](https://drive.google.com/file/d/1T8aYkr089OUiVGXVVgofw95aikcy5Qm7/view?usp=drive_link)
+- [Capstone Poster](https://drive.google.com/file/d/1WyMcFZaHDOcC9xkAh8VggRbmTfmtzV_k/view?usp=drive_link)
+- [Capstone Report](https://drive.google.com/file/d/1ZUx-jpPcDKeLZZMVJCRz5k9ipT5hy2m0/view?usp=drive_link)
 
-This site is built using:
-- HTML5 for structure
-- CSS3 for styling (Bootstrap framework)
-- JavaScript (jQuery) for interactivity
+## Technologies Used
+- HTML5
+- CSS3 with Bootstrap
+- JavaScript with jQuery
+- Owl Carousel for image sliders
 - Font Awesome for icons
+- Formspree for form submissions
 
 ## Local Development
-
-1. Clone the repository
-2. Use a local server (e.g., Live Server VS Code extension)
-3. Access via http://127.0.0.1:5500/index.html
-
-Note: The `old_website` directory is included for reference purposes only and is excluded from version control.
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/DarpanBeri/DarpanBeri.github.io.git
+   ```
+2. Open `index.html` in a web browser
+3. For live reloading during development, use VS Code's Live Server extension or any local server
 
 ## Deployment
 
@@ -43,5 +57,4 @@ The site is deployed using GitHub Pages at https://darpanberi.github.io/
 The current design is based on the Rabbit template with custom modifications and content from the previous portfolio version (referenced in old_website directory).
 
 ## License
-
-[Add appropriate license]
+MIT License - See LICENSE.txt for details
