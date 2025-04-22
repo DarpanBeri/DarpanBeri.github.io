@@ -273,53 +273,45 @@ $(document).ready(function() {
         e.preventDefault();
         
         // Get form values
-        const name = $('input[name="name"]').val().trim();
-        const email = $('input[name="_replyto"]').val().trim();
-        const message = $('textarea[name="message"]').val().trim();
+        const form = this;
+        const data = new FormData(form);
         
-        // Basic validation
-        if (!name || !email || !message) {
-            showFormStatus('Please fill in all fields', 'error');
-            return false;
-        }
-        
-        // Email validation
-        if (!isValidEmail(email)) {
-            showFormStatus('Please enter a valid email address', 'error');
-            return false;
-        }
-
         // Show sending message
         showFormStatus('Sending...', 'info');
         
-        // Submit form using Formspree
-        const $form = $(this);
-        const $submitBtn = $form.find('button[type="submit"]');
+        // Disable submit button
+        const submitBtn = form.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.classList.add('btn-loading');
         
-        $submitBtn.prop('disabled', true).addClass('btn-loading');
-        
-        fetch($form.attr('action'), {
-            method: 'POST',
-            body: new FormData($form[0]),
+        fetch(form.action, {
+            method: form.method,
+            body: data,
             headers: {
                 'Accept': 'application/json'
-            },
+            }
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.ok) {
                 showFormStatus('Message sent successfully!', 'success');
-                $form[0].reset();
+                form.reset();
             } else {
                 throw new Error('Form submission failed');
             }
         })
         .catch(error => {
-            showFormStatus('Error sending message. Please try again.', 'error');
-            console.error('Form submission error:', error);
+            console.error('Error:', error);
+            showFormStatus('Error sending message. Please try again later.', 'error');
         })
         .finally(() => {
-            $submitBtn.prop('disabled', false).removeClass('btn-loading');
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('btn-loading');
         });
     });
 

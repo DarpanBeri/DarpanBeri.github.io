@@ -5,6 +5,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
         <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="mobile-web-app-capable" content="yes">
         <base href="https://darpanberi.github.io/">
         
         <!-- SEO Meta Tags -->
@@ -49,6 +50,7 @@
         <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+        <script src="https://formspree.io/js/formbutton-v1.min.js" defer></script>
         <script defer src="assets/js/script.js"></script>
         
         <!-- Styles -->
@@ -349,12 +351,12 @@
                             <input type="hidden" name="_format" value="json">
                             <div class="form-group">
                                 <label for="name" class="sr-only">Name</label>
-                                <input type="text" name="name" id="name" class="form-control" placeholder="Name" required aria-required="true">
+                                <input type="text" name="name" id="name" class="form-control" placeholder="Name" required aria-required="true" autocomplete="name">
                                 <div class="invalid-feedback" role="alert">Please enter your name</div>
                             </div>
                             <div class="form-group">
                                 <label for="email" class="sr-only">Email</label>
-                                <input type="email" name="_replyto" id="email" class="form-control" placeholder="Email" required aria-required="true">
+                                <input type="email" name="_replyto" id="email" class="form-control" placeholder="Email" required aria-required="true" autocomplete="email">
                                 <div class="invalid-feedback" role="alert">Please enter a valid email address</div>
                             </div>
                             <div class="form-group">
