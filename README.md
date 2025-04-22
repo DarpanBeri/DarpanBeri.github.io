@@ -79,6 +79,8 @@ The website uses Google Analytics 4 to track:
 - Fixing the form submission issue
 - iOS refreshing when scrolling to the top
 - Minify Css Js and Html files
+- Improving the text information on the website to help a non technical person understand the website better.
+- Improving grammar and sentence structure of the text information on the website.
 
 ## Contributing
 This is a personal portfolio website, but if you find any bugs or have suggestions, feel free to open an issue.
