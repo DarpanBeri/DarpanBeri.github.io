@@ -274,7 +274,7 @@ $(document).ready(function() {
         
         // Get form values
         const name = $('input[name="name"]').val().trim();
-        const email = $('input[name="email"]').val().trim();
+        const email = $('input[name="_replyto"]').val().trim();
         const message = $('textarea[name="message"]').val().trim();
         
         // Basic validation
@@ -284,8 +284,7 @@ $(document).ready(function() {
         }
         
         // Email validation
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
+        if (!isValidEmail(email)) {
             showFormStatus('Please enter a valid email address', 'error');
             return false;
         }
@@ -294,40 +293,33 @@ $(document).ready(function() {
         showFormStatus('Sending...', 'info');
         
         // Submit form using Formspree
-        $.ajax({
-            url: 'https://formspree.io/f/xkgrwpbr',
+        const $form = $(this);
+        const $submitBtn = $form.find('button[type="submit"]');
+        
+        $submitBtn.prop('disabled', true).addClass('btn-loading');
+        
+        fetch($form.attr('action'), {
             method: 'POST',
-            data: $(this).serialize(),
-            dataType: 'json',
-            beforeSend: function() {
-                // Track form submission attempt
-                trackEvent('form_submission_attempt', {
-                    'form_name': 'contact'
-                });
-                
-                const $submitBtn = $("#contactForm button[type='submit']");
-                $submitBtn.addClass('btn-loading');
+            body: new FormData($form[0]),
+            headers: {
+                'Accept': 'application/json'
             },
-            success: function(response) {
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.ok) {
                 showFormStatus('Message sent successfully!', 'success');
-                // Track successful form submission
-                trackEvent('form_submission_success', {
-                    'form_name': 'contact'
-                });
-                $("#contactForm")[0].reset();
-            },
-            error: function(err) {
-                showFormStatus('Error sending message. Please try again.', 'error');
-                // Track form submission error
-                trackEvent('form_submission_error', {
-                    'form_name': 'contact',
-                    'error_message': err.message
-                });
-            },
-            complete: function() {
-                const $submitBtn = $("#contactForm button[type='submit']");
-                $submitBtn.removeClass('btn-loading');
+                $form[0].reset();
+            } else {
+                throw new Error('Form submission failed');
             }
+        })
+        .catch(error => {
+            showFormStatus('Error sending message. Please try again.', 'error');
+            console.error('Form submission error:', error);
+        })
+        .finally(() => {
+            $submitBtn.prop('disabled', false).removeClass('btn-loading');
         });
     });
 
@@ -335,9 +327,9 @@ $(document).ready(function() {
     function showFormStatus(message, type) {
         const statusDiv = $('#form-status');
         statusDiv.removeClass('alert-success alert-danger alert-info')
-                .addClass(type === 'success' ? 'alert-success' : 
-                         type === 'error' ? 'alert-danger' : 
-                         'alert-info')
+                .addClass(`alert-${type === 'success' ? 'success' : 
+                          type === 'error' ? 'danger' : 
+                          'info'}`)
                 .html(message)
                 .fadeIn();
         
@@ -346,14 +338,10 @@ $(document).ready(function() {
         }
     }
 
-    // Carousel keyboard navigation
-    $('#owl-demo').on('keydown', function(e) {
-        if (e.key === 'ArrowLeft') {
-            $(this).trigger('prev.owl.carousel');
-        } else if (e.key === 'ArrowRight') {
-            $(this).trigger('next.owl.carousel');
-        }
-    });
+    // Helper function to validate email
+    function isValidEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
 
     // Form validation with ARIA support
     const form = document.getElementById('contactForm');
