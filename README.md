@@ -72,11 +72,12 @@ The website uses Google Analytics 4 to track:
 - Accessibility features implemented
 
 ## Future Improvements
-- Implement image optimization pipeline
+- Implement image optimization
 - Add project filtering capabilities
 - Enhance PWA features
-- Add blog/articles section
-- Implement CI/CD pipeline
+- Code Security Audit
+- Fixing the form submission issue
+- iOS refreshing when scrolling to the top
 
 ## Contributing
 This is a personal portfolio website, but if you find any bugs or have suggestions, feel free to open an issue.
