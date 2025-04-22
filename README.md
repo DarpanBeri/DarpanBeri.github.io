@@ -78,6 +78,7 @@ The website uses Google Analytics 4 to track:
 - Code Security Audit
 - Fixing the form submission issue
 - iOS refreshing when scrolling to the top
+- Minify Css Js and Html files
 
 ## Contributing
 This is a personal portfolio website, but if you find any bugs or have suggestions, feel free to open an issue.
