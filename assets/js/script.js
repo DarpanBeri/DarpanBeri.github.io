@@ -272,21 +272,51 @@ $(document).ready(function() {
     $("#contactForm").on('submit', function(e) {
         e.preventDefault();
         
-        // Get form values
+        // Basic form validation
+        let isValid = true;
         const form = this;
-        const data = new FormData(form);
+        const inputs = form.querySelectorAll('input[required], textarea[required]');
+        
+        inputs.forEach(input => {
+            if (!input.value.trim()) {
+                isValid = false;
+                input.setAttribute('aria-invalid', 'true');
+                input.classList.add('is-invalid');
+            } else {
+                input.setAttribute('aria-invalid', 'false');
+                input.classList.remove('is-invalid');
+            }
+        });
+
+        const emailInput = form.querySelector('input[type="email"]');
+        if (emailInput && emailInput.value && !isValidEmail(emailInput.value)) {
+            isValid = false;
+            emailInput.setAttribute('aria-invalid', 'true');
+            emailInput.classList.add('is-invalid');
+        }
+
+        if (!isValid) {
+            const firstInvalid = form.querySelector('[aria-invalid="true"]');
+            if (firstInvalid) {
+                firstInvalid.focus();
+            }
+            return;
+        }
         
         // Show sending message
         showFormStatus('Sending...', 'info');
         
-        // Disable submit button
+        // Disable submit button and show loading state
         const submitBtn = form.querySelector('button[type="submit"]');
         submitBtn.disabled = true;
         submitBtn.classList.add('btn-loading');
         
+        // Submit form using Formspree
+        const formData = new FormData(form);
+        
         fetch(form.action, {
             method: form.method,
-            body: data,
+            body: formData,
             headers: {
                 'Accept': 'application/json'
             }
@@ -331,41 +361,6 @@ $(document).ready(function() {
     }
 
     // Helper function to validate email
-    function isValidEmail(email) {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    }
-
-    // Form validation with ARIA support
-    const form = document.getElementById('contactForm');
-    form.addEventListener('submit', function(e) {
-        let isValid = true;
-        const inputs = form.querySelectorAll('input[required], textarea[required]');
-        
-        inputs.forEach(input => {
-            if (!input.value.trim()) {
-                isValid = false;
-                input.setAttribute('aria-invalid', 'true');
-                input.classList.add('is-invalid');
-            } else {
-                input.setAttribute('aria-invalid', 'false');
-                input.classList.remove('is-invalid');
-            }
-        });
-
-        const email = document.getElementById('email');
-        if (email.value && !isValidEmail(email.value)) {
-            isValid = false;
-            email.setAttribute('aria-invalid', 'true');
-            email.classList.add('is-invalid');
-        }
-
-        if (!isValid) {
-            e.preventDefault();
-            const firstInvalid = form.querySelector('[aria-invalid="true"]');
-            firstInvalid.focus();
-        }
-    });
-
     function isValidEmail(email) {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
