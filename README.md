@@ -81,6 +81,7 @@ The website uses Google Analytics 4 to track:
 - Minify Css Js and Html files
 - Improving the text information on the website to help a non technical person understand the website better.
 - Improving grammar and sentence structure of the text information on the website.
+- Easter Egg button not working.
 
 ## Contributing
 This is a personal portfolio website, but if you find any bugs or have suggestions, feel free to open an issue.
