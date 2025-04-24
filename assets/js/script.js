@@ -426,4 +426,24 @@ $(document).ready(function() {
             'slide_index': event.item.index
         });
     });
+
+    // Easter egg button functionality
+    const whereToFindMeButton = document.getElementById('where-to-find-me');
+    const whereToFindMeSection = document.getElementById('where_to_find_me');
+
+    whereToFindMeButton.addEventListener('click', function (event) {
+        event.preventDefault();
+
+        // Toggle visibility
+        if (whereToFindMeSection.style.display === 'none' || !whereToFindMeSection.style.display) {
+            whereToFindMeSection.style.display = 'block';
+            whereToFindMeSection.scrollIntoView({ behavior: 'smooth' });
+
+            // Update URL without reloading
+            history.pushState(null, '', '#where_to_find_me');
+        } else {
+            whereToFindMeSection.style.display = 'none';
+            history.pushState(null, '', '#resources_scroll');
+        }
+    });
 });
