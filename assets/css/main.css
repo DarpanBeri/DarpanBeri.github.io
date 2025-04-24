@@ -83,6 +83,11 @@ html, body {
     padding: 0;
 }
 
+/* Prevent pull-to-refresh behavior on iOS */
+body {
+    overscroll-behavior-y: none;
+}
+
 /* Container */
 .container.main {
     min-height: 100vh;
