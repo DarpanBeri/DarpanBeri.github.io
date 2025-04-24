@@ -231,12 +231,6 @@ $(document).ready(function() {
             if (deltaY < 0 && $currentSection.is("#index")) {
                 $("#about").click();
             }
-            // Swipe down - go back to home only if at the top of the current section
-            else if (deltaY > 0 && !$currentSection.is("#index")) {
-                if ($currentSection.scrollTop() === 0) {
-                    $(".back").click();
-                }
-            }
         }
     });
 
