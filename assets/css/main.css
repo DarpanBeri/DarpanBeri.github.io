@@ -670,31 +670,64 @@ footer {
     margin-bottom: 20px;
     border: 1px solid transparent;
     border-radius: 4px;
-    font-family: "Crimson", serif;
 }
 
 .alert-success {
-    color: #155724;
-    background-color: #d4edda;
-    border-color: #c3e6cb;
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
 }
 
 .alert-danger {
-    color: #721c24;
-    background-color: #f8d7da;
-    border-color: #f5c6cb;
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
 }
 
 .alert-info {
-    color: #0c5460;
-    background-color: #d1ecf1;
-    border-color: #bee5eb;
+    color: #31708f;
+    background-color: #d9edf7;
+    border-color: #bce8f1;
 }
 
-#form-status {
-    margin-top: 15px;
-    margin-bottom: 15px;
-    font-size: 16px;
+.form-control.is-invalid {
+    border-color: #dc3545;
+    padding-right: calc(1.5em + .75rem);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='5.5'/%3e%3cpath d='M6 3v3m0 3h.01'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(.375em + .1875rem) center;
+    background-size: calc(.75em + .375rem) calc(.75em + .375rem);
+}
+
+.form-control.is-invalid + .invalid-feedback {
+    display: block;
+}
+
+.btn-loading {
+    position: relative;
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
+.btn-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 1rem;
+    height: 1rem;
+    margin-top: -0.5rem;
+    margin-left: -0.5rem;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spinner-border .75s linear infinite;
+}
+
+@keyframes spinner-border {
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* Resources Section Styles */
@@ -1589,13 +1622,14 @@ html, body {
     }
 }
 
-/* Ensure Back to Home button is only visible in active sections */
+/* Ensure Back to Home button is visible when sections are active */
 .pages .back {
     z-index: 10;
     position: relative;
-    display: none;
+    display: block; /* Change from 'none' to 'block' */
+    visibility: hidden; /* Add visibility control */
 }
 
 .pages:visible .back {
-    display: block;
+    visibility: visible; /* Ensure visibility when section is active */
 }

@@ -344,29 +344,24 @@
                         </div>
                         <p class='subtitle'>I'm currently based in Ontario. Feel free to reach out to me for any opportunities or collaborations.
                         </p>
-                        <!-- Contact form using Formspree -->
-                        <form action="https://formspree.io/f/xkgrwpbr" method="POST" class="form_edit" id="contactForm" role="form" aria-label="Contact form">
-                            <input type="hidden" name="_subject" value="Portfolio Contact Form Submission">
-                            <input type="hidden" name="_next" value="https://darpanberi.github.io/#contact_scroll">
-                            <input type="hidden" name="_format" value="json">
+                        <!-- Add a single form status element -->
+                        <div id="form-status" class="alert" style="display: none;"></div>
+
+                        <!-- Simplify contact form -->
+                        <form id="contactForm" action="https://formspree.io/f/{your-form-id}" method="POST">
                             <div class="form-group">
-                                <label for="name" class="sr-only">Name</label>
-                                <input type="text" name="name" id="name" class="form-control" placeholder="Name" required aria-required="true" autocomplete="name">
-                                <div class="invalid-feedback" role="alert">Please enter your name</div>
+                                <label for="name">Name</label>
+                                <input type="text" class="form-control" id="name" name="name" required>
                             </div>
                             <div class="form-group">
-                                <label for="email" class="sr-only">Email</label>
-                                <input type="email" name="_replyto" id="email" class="form-control" placeholder="Email" required aria-required="true" autocomplete="email">
-                                <div class="invalid-feedback" role="alert">Please enter a valid email address</div>
+                                <label for="email">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
                             </div>
                             <div class="form-group">
-                                <label for="message" class="sr-only">Message</label>
-                                <textarea name="message" id="message" class="form-control" rows="5" placeholder="Message" required aria-required="true"></textarea>
-                                <div class="invalid-feedback" role="alert">Please enter your message</div>
+                                <label for="message">Message</label>
+                                <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
                             </div>
-                            <input type="text" name="_gotcha" style="display:none">
-                            <div id="form-status" class="alert" role="alert" style="display: none;"></div>
-                            <button type="submit" class="btn btn-rabbit submit" aria-label="Send message">Send Message</button>
+                            <button type="submit" class="btn btn-primary">Send</button>
                         </form>
                     </div>
                 </div>

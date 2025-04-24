@@ -264,15 +264,41 @@ $(document).ready(function() {
         }, 250);
     });
 
-    // Form validation and submission
-    $("#contactForm").on('submit', function(e) {
-        e.preventDefault();
-        
+    // Consolidate redundant form submission handling and email validation functions
+
+    // Helper function to validate email
+    function isValidEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    // Helper function to show form status
+    function showFormStatus(message, type) {
+        const statusDiv = $('#form-status');
+        statusDiv.removeClass('alert-success alert-danger alert-info')
+                .addClass(`alert-${type === 'success' ? 'success' : 
+                          type === 'error' ? 'danger' : 
+                          'info'}`)
+                .html(message)
+                .fadeIn();
+
+        if (type === 'success' || type === 'error') {
+            setTimeout(() => statusDiv.fadeOut(), 5000);
+        }
+    }
+
+    // Unified form submission handler
+    async function handleSubmit(event) {
+        event.preventDefault();
+        const form = event.target;
+        const formStatus = document.getElementById('form-status');
+        formStatus.style.display = 'none';
+        formStatus.className = 'alert';
+        formStatus.textContent = '';
+
         // Basic form validation
         let isValid = true;
-        const form = this;
         const inputs = form.querySelectorAll('input[required], textarea[required]');
-        
+
         inputs.forEach(input => {
             if (!input.value.trim()) {
                 isValid = false;
@@ -298,67 +324,51 @@ $(document).ready(function() {
             }
             return;
         }
-        
+
         // Show sending message
         showFormStatus('Sending...', 'info');
-        
+
         // Disable submit button and show loading state
         const submitBtn = form.querySelector('button[type="submit"]');
         submitBtn.disabled = true;
         submitBtn.classList.add('btn-loading');
-        
+
         // Submit form using Formspree
         const formData = new FormData(form);
-        
-        fetch(form.action, {
-            method: form.method,
-            body: formData,
-            headers: {
-                'Accept': 'application/json'
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.ok) {
+
+        try {
+            const response = await fetch(form.action, {
+                method: form.method,
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+
+            if (response.ok) {
                 showFormStatus('Message sent successfully!', 'success');
                 form.reset();
             } else {
-                throw new Error('Form submission failed');
+                const responseData = await response.json();
+                if (Object.hasOwn(responseData, 'errors')) {
+                    showFormStatus(responseData["errors"].map(error => error["message"]).join(", "), 'error');
+                } else {
+                    showFormStatus('Oops! There was a problem submitting your form', 'error');
+                }
             }
-        })
-        .catch(error => {
+        } catch (error) {
             console.error('Error:', error);
-            showFormStatus('Error sending message. Please try again later.', 'error');
-        })
-        .finally(() => {
+            showFormStatus('Oops! There was a problem submitting your form', 'error');
+        } finally {
             submitBtn.disabled = false;
             submitBtn.classList.remove('btn-loading');
-        });
-    });
-
-    // Helper function to show form status
-    function showFormStatus(message, type) {
-        const statusDiv = $('#form-status');
-        statusDiv.removeClass('alert-success alert-danger alert-info')
-                .addClass(`alert-${type === 'success' ? 'success' : 
-                          type === 'error' ? 'danger' : 
-                          'info'}`)
-                .html(message)
-                .fadeIn();
-        
-        if (type === 'success' || type === 'error') {
-            setTimeout(() => statusDiv.fadeOut(), 5000);
         }
     }
 
-    // Helper function to validate email
-    function isValidEmail(email) {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    // Attach unified form submission handler
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        contactForm.addEventListener('submit', handleSubmit);
     }
 
     // Add focus management for navigation
@@ -442,50 +452,4 @@ $(document).ready(function() {
             history.pushState(null, '', '#resources_scroll');
         }
     });
-
-    // Updated contact form submission handling based on Formspree example
-    const contactForm = document.getElementById('contactForm');
-    const formStatus = document.getElementById('form-status');
-
-    async function handleSubmit(event) {
-        event.preventDefault();
-        formStatus.style.display = 'none';
-        formStatus.className = 'alert';
-        formStatus.textContent = '';
-
-        const data = new FormData(event.target);
-        try {
-            const response = await fetch(event.target.action, {
-                method: contactForm.method,
-                body: data,
-                headers: {
-                    'Accept': 'application/json'
-                }
-            });
-
-            if (response.ok) {
-                formStatus.style.display = 'block';
-                formStatus.classList.add('alert-success');
-                formStatus.textContent = 'Thanks for your submission!';
-                contactForm.reset();
-            } else {
-                const responseData = await response.json();
-                if (Object.hasOwn(responseData, 'errors')) {
-                    formStatus.style.display = 'block';
-                    formStatus.classList.add('alert-danger');
-                    formStatus.textContent = responseData["errors"].map(error => error["message"]).join(", ");
-                } else {
-                    formStatus.style.display = 'block';
-                    formStatus.classList.add('alert-danger');
-                    formStatus.textContent = 'Oops! There was a problem submitting your form';
-                }
-            }
-        } catch (error) {
-            formStatus.style.display = 'block';
-            formStatus.classList.add('alert-danger');
-            formStatus.textContent = 'Oops! There was a problem submitting your form';
-        }
-    }
-
-    contactForm.addEventListener('submit', handleSubmit);
 });
