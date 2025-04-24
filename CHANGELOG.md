@@ -1,5 +1,18 @@
 # Changelog
 
+## [Unreleased] - Upcoming 1.1.0
+
+### Planned Fixes
+- Fix Easter Egg button functionality in Resources section
+- Resolve form submission issues in Contact section
+- Address iOS pull-to-refresh behavior when scrolling to top
+
+### Planned Enhancements
+- Implement lazy loading for images
+- Minify CSS, JS, and HTML files for performance optimization
+- Improve content clarity for non-technical visitors
+- Add responsive image handling with srcset
+
 ## [1.0.0] - 2025-04-21
 
 ### Added

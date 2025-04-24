@@ -167,3 +167,49 @@
 - Accessibility-first design
 - Analytics-driven improvements
 - Regular documentation updates
+
+## Implementation Details for Priority Improvements
+
+### 1. Easter Egg Button Fix
+- Issue: The "Where to find me" button in Resources section does not properly show the hidden content
+- Implementation:
+  - Event listener should toggle visibility of `#where_to_find_me` div
+  - Ensure smooth transition with fade-in effect
+  - Maintain scroll position after animation
+  - Add proper history API handling with pushState
+  - Test with keyboard navigation and screen readers
+
+### 2. Form Submission Issues
+- Issue: Contact form may not provide proper feedback on submission
+- Implementation:
+  - Update Formspree integration with proper AJAX handling
+  - Add clear success and error states with accessible feedback
+  - Implement input validation before submission
+  - Add loading state during form submission
+  - Test with screen readers and keyboard navigation
+  - Monitor submission events in Google Analytics
+
+### 3. iOS Scrolling Fix
+- Issue: Pull-to-refresh behavior triggers page reload on iOS
+- Implementation:
+  - Add `overscroll-behavior-y: none` to body element
+  - Implement custom bounce effect for iOS devices
+  - Test on multiple iOS devices and versions
+  - Ensure fix doesn't affect normal scrolling behavior
+
+### 4. Image Optimization Plan
+- Implementation:
+  - Convert all images to WebP format with PNG fallback
+  - Implement responsive images with srcset attribute
+  - Add loading="lazy" attribute to images below the fold
+  - Optimize GIF file or replace with video format
+  - Implement placeholder strategy for better perceived performance
+
+### 5. Code Minification
+- Implementation:
+  - Set up build process with Gulp or similar tool
+  - Minify CSS files with cssnano
+  - Minify JS files with terser
+  - Implement HTML minification
+  - Configure proper source maps for development
+  - Create deployment script for GitHub Pages

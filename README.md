@@ -72,16 +72,26 @@ The website uses Google Analytics 4 to track:
 - Accessibility features implemented
 
 ## Future Improvements
-- Implement image optimization
-- Add project filtering capabilities
-- Enhance PWA features
-- Code Security Audit
-- Fixing the form submission issue
-- iOS refreshing when scrolling to the top
-- Minify Css Js and Html files
-- Improving the text information on the website to help a non technical person understand the website better.
-- Improving grammar and sentence structure of the text information on the website.
-- Easter Egg button not working.
+
+### Priority Fixes
+- Easter Egg button functionality in Resources section
+- Fix form submission issues in Contact section
+- Address iOS pull-to-refresh behavior when scrolling to the top
+
+### Performance Optimizations
+- Implement responsive image loading with lazy loading
+- Minify CSS, JS and HTML files for faster load times
+- Enhance PWA features for offline capabilities
+
+### Content & UX Enhancements
+- Improve text information to make content more accessible to non-technical visitors
+- Enhance grammar and sentence structure throughout the website
+- Add project filtering capabilities for easier navigation
+
+### Technical Improvements
+- Conduct Code Security Audit
+- Implement additional accessibility enhancements
+- Optimize animations and transitions for smoother performance
 
 ## Contributing
 This is a personal portfolio website, but if you find any bugs or have suggestions, feel free to open an issue.
