@@ -83,9 +83,10 @@ html, body {
     padding: 0;
 }
 
-/* Prevent pull-to-refresh behavior on iOS */
-body {
+/* Prevent pull-to-refresh behavior on iOS with increased specificity */
+html, body {
     overscroll-behavior-y: none;
+    -webkit-overflow-scrolling: touch;
 }
 
 /* Container */
