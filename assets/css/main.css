@@ -1633,3 +1633,76 @@ html, body {
 .pages:visible .back {
     visibility: visible; /* Ensure visibility when section is active */
 }
+
+/* Add a persistent 'Go Back to Home' button */
+.go-back-home {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    background-color: var(--accent-color);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-size: 16px;
+    font-family: "Josefin Sans", sans-serif;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.go-back-home:hover {
+    background-color: var(--accent-hover);
+    transform: translateY(-2px);
+}
+
+.go-back-home:focus {
+    outline: 3px solid white;
+    outline-offset: 2px;
+}
+
+/* Update styles for Back to home button to match other buttons */
+.back-to-home {
+    display: inline-block;
+    font-family: "Josefin Sans", sans-serif;
+    font-style: italic;
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+    background-color: var(--btn-bg);
+    color: var(--btn-text);
+    cursor: pointer;
+    -webkit-transition: all 0.4s ease-in-out;
+    -moz-transition: all 0.4s ease-in-out;
+    -o-transition: all 0.4s ease-in-out;
+    transition: all 0.4s ease-in-out;
+    text-decoration: none;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    border-radius: 0px !important;
+}
+
+.back-to-home:hover {
+    color: #fff;
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+.back-to-home:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+}
+
+.back-to-home i {
+    margin-right: 10px;
+    font-size: 16px;
+}
+
+/* Improve mobile responsiveness for the back button */
+@media (max-width: 767px) {
+    .back-to-home {
+        padding: 8px 15px;
+        font-size: 14px;
+    }
+}
