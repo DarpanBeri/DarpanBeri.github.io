@@ -453,3 +453,28 @@ $(document).ready(function() {
         }
     });
 });
+
+// Ensure proper functionality for the 'Back to Home' button
+
+document.addEventListener('DOMContentLoaded', function () {
+    const backButtons = document.querySelectorAll('.back');
+
+    backButtons.forEach(button => {
+        button.addEventListener('click', function (event) {
+            event.preventDefault();
+
+            // Hide all sections
+            const sections = document.querySelectorAll('.pages');
+            sections.forEach(section => {
+                section.style.display = 'none';
+            });
+
+            // Show the home section
+            const homeSection = document.getElementById('index');
+            homeSection.style.display = 'block';
+
+            // Scroll to the top of the home section
+            homeSection.scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+});
