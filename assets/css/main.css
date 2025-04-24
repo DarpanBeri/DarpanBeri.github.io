@@ -1588,3 +1588,14 @@ html, body {
         padding: 15px;
     }
 }
+
+/* Ensure Back to Home button is only visible in active sections */
+.pages .back {
+    z-index: 10;
+    position: relative;
+    display: none;
+}
+
+.pages:visible .back {
+    display: block;
+}
