@@ -96,8 +96,7 @@ The contact form is integrated with [Formspree](https://formspree.io/) for handl
 
 ### Priority Fixes
 - Easter Egg button functionality in Resources section
-- Fix form submission issues in Contact section
-- Address iOS pull-to-refresh behavior when scrolling to the top
+- Fix re-emerged form submission issues in Contact section
 
 ### Performance Optimizations
 - Implement responsive image loading with lazy loading
