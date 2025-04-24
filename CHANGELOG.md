@@ -13,6 +13,11 @@
 - Improve content clarity for non-technical visitors
 - Add responsive image handling with srcset
 
+### April 24, 2025
+
+- **Contact Form**: Updated the form submission logic to use AJAX with Formspree, including validation, loading states, and user feedback.
+- **Easter Egg Button**: Implemented functionality to toggle the visibility of the "Where to find me" section with smooth scrolling and URL updates.
+
 ## [1.0.0] - 2025-04-21
 
 ### Added

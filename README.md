@@ -71,6 +71,27 @@ The website uses Google Analytics 4 to track:
 - Cross-browser tested and optimized
 - Accessibility features implemented
 
+## Contact Form
+
+The contact form is integrated with [Formspree](https://formspree.io/) for handling submissions. It uses AJAX to submit the form without reloading the page. The following features are implemented:
+
+- **AJAX Submission**: The form submits asynchronously using the Fetch API.
+- **Validation**: Input fields are validated for required values and proper email format.
+- **Loading State**: A loading indicator is displayed on the submit button during submission.
+- **Feedback**: Success or error messages are displayed to the user after submission.
+
+### How to Use
+
+1. Navigate to the "Contact" section of the website.
+2. Fill in the required fields (Name, Email, and Message).
+3. Click the "Send Message" button.
+4. A success message will appear if the submission is successful. Otherwise, an error message will be displayed.
+
+### Troubleshooting
+
+- Ensure the Formspree endpoint (`action` attribute in the form) is correctly configured.
+- Check the browser console for any errors if the form does not work as expected.
+
 ## Future Improvements
 
 ### Priority Fixes
