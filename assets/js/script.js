@@ -219,21 +219,23 @@ $(document).ready(function() {
 
     $(document).on('touchend', function(e) {
         if (isAnimating) return;
-        
+
         const touchEndY = e.originalEvent.changedTouches[0].clientY;
         const deltaY = touchEndY - touchStartY;
-        
+
         // If significant vertical swipe
         if (Math.abs(deltaY) > 50) {
             const $currentSection = $(".pages:visible");
-            
+
             // Swipe up - go to next section
             if (deltaY < 0 && $currentSection.is("#index")) {
                 $("#about").click();
             }
-            // Swipe down - go back to home
+            // Swipe down - go back to home only if at the top of the current section
             else if (deltaY > 0 && !$currentSection.is("#index")) {
-                $(".back").click();
+                if ($currentSection.scrollTop() === 0) {
+                    $(".back").click();
+                }
             }
         }
     });
