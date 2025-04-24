@@ -447,87 +447,49 @@ $(document).ready(function() {
         }
     });
 
-    // Contact form submission handling
+    // Updated contact form submission handling based on Formspree example
     const contactForm = document.getElementById('contactForm');
     const formStatus = document.getElementById('form-status');
 
-    contactForm.addEventListener('submit', function (event) {
+    async function handleSubmit(event) {
         event.preventDefault();
-
-        // Clear previous status messages
         formStatus.style.display = 'none';
         formStatus.className = 'alert';
         formStatus.textContent = '';
 
-        // Validate inputs
-        const name = document.getElementById('name');
-        const email = document.getElementById('email');
-        const message = document.getElementById('message');
-        let isValid = true;
+        const data = new FormData(event.target);
+        try {
+            const response = await fetch(event.target.action, {
+                method: contactForm.method,
+                body: data,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
 
-        if (!name.value.trim()) {
-            name.classList.add('is-invalid');
-            isValid = false;
-        } else {
-            name.classList.remove('is-invalid');
-        }
-
-        if (!email.value.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
-            email.classList.add('is-invalid');
-            isValid = false;
-        } else {
-            email.classList.remove('is-invalid');
-        }
-
-        if (!message.value.trim()) {
-            message.classList.add('is-invalid');
-            isValid = false;
-        } else {
-            message.classList.remove('is-invalid');
-        }
-
-        if (!isValid) {
+            if (response.ok) {
+                formStatus.style.display = 'block';
+                formStatus.classList.add('alert-success');
+                formStatus.textContent = 'Thanks for your submission!';
+                contactForm.reset();
+            } else {
+                const responseData = await response.json();
+                if (Object.hasOwn(responseData, 'errors')) {
+                    formStatus.style.display = 'block';
+                    formStatus.classList.add('alert-danger');
+                    formStatus.textContent = responseData["errors"].map(error => error["message"]).join(", ");
+                } else {
+                    formStatus.style.display = 'block';
+                    formStatus.classList.add('alert-danger');
+                    formStatus.textContent = 'Oops! There was a problem submitting your form';
+                }
+            }
+        } catch (error) {
             formStatus.style.display = 'block';
             formStatus.classList.add('alert-danger');
-            formStatus.textContent = 'Please fill out all fields correctly.';
-            return;
+            formStatus.textContent = 'Oops! There was a problem submitting your form';
         }
+    }
 
-        // Show loading state
-        const submitButton = contactForm.querySelector('button[type="submit"]');
-        submitButton.disabled = true;
-        submitButton.classList.add('btn-loading');
-
-        // Submit form via AJAX
-        const formData = new FormData(contactForm);
-        fetch(contactForm.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'Accept': 'application/json'
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            formStatus.style.display = 'block';
-            formStatus.classList.add('alert-success');
-            formStatus.textContent = 'Message sent successfully!';
-            contactForm.reset();
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            formStatus.style.display = 'block';
-            formStatus.classList.add('alert-danger');
-            formStatus.textContent = 'An error occurred. Please try again later.';
-        })
-        .finally(() => {
-            submitButton.disabled = false;
-            submitButton.classList.remove('btn-loading');
-        });
-    });
+    contactForm.addEventListener('submit', handleSubmit);
 });
