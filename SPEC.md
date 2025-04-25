@@ -139,6 +139,7 @@
 - Secure file downloads
 - Form submission rate limiting
 - Production endpoint configuration
+- Subresource Integrity (SRI) checks for all external scripts and stylesheets
 
 ## Analytics & Tracking
 - Google Analytics 4 integration

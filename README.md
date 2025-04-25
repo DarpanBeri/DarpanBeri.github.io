@@ -12,13 +12,14 @@ Personal portfolio website showcasing my projects, skills, and professional expe
 - Google Analytics 4 tracking
 - Easter egg content
 - Accessibility optimizations
+- Subresource Integrity (SRI) security
 
 ## Technologies Used
 - HTML5, CSS3, JavaScript
-- Bootstrap 3.3.7
-- jQuery 3.7.1
-- Font Awesome
-- Owl Carousel 2.3.4
+- Bootstrap 3.4.1 (with SRI)
+- jQuery 3.7.1 (with SRI)
+- Font Awesome 4.7.0 (with SRI)
+- Owl Carousel 2.3.4 (with SRI)
 - Formspree for form handling
 - Google Analytics 4
 
@@ -70,6 +71,7 @@ The website uses Google Analytics 4 to track:
 - All external links use noopener for security
 - Cross-browser tested and optimized
 - Accessibility features implemented
+- All CDN resources protected with Subresource Integrity (SRI) checks
 
 ## Contact Form
 
@@ -94,9 +96,6 @@ The contact form is integrated with [Formspree](https://formspree.io/) for handl
 - Check the browser console for any errors if the form does not work as expected.
 
 ## Future Improvements
-
-### Priority Fixes
-- Fix re-emerged form submission issues in Contact section
 
 ### Performance Optimizations
 - Implement responsive image loading with lazy loading
