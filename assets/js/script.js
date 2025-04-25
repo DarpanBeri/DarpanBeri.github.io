@@ -436,6 +436,8 @@ $(document).ready(function() {
     // Easter egg button functionality - updated to use consistent animation patterns
     $("#where-to-find-me").click(function(e) {
         e.preventDefault();
+        e.stopPropagation(); // Prevent event bubbling
+        
         trackEvent('easter_egg_click', {
             'name': 'where_to_find_me'
         });
@@ -445,11 +447,19 @@ $(document).ready(function() {
             switchSection($("#where_to_find_me"), $("#resources_scroll"));
             history.pushState(null, '', '#resources_scroll');
         } else {
-            switchSection($("#resources_scroll"), $("#where_to_find_me"));
-            history.pushState(null, '', '#where_to_find_me');
+            // Hide all pages first to avoid conflicts
+            $(".pages").hide();
             
-            // Add animation classes for consistent effect
-            $('#where_to_find_me').addClass('animated fadeIn');
+            // Show the Easter egg section with proper animation
+            $("#where_to_find_me").fadeIn(400, function() {
+                isAnimating = false;
+                // Scroll to top of new section on mobile
+                if (window.innerWidth <= 767) {
+                    window.scrollTo(0, 0);
+                }
+            });
+            
+            history.pushState(null, '', '#where_to_find_me');
             
             // Set focus to the section for accessibility
             setTimeout(() => {

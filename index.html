@@ -408,26 +408,7 @@
                 homeSection.scrollIntoView({ behavior: 'smooth' });
             }
 
-            document.addEventListener('DOMContentLoaded', function () {
-                const button = document.getElementById('where-to-find-me');
-                const hiddenSection = document.getElementById('where_to_find_me');
-
-                button.addEventListener('click', function (event) {
-                    event.preventDefault();
-
-                    // Toggle visibility
-                    if (hiddenSection.style.display === 'none' || !hiddenSection.style.display) {
-                        hiddenSection.style.display = 'block';
-                        hiddenSection.scrollIntoView({ behavior: 'smooth' });
-
-                        // Update URL without reloading
-                        history.pushState(null, '', '#where_to_find_me');
-                    } else {
-                        hiddenSection.style.display = 'none';
-                        history.pushState(null, '', '#resources_scroll');
-                    }
-                });
-            });
+            // Removing conflicting event handler that was causing the Easter egg section to disappear
         </script>
     </body>
 </html>
