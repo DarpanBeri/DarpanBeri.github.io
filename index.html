@@ -303,26 +303,31 @@
                                 <li><a href="https://drive.google.com/file/d/1WyMcFZaHDOcC9xkAh8VggRbmTfmtzV_k/view?usp=drive_link" target="_blank">Capstone Poster</a></li>
                                 <li><a href="https://drive.google.com/file/d/1ZUx-jpPcDKeLZZMVJCRz5k9ipT5hy2m0/view?usp=drive_link" target="_blank">Capstone Report</a></li>
                             </ul>
-                            <!-- Easter egg button -->
-                            <a id="where-to-find-me" class="btn btn-rabbit" href="#where_to_find_me">Where to find me</a>
+                            <!-- Easter egg button - updated for consistency and accessibility -->
+                            <button id="where-to-find-me" class="btn btn-rabbit" 
+                                 aria-label="Easter Egg: Where to find me" 
+                                 role="button">
+                                Where to find me
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Hidden page content for the easter egg -->
-            <div id="where_to_find_me" class="pages" style="display: none;">
+            <div id="where_to_find_me" class="pages" role="region" aria-labelledby="where-to-find-title">
                 <div class="row">
                     <div class="col-md-12">
-                        <!-- Updated button to use btn-rabbit class -->
-                        <a href="#resources_scroll" class="btn btn-rabbit">
+                        <!-- Updated navigation button for consistency -->
+                        <a href="#resources_scroll" class="btn btn-rabbit" id="back-to-resources">
                             <i class="fa fa-angle-left" aria-hidden="true"></i> Back to Resources
                         </a>
                         <div id="watermark">
-                            <h2 class="page-title" text-center>Where to Find Me</h2>
+                            <h2 id="where-to-find-title" class="page-title" text-center>Where to Find Me</h2>
                             <div class="marker">w</div>
                         </div>
                         <div class="info">
+                            <!-- Content remains the same -->
                             <p>Welcome to this easter egg. This is a glimpse into the different flavors of life I savor, the worlds my mind explores.</p>
                             <p>Since childhood, books, and eventually computers, have been my outlets, portals for my imagination. I also have ADHD, which I suspect plays a role; my mind rarely stagnates, always wandering, always exploring.</p>
                             <p>Where might you find me, metaphorically or literally?</p>

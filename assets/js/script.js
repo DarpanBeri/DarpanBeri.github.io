@@ -433,24 +433,53 @@ $(document).ready(function() {
         });
     });
 
-    // Easter egg button functionality
-    const whereToFindMeButton = document.getElementById('where-to-find-me');
-    const whereToFindMeSection = document.getElementById('where_to_find_me');
-
-    whereToFindMeButton.addEventListener('click', function (event) {
-        event.preventDefault();
-
-        // Toggle visibility
-        if (whereToFindMeSection.style.display === 'none' || !whereToFindMeSection.style.display) {
-            whereToFindMeSection.style.display = 'block';
-            whereToFindMeSection.scrollIntoView({ behavior: 'smooth' });
-
-            // Update URL without reloading
-            history.pushState(null, '', '#where_to_find_me');
-        } else {
-            whereToFindMeSection.style.display = 'none';
+    // Easter egg button functionality - updated to use consistent animation patterns
+    $("#where-to-find-me").click(function(e) {
+        e.preventDefault();
+        trackEvent('easter_egg_click', {
+            'name': 'where_to_find_me'
+        });
+        
+        // Use the same switchSection pattern as other navigation
+        if ($("#where_to_find_me").is(":visible")) {
+            switchSection($("#where_to_find_me"), $("#resources_scroll"));
             history.pushState(null, '', '#resources_scroll');
+        } else {
+            switchSection($("#resources_scroll"), $("#where_to_find_me"));
+            history.pushState(null, '', '#where_to_find_me');
+            
+            // Add animation classes for consistent effect
+            $('#where_to_find_me').addClass('animated fadeIn');
+            
+            // Set focus to the section for accessibility
+            setTimeout(() => {
+                $('#where_to_find_me').attr('tabindex', '-1').focus();
+                setTimeout(() => {
+                    $('#where_to_find_me').removeAttr('tabindex');
+                }, 100);
+            }, 500);
         }
+    });
+    
+    // Add keyboard navigation for Easter Egg section
+    $("#where_to_find_me").on('keydown', function(e) {
+        if (e.key === 'Escape') { // ESC key
+            $("#resources").click();
+        }
+    });
+
+    // Back to Resources button from Easter egg section
+    $("#back-to-resources").click(function(e) {
+        e.preventDefault();
+        
+        // Use the same switchSection pattern for consistent animations
+        switchSection($("#where_to_find_me"), $("#resources_scroll"));
+        history.pushState(null, '', '#resources_scroll');
+        
+        // Set focus back to the where-to-find-me button for accessibility
+        setTimeout(() => {
+            $('#where-to-find-me').focus();
+        }, 500);
     });
 });
 
