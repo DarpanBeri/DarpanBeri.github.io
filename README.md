@@ -95,7 +95,6 @@ The contact form is integrated with [Formspree](https://formspree.io/) for handl
 ## Future Improvements
 
 ### Priority Fixes
-- Easter Egg button functionality in Resources section
 - Fix re-emerged form submission issues in Contact section
 
 ### Performance Optimizations

@@ -3,7 +3,6 @@
 ## [Unreleased] - Upcoming 1.1.0
 
 ### Planned Fixes
-- Fix Easter Egg button functionality in Resources section
 - Resolve re-emerged form submission issues in Contact section
 
 ### Planned Enhancements
@@ -11,6 +10,10 @@
 - Minify CSS, JS, and HTML files for performance optimization
 - Improve content clarity for non-technical visitors
 - Add responsive image handling with srcset
+
+### April 25, 2025
+
+- **Easter Egg Button**: Fixed the "Where to find me" button in Resources section to properly show/hide content with smooth fade transitions, preventing the content from briefly appearing and disappearing.
 
 ### April 24, 2025
 
