@@ -79,6 +79,7 @@ The contact form is integrated with [Formspree](https://formspree.io/) for handl
 - **Validation**: Input fields are validated for required values and proper email format.
 - **Loading State**: A loading indicator is displayed on the submit button during submission.
 - **Feedback**: Success or error messages are displayed to the user after submission.
+- **Minimalist Design**: Clean, modern interface with placeholder text and subtle styling.
 
 ### How to Use
 
