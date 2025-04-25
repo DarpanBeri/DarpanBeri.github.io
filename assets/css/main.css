@@ -690,45 +690,77 @@ footer {
     border-color: #bce8f1;
 }
 
-.form-control.is-invalid {
-    border-color: #dc3545;
-    padding-right: calc(1.5em + .75rem);
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='5.5'/%3e%3cpath d='M6 3v3m0 3h.01'/%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right calc(.375em + .1875rem) center;
-    background-size: calc(.75em + .375rem) calc(.75em + .375rem);
+/* Minimalist form styles based on the attached image */
+.form-control.minimalist {
+    border: none;
+    border-bottom: 1px solid var(--border-color);
+    border-radius: 0;
+    box-shadow: none;
+    padding: 15px 0;
+    margin-bottom: 25px;
+    font-family: "Crimson", serif;
+    font-size: 16px;
+    width: 100%;
+    transition: border-color 0.3s ease;
+    background-color: transparent;
 }
 
-.form-control.is-invalid + .invalid-feedback {
-    display: block;
+.form-control.minimalist:focus {
+    border-bottom: 1px solid var(--accent-color);
+    box-shadow: none;
+    outline: none;
 }
 
-.btn-loading {
-    position: relative;
-    cursor: not-allowed;
-    opacity: 0.65;
+.form-control.minimalist::placeholder {
+    color: #999;
+    font-style: italic;
 }
 
-.btn-loading::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 1rem;
-    height: 1rem;
-    margin-top: -0.5rem;
-    margin-left: -0.5rem;
-    border: 2px solid currentColor;
-    border-right-color: transparent;
-    border-radius: 50%;
-    animation: spinner-border .75s linear infinite;
+.btn-send {
+    background: transparent;
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    padding: 10px 40px;
+    margin-top: 15px;
+    font-family: "Crimson", serif;
+    font-size: 16px;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    border-radius: 0;
 }
 
-@keyframes spinner-border {
-    to {
-        transform: rotate(360deg);
-    }
+.btn-send:hover {
+    background-color: var(--accent-color);
+    color: #fff;
+    border-color: var(--accent-color);
 }
+
+.text-center {
+    text-align: center;
+}
+
+/* Minimalist form dark mode support */
+[data-theme="dark"] .form-control.minimalist {
+    color: var(--text-color);
+    border-bottom-color: var(--border-color);
+}
+
+[data-theme="dark"] .form-control.minimalist::placeholder {
+    color: #888;
+}
+
+[data-theme="dark"] .btn-send {
+    color: var(--text-color);
+}
+
+/* Form validation for minimalist design */
+.form-control.minimalist.is-invalid {
+    border-bottom-color: #dc3545;
+    background-image: none;
+    padding-right: inherit;
+}
+
+/* Keep existing CSS below */
 
 /* Resources Section Styles */
 .resources-list {
@@ -1705,4 +1737,86 @@ html, body {
         padding: 8px 15px;
         font-size: 14px;
     }
+}
+
+/* Minimalist form styles based on the attached image */
+.form-field {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.form-control.minimalist {
+    border: 1px solid #e6e6e6;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 12px 15px;
+    font-family: "Lato", sans-serif;
+    font-size: 16px;
+    width: 100%;
+    transition: border-color 0.3s ease;
+    background-color: #fff;
+    color: #666;
+    font-style: normal;
+    height: auto;
+    margin-top: 0;
+}
+
+.form-control.minimalist:focus {
+    border-color: #bb9e7d;
+    box-shadow: none;
+    outline: none;
+}
+
+.form-control.minimalist::placeholder {
+    color: #999;
+    font-style: italic;
+}
+
+.form-button-container {
+    width: 100%;
+    margin-top: 10px;
+    text-align: left;
+}
+
+.btn-send {
+    background: #f0f0f0;
+    color: #333;
+    border: none;
+    padding: 12px 30px;
+    font-family: "Lato", sans-serif;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    border-radius: 0;
+    font-weight: normal;
+    height: auto;
+    cursor: pointer;
+}
+
+.btn-send:hover {
+    background-color: #e0e0e0;
+}
+
+/* Dark mode support */
+[data-theme="dark"] .form-control.minimalist {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    border-color: #444;
+}
+
+[data-theme="dark"] .form-control.minimalist::placeholder {
+    color: #888;
+}
+
+[data-theme="dark"] .btn-send {
+    background-color: #444;
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .btn-send:hover {
+    background-color: #555;
+}
+
+/* Form validation for minimalist design */
+.form-control.minimalist.is-invalid {
+    border-color: #dc3545;
 }

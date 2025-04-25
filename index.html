@@ -367,21 +367,20 @@
                         <!-- Add a single form status element -->
                         <div id="form-status" class="alert" style="display: none;"></div>
 
-                        <!-- Simplify contact form -->
+                        <!-- Updated minimalist contact form -->
                         <form id="contactForm" action="https://formspree.io/f/xkgrwpbr" method="POST">
-                            <div class="form-group">
-                                <label for="name">Name</label>
-                                <input type="text" class="form-control" id="name" name="name" required>
+                            <div class="form-field">
+                                <input type="text" class="form-control minimalist" id="name" name="name" placeholder="Name" required>
                             </div>
-                            <div class="form-group">
-                                <label for="email">Email</label>
-                                <input type="email" class="form-control" id="email" name="email" required>
+                            <div class="form-field">
+                                <input type="email" class="form-control minimalist" id="email" name="email" placeholder="Email" required>
                             </div>
-                            <div class="form-group">
-                                <label for="message">Message</label>
-                                <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
+                            <div class="form-field">
+                                <textarea class="form-control minimalist" id="message" name="message" rows="5" placeholder="Message" required></textarea>
                             </div>
-                            <button type="submit" class="btn btn-primary">Send</button>
+                            <div class="form-button-container">
+                                <button type="submit" class="btn btn-send">Send Message</button>
+                            </div>
                         </form>
                     </div>
                 </div>
