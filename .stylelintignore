@@ -1,0 +1,5 @@
+# Ignore minified/vendor CSS from stylelint
+assets/css/*.min.css
+assets/css/bootstrap.min.css
+assets/css/font-awesome.min.css
+assets/css/bootstrap-theme.min.css

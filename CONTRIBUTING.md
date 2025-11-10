@@ -16,6 +16,7 @@ This repository enforces an “AI cleanup and guardrails” workflow. All PRs mu
 - Husky pre-commit hooks will auto-run format/lint on changed files (added in PR 2).
 
 Common commands (will be added in PR 2):
+
 - `npm run format` / `npm run format:check` — Prettier formatting.
 - `npm run lint` — ESLint + Stylelint + Markdownlint and custom cleanup checks.
 - `npm run test` / `npm run test:coverage` — Jest unit tests with coverage.

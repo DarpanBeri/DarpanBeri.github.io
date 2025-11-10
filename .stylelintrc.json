@@ -1,0 +1,17 @@
+{
+  "extends": ["stylelint-config-standard"],
+  "rules": {
+    "selector-class-pattern": null,
+    "selector-id-pattern": null,
+    "no-descending-specificity": null,
+    "no-duplicate-selectors": null,
+    "custom-property-no-missing-var-function": null,
+    "font-family-no-missing-generic-family-keyword": null,
+    "declaration-block-no-duplicate-properties": null,
+    "media-feature-name-no-unknown": [
+      true,
+      { "ignoreMediaFeatureNames": ["min-device-pixel-ratio"] }
+    ],
+    "selector-pseudo-class-no-unknown": [true, { "ignorePseudoClasses": ["visible"] }]
+  }
+}
