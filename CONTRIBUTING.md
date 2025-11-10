@@ -2,13 +2,6 @@
 
 This repository enforces an “AI cleanup and guardrails” workflow. All PRs must pass formatting, linting, validation, tests, coverage, and accessibility checks.
 
-## Identity
-
-- Only personal identity is allowed for this repo.
-- Local git config is set per-repo:  
-  user.name "Darpan Beri", user.email "darpanberi.99@gmail.com".
-- Keep the remote host as github.com (personal). Do not push with work identity.
-
 ## Branching & PRs
 
 - Use feature branches from the latest `main`.
