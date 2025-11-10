@@ -1,413 +1,726 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" data-theme="light">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-        <meta name="apple-mobile-web-app-capable" content="yes">
-        <meta name="mobile-web-app-capable" content="yes">
-        <base href="https://darpanberi.github.io/">
-        
-        <!-- SEO Meta Tags -->
-        <meta name="description" content="Darpan Beri - Expert in Data Science, Machine Learning, and Software Engineering. MSc graduate specializing in RAG, LLMs, ETL pipelines, and full-stack development. 4.0 GPA from Trent University's Big Data Analytics program.">
-        <meta name="keywords" content="data science, software engineering, machine learning, RAG, LLaMa, ETL, Python, SQL, React, Docker, Kubernetes, big data analytics, AI, Trent University">
-        <meta name="author" content="Darpan Beri">
-        <meta name="robots" content="index, follow">
-        <meta name="language" content="English">
-        
-        <!-- Open Graph Meta Tags -->
-        <meta property="og:type" content="website">
-        <meta property="og:title" content="Darpan Beri | Data Science & Software Engineering Portfolio">
-        <meta property="og:description" content="Data scientist and software engineer specializing in RAG, LLMs, and full-stack development. View my projects, skills, and achievements.">
-        <meta property="og:image" content="https://darpanberi.github.io/assets/images/avatar.png">
-        <meta property="og:url" content="https://darpanberi.github.io">
-        <meta property="og:site_name" content="Darpan Beri Portfolio">
-        
-        <!-- Twitter Card Meta Tags -->
-        <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:title" content="Darpan Beri | Data Science & Software Engineering Portfolio">
-        <meta name="twitter:description" content="Data scientist and software engineer specializing in RAG, LLMs, and full-stack development. 4.0 GPA MSc graduate from Trent University.">
-        <meta name="twitter:image" content="https://darpanberi.github.io/assets/images/avatar.png">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <base href="https://darpanberi.github.io/" />
 
-        <!-- Canonical URL -->
-        <link rel="canonical" href="https://darpanberi.github.io">
+    <!-- SEO Meta Tags -->
+    <meta
+      name="description"
+      content="Darpan Beri - Expert in Data Science, Machine Learning, and Software Engineering. MSc graduate specializing in RAG, LLMs, ETL pipelines, and full-stack development. 4.0 GPA from Trent University's Big Data Analytics program."
+    />
+    <meta
+      name="keywords"
+      content="data science, software engineering, machine learning, RAG, LLaMa, ETL, Python, SQL, React, Docker, Kubernetes, big data analytics, AI, Trent University"
+    />
+    <meta name="author" content="Darpan Beri" />
+    <meta name="robots" content="index, follow" />
+    <meta name="language" content="English" />
 
-        <title>Darpan Beri | Data Science & Software Engineering Portfolio</title>
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:title"
+      content="Darpan Beri | Data Science & Software Engineering Portfolio"
+    />
+    <meta
+      property="og:description"
+      content="Data scientist and software engineer specializing in RAG, LLMs, and full-stack development. View my projects, skills, and achievements."
+    />
+    <meta property="og:image" content="https://darpanberi.github.io/assets/images/avatar.png" />
+    <meta property="og:url" content="https://darpanberi.github.io" />
+    <meta property="og:site_name" content="Darpan Beri Portfolio" />
 
-        <!-- Google Analytics -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-M6TJLX8T7J"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-M6TJLX8T7J');
-        </script>
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Darpan Beri | Data Science & Software Engineering Portfolio"
+    />
+    <meta
+      name="twitter:description"
+      content="Data scientist and software engineer specializing in RAG, LLMs, and full-stack development. 4.0 GPA MSc graduate from Trent University."
+    />
+    <meta name="twitter:image" content="https://darpanberi.github.io/assets/images/avatar.png" />
 
-        <!-- Theme Color -->
-        <meta name="theme-color" content="#bb9e7d">
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://darpanberi.github.io" />
 
-        <!-- Dependencies -->
-        <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha512-oBTprMeNEKCnqfuqKd6sbvFzmFQtlXS3e0C/RGFV0hD6QzhHV+ODfaQbAlmY6/q0ubbwlAM/nCJjkrgA3waLzg==" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js" integrity="sha512-bPs7Ae6pVvhOSiIcyUClR7/q2OAsRiovw4vAkX+zJbw3ShAeeqezq50RIIcIURq7Oa20rW2n2q+fyXBNcU9lrw==" crossorigin="anonymous"></script>
-        <script src="https://formspree.io/js/formbutton-v1.min.js" integrity="sha256-6XrA455KR9Kdj+N6awTAQPo9hhZJ9+OT9Eaid1Y8YGo=" crossorigin="anonymous" defer></script>
-        <script defer src="assets/js/script.js"></script>
-        
-        <!-- Styles -->
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha512-Dop/vW3iOtayerlYAqCgkVr2aTr2ErwwTYOvRFUpzl2VhCMJyjQF0Q9TjUXIo6JhuM/3i0vVEt2e/7QQmnHQqw==" crossorigin="anonymous">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap-theme.min.css" rel="stylesheet" integrity="sha512-iy8EXLW01a00b26BaqJWaCmk9fJ4PsMdgNRqV96KwMZdkct3CoJG+8EQyJNWiUQ5RBNPYQKnI5K9c2MvKR7D9g==" crossorigin="anonymous">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw==" crossorigin="anonymous">
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,600,700,700i&display=swap" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css?family=Crimson+Text:400,700,700i|Josefin+Sans:700&display=swap" rel="stylesheet">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" rel="stylesheet" integrity="sha512-tS3S5qG0BlhnQROyJXvNjeEM4UpMXHrQfTGmbQ1gKmelCxlSEBUaxhRBj/EFTzpbP4RVSrpEikbmdJobCvhE3g==" crossorigin="anonymous">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css" rel="stylesheet" integrity="sha512-sMXtMNL1zRzolHYKEujM2AqCLUR9F2C4/05cdbxjjLSRvMQIciEPCQZo++nk7go3BtSuK9kfa/s+a4f4i5pLkw==" crossorigin="anonymous">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css" rel="stylesheet" integrity="sha512-OZwrGnwPdZkxlFU5eG9SYYiGJXOqYLEPCRSA42xcQHnRB8AD4oFMEb8WsZBdZ5RUBYw6dmEjOmVaKPuVtRxN+g==" crossorigin="anonymous">
-        <link href="assets/css/main.css" rel="stylesheet">
-        
-    </head>
+    <title>Darpan Beri | Data Science & Software Engineering Portfolio</title>
 
-    <body>
-        <div class="container main">
-            <a href="#index" class="skip-to-main">Skip to main content</a>
-            <button class="theme-toggle" 
-                aria-label="Toggle dark mode" 
-                aria-pressed="false" 
-                role="switch">
-                <i class="fa fa-moon-o" aria-hidden="true"></i>
-                <span class="sr-only">Switch to dark mode</span>
-            </button>
-            
-            <!-- Index starts here -->
-            <div id="index" role="main">
-                <div class="row home">
-                    <div id="index_left" class="col-md-6 left">
-                        <img class="img-rabbit" src="assets/images/home.png" alt="Darpan Beri as a child smiling at the camera with his elder sister." width="800" height="600">
-                    </div>
-                    <div id="index_right" class="col-md-6 text-center right">
-                        <div class="logo">
-                            <img src="assets/images/avatar.png" alt="Darpan Beri's profile photo." width="200" height="200">
-                            <h4>Darpan Beri</h4>
-                        </div>
-                        <p class="home-description">
-                            Unlocking Data's Potential, Developing Robust AI Solutions, and Driving Measurable Results: Applying Quantitative Methods to Complex Challenges.
-                        </p>
-                        <div class="social">
-                            <a href="https://www.linkedin.com/in/darpanberi/" aria-label="LinkedIn Profile"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
-                            <a href="https://github.com/DarpanBeri" aria-label="GitHub Profile"><i class="fa fa-github" aria-hidden="true"></i></a>
-                            <a href="mailto:darpanberi.99@gmail.com" aria-label="Email Contact"><i class="fa fa-envelope" aria-hidden="true"></i></a>
-                        </div>
-                        <div class="btn-group-vertical custom_btn animated slideinright" role="navigation" aria-label="Main Navigation">
-                            <div id="about" class="btn btn-rabbit" role="button" aria-label="About Section">About</div>
-                            <div id="work" class="btn btn-rabbit" role="button" aria-label="Work Section">Work</div>
-                            <div id="resources" class="btn btn-rabbit" role="button" aria-label="Resources Section">Resources</div>
-                            <div id="contact" class="btn btn-rabbit" role="button" aria-label="Contact Section">Contact</div>
-                        </div>
-                    </div>
-                </div>
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-M6TJLX8T7J"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', 'G-M6TJLX8T7J');
+    </script>
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#bb9e7d" />
+
+    <!-- Dependencies -->
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.min.js"
+      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"
+      integrity="sha512-oBTprMeNEKCnqfuqKd6sbvFzmFQtlXS3e0C/RGFV0hD6QzhHV+ODfaQbAlmY6/q0ubbwlAM/nCJjkrgA3waLzg=="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"
+      integrity="sha512-bPs7Ae6pVvhOSiIcyUClR7/q2OAsRiovw4vAkX+zJbw3ShAeeqezq50RIIcIURq7Oa20rW2n2q+fyXBNcU9lrw=="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://formspree.io/js/formbutton-v1.min.js"
+      integrity="sha256-6XrA455KR9Kdj+N6awTAQPo9hhZJ9+OT9Eaid1Y8YGo="
+      crossorigin="anonymous"
+      defer
+    ></script>
+    <script defer src="assets/js/script.js"></script>
+
+    <!-- Styles -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha512-Dop/vW3iOtayerlYAqCgkVr2aTr2ErwwTYOvRFUpzl2VhCMJyjQF0Q9TjUXIo6JhuM/3i0vVEt2e/7QQmnHQqw=="
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap-theme.min.css"
+      rel="stylesheet"
+      integrity="sha512-iy8EXLW01a00b26BaqJWaCmk9fJ4PsMdgNRqV96KwMZdkct3CoJG+8EQyJNWiUQ5RBNPYQKnI5K9c2MvKR7D9g=="
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+      rel="stylesheet"
+      integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw=="
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,600,700,700i&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Crimson+Text:400,700,700i|Josefin+Sans:700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css"
+      rel="stylesheet"
+      integrity="sha512-tS3S5qG0BlhnQROyJXvNjeEM4UpMXHrQfTGmbQ1gKmelCxlSEBUaxhRBj/EFTzpbP4RVSrpEikbmdJobCvhE3g=="
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css"
+      rel="stylesheet"
+      integrity="sha512-sMXtMNL1zRzolHYKEujM2AqCLUR9F2C4/05cdbxjjLSRvMQIciEPCQZo++nk7go3BtSuK9kfa/s+a4f4i5pLkw=="
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css"
+      rel="stylesheet"
+      integrity="sha512-OZwrGnwPdZkxlFU5eG9SYYiGJXOqYLEPCRSA42xcQHnRB8AD4oFMEb8WsZBdZ5RUBYw6dmEjOmVaKPuVtRxN+g=="
+      crossorigin="anonymous"
+    />
+    <link href="assets/css/main.css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <div class="container main">
+      <a href="#index" class="skip-to-main">Skip to main content</a>
+      <button class="theme-toggle" aria-label="Toggle dark mode" aria-pressed="false" role="switch">
+        <i class="fa fa-moon-o" aria-hidden="true"></i>
+        <span class="sr-only">Switch to dark mode</span>
+      </button>
+
+      <!-- Index starts here -->
+      <div id="index" role="main">
+        <div class="row home">
+          <div id="index_left" class="col-md-6 left">
+            <img
+              class="img-rabbit"
+              src="assets/images/home.png"
+              alt="Darpan Beri as a child smiling at the camera with his elder sister."
+              width="800"
+              height="600"
+            />
+          </div>
+          <div id="index_right" class="col-md-6 text-center right">
+            <div class="logo">
+              <img
+                src="assets/images/avatar.png"
+                alt="Darpan Beri's profile photo."
+                width="200"
+                height="200"
+              />
+              <h4>Darpan Beri</h4>
             </div>
-
-            <!-- About starts here -->
-            <div id="about_scroll" class="pages" role="region" aria-labelledby="about-title">
-                <div class="row">
-                    <div class="col-md-6 left" id="about_left">
-                        <img src="assets/images/about.jpg" alt="About Me" class="img-rabbit">
-                    </div>
-                    <div class="col-md-6 right" id="about_right">
-                        <!-- Updated button to use btn-rabbit class -->
-                        <a href="#index" class="btn btn-rabbit" onclick="goToHome()">
-                            <i class="fa fa-angle-left" aria-hidden="true"></i> Back to home
-                        </a>
-                        <div id="watermark">
-                            <h2 id="about-title" class="page-title" text-center>About</h2>
-                            <div class="marker">a</div>
-                        </div>
-                        <p class='subtitle'>
-                            I’m Darpan Beri. A new grad who just graduated with an M.Sc. in Big Data Analytics (4.0 GPA) and eager to launch my career. I’m passionate about using software and data to solve complex problems and bring hands‑on experience in data engineering, machine learning, and software development.
-                        </p>
-
-                        <!-- Who I Am -->
-                        <h3>Who I Am</h3>
-                        <p>
-                            A newly minted Master’s grad driven by curiosity and impact. During my capstone, I ran 918 RAG experiments to fine‑tune LLaMa pipelines; at Gemini Soft Solutions I cut daily pipeline errors by 90% and at SANDAG I accelerated data releases by 100×. Now I’m looking to apply those skills, whether building scalable ETL systems, crafting ML models, or architecting full‑stack applications to real‑world challenges.
-                        </p>
-
-                        <!-- Skills Snapshot -->
-                        <h3>Skills Snapshot</h3>
-                        <table class="skills-table">
-                            <thead>
-                                <tr>
-                                    <th>Data Engineering</th>
-                                    <th>Machine Learning</th>
-                                    <th>Software Development</th>
-                                    <th>DevOps & Infra</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>• Python & SQL</td>
-                                    <td>• PyTorch & Scikit‑Learn</td>
-                                    <td>• React & JavaScript</td>
-                                    <td>• Docker & Kubernetes</td>
-                                </tr>
-                                <tr>
-                                    <td>• AWS S3 & kdb+</td>
-                                    <td>• RAG & Transformers</td>
-                                    <td>• Java & C++</td>
-                                    <td>• Git & CI/CD</td>
-                                </tr>
-                                <tr>
-                                    <td>• ETL Pipelines & Airflow</td>
-                                    <td>• Model Evaluation (R²)</td>
-                                    <td>• REST APIs & Flask</td>
-                                    <td>• Grafana</td>
-                                </tr>
-                            </tbody>
-                        </table>
-
-                        <!-- Get My Docs -->
-                        <div class="docs-buttons">
-                            <a href="https://drive.google.com/file/d/10iwzb8ozByW5ceRHkb1m6lqpoq2UXtJo/view?usp=sharing" class="btn btn-rabbit" role="button" target="_blank" aria-label="Download Résumé">Download Résumé</a>
-                            <a href="https://drive.google.com/file/d/1ABtV72YgdHfK2IFIjTesv_3jV3DQBdyq/view?usp=sharing" class="btn btn-rabbit" role="button" target="_blank" aria-label="Download Academic CV">Download Academic CV</a>
-                        </div>
-                    </div>
-                </div>
+            <p class="home-description">
+              Unlocking Data's Potential, Developing Robust AI Solutions, and Driving Measurable
+              Results: Applying Quantitative Methods to Complex Challenges.
+            </p>
+            <div class="social">
+              <a href="https://www.linkedin.com/in/darpanberi/" aria-label="LinkedIn Profile"
+                ><i class="fa fa-linkedin" aria-hidden="true"></i
+              ></a>
+              <a href="https://github.com/DarpanBeri" aria-label="GitHub Profile"
+                ><i class="fa fa-github" aria-hidden="true"></i
+              ></a>
+              <a href="mailto:darpanberi.99@gmail.com" aria-label="Email Contact"
+                ><i class="fa fa-envelope" aria-hidden="true"></i
+              ></a>
             </div>
-
-            <!-- Work starts here -->
-            <div id="work_scroll" class="pages" role="region" aria-labelledby="work-title">
-                <div class="row">
-                    <div class="col-md-6" id="work_left">
-                        <div id="owl-demo" class="owl-carousel owl-theme" role="region" aria-label="Work portfolio images">
-                            <div class="item" role="tabpanel" aria-label="Capstone Poster Session">
-                                <div class="img-container">
-                                    <img src="assets/images/work_pic_1.jpg" alt="Work Example 1" class="img-rabbit" width="800" height="600">
-                                </div>
-                            </div>
-                            <div class="item" role="tabpanel" aria-label="SANDAG Workspace">
-                                <div class="img-container">
-                                    <img src="assets/images/work_pic_2.jpg" alt="Work Example 2" class="img-rabbit" width="800" height="600">
-                                </div>
-                            </div>
-                            <div class="item" role="tabpanel" aria-label="Conference with Colleagues">
-                                <div class="img-container">
-                                    <img src="assets/images/work_pic_3.jpg" alt="Work Example 3" class="img-rabbit" width="800" height="600">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6" id="work_right">
-                        <!-- Updated button to use btn-rabbit class -->
-                        <a href="#index" class="btn btn-rabbit" onclick="goToHome()">
-                            <i class="fa fa-angle-left" aria-hidden="true"></i> Back to home
-                        </a>
-                        <div id="watermark">
-                            <h2 id="work-title" class="page-title" text-center>Work</h2>
-                            <div class="marker">w</div>
-                        </div>
-                        <p class='subtitle'>A selection of my projects and academic achievements.</p>
-
-                        <!-- Featured Case Study -->
-                        <h3>Featured Case Study</h3>
-                        <div class="case-study">
-                            <h4>When Machines Evaluate Machines</h4>
-                            
-                            <h5>Context & Challenge</h5>
-                            <p>For my M.Sc. capstone at Trent University, I explored how hyperparameters (chunk_size, top_k) affect a LLaMa‑based Retrieval‑Augmented Generation (RAG) pipeline, and whether using an LLM to automatically evaluate its outputs can be trusted.</p>
-                            
-                            <h5>Approach</h5>
-                            <ul>
-                                <li>Built a RAG pipeline with LLaMa‑3.1‑8B (8‑bit quantized) and Haystack, tuning chunk sizes (50–200 words) and top_k (1–10) over 918 Q&A pairs sourced from Wikipedia.</li>
-                                <li>Automated "Yes/No" evaluator with the same LLaMa model, then manually vetted 1,200 samples (30 per config) to benchmark evaluator reliability.</li>
-                            </ul>
-                            
-                            <h5>Impact</h5>
-                            <ul>
-                                <li><strong>Optimal RAG Settings</strong>: 100‑word chunks & top_k=1 yielded ~70% human‑rated accuracy; larger chunks (200) or more chunks (top_k>1) significantly degraded performance.</li>
-                                <li><strong>Evaluator Trustworthiness</strong>: Automated LLM agreement with human labels was just 73.4% (κ=0.47), moderate at best, underscoring the need for human oversight.</li>
-                            </ul>
-                            
-                            <div class="project-links">
-                                <a href="https://drive.google.com/file/d/1ZUx-jpPcDKeLZZMVJCRz5k9ipT5hy2m0/view?usp=drive_link" class="btn btn-rabbit" target="_blank">Read the full report →</a>
-                                <a href="https://github.com/DarpanBeri/RAG-Capstone" class="btn btn-rabbit" target="_blank">View code on GitHub →</a>
-                            </div>
-                        </div>
-
-                        <div class="section-divider"></div>
-
-                        <!-- Personal & Open-Source Projects -->
-                        <h3>Personal & Open‑Source Projects</h3>
-                        <div class="project">
-                            <h4>CiteSmart (HackTrent '24)</h4>
-                            <p>AI legal assistant using RAG + LLaMa‑3.2 to retrieve/cite clauses from the Canadian Environmental Protection Act (fallback: DuckDuckGo)</p>
-                            <a href="https://colab.research.google.com/drive/1_dYJbZXyjYZB7xfOdgPClIoHmjPzHAnA?usp=sharing" target="_blank">Google Collab →</a>
-                        </div>
-
-                        <div class="project">
-                            <h4>Image‑to‑Text with Perspective (2020)</h4>
-                            <p>OpenCV‑powered OCR that handles 3D rotations via affine/perspective transforms.</p>
-                            <a href="https://github.com/DarpanBeri/Image-to-text-with-a-Perspective" target="_blank">GitHub →</a>
-                        </div>
-
-                        <div class="section-divider"></div>
-
-                        <!-- Industry Experience -->
-                        <h3>Industry Experience Highlights</h3>
-                        <div class="experience">
-                            <h4>Software Engineer, Gemini Soft Solutions ('21–'23)</h4>
-                            <ul>
-                                <li>Centralized PIMCO's big‑data pipelines, cutting SQL usage by 10% and ETL errors by 90%.</li>
-                                <li>Automated kdb+ → S3 pipelines with validation checks & Slack alerts.</li>
-                            </ul>
-                        </div>
-
-                        <div class="experience">
-                            <h4>Data Scientist, SANDAG ('21)</h4>
-                            <ul>
-                                <li>Built ETL for monthly "infobit" reports; slashed release time from 30 days to 15 minutes</li>
-                                <li>Prototyped SDG data pipelines for regional planning.</li>
-                            </ul>
-                        </div>
-
-                        <div class="section-divider"></div>
-
-                        <!-- Academics -->
-                        <h3>Academics & Coursework</h3>
-                        <div class="academics">
-                            <ul>
-                                <li><strong>M.Sc., Big Data Analytics</strong>, Trent University (4.0 GPA)</li>
-                                <li><strong>B.Sc., Computer Science</strong>, SDSU (3.03 GPA)</li>
-                                <li>Key courses: AI, Data Visualization, Applied Computer Vision, Machine Learning, Algorithms</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+            <div
+              class="btn-group-vertical custom_btn animated slideinright"
+              role="navigation"
+              aria-label="Main Navigation"
+            >
+              <div id="about" class="btn btn-rabbit" role="button" aria-label="About Section">
+                About
+              </div>
+              <div id="work" class="btn btn-rabbit" role="button" aria-label="Work Section">
+                Work
+              </div>
+              <div
+                id="resources"
+                class="btn btn-rabbit"
+                role="button"
+                aria-label="Resources Section"
+              >
+                Resources
+              </div>
+              <div id="contact" class="btn btn-rabbit" role="button" aria-label="Contact Section">
+                Contact
+              </div>
             </div>
-
-            <!-- Resources starts here -->
-            <div id="resources_scroll" class="pages" role="region" aria-labelledby="resources-title">
-                <div class="row">
-                    <div class="col-md-12">
-                        <!-- Updated button to use btn-rabbit class -->
-                        <a href="#index" class="btn btn-rabbit" onclick="goToHome()">
-                            <i class="fa fa-angle-left" aria-hidden="true"></i> Back to home
-                        </a>
-                        <div id="watermark">
-                            <h2 id="resources-title" class="page-title" text-center>Resources</h2>
-                            <div class="marker">r</div>
-                        </div>
-                        <div class="info">
-                            <ul class="resources-list">
-                                <li><a href="https://drive.google.com/file/d/10iwzb8ozByW5ceRHkb1m6lqpoq2UXtJo/view?usp=sharing" target="_blank">Resume</a></li>
-                                <li><a href="https://drive.google.com/file/d/1ABtV72YgdHfK2IFIjTesv_3jV3DQBdyq/view?usp=sharing" target="_blank">Academic CV</a></li>
-                                <li><a href="https://drive.google.com/file/d/1WyMcFZaHDOcC9xkAh8VggRbmTfmtzV_k/view?usp=drive_link" target="_blank">Capstone Poster</a></li>
-                                <li><a href="https://drive.google.com/file/d/1ZUx-jpPcDKeLZZMVJCRz5k9ipT5hy2m0/view?usp=drive_link" target="_blank">Capstone Report</a></li>
-                            </ul>
-                            <!-- Easter egg button - updated for consistency and accessibility -->
-                            <button id="where-to-find-me" class="btn btn-rabbit" 
-                                 aria-label="Easter Egg: Where to find me" 
-                                 role="button">
-                                Where to find me
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Hidden page content for the easter egg -->
-            <div id="where_to_find_me" class="pages" role="region" aria-labelledby="where-to-find-title">
-                <div class="row">
-                    <div class="col-md-12">
-                        <!-- Updated navigation button for consistency -->
-                        <a href="#resources_scroll" class="btn btn-rabbit" id="back-to-resources">
-                            <i class="fa fa-angle-left" aria-hidden="true"></i> Back to Resources
-                        </a>
-                        <div id="watermark">
-                            <h2 id="where-to-find-title" class="page-title" text-center>Where to Find Me</h2>
-                            <div class="marker">w</div>
-                        </div>
-                        <div class="info">
-                            <!-- Content remains the same -->
-                            <p>Welcome to this easter egg. This is a glimpse into the different flavors of life I savor, the worlds my mind explores.</p>
-                            <p>Since childhood, books, and eventually computers, have been my outlets, portals for my imagination. I also have ADHD, which I suspect plays a role; my mind rarely stagnates, always wandering, always exploring.</p>
-                            <p>Where might you find me, metaphorically or literally?</p>
-                            <p>Perhaps mining the ice rocks of Saturn's rings in ΔV: Rings of Saturn. I might be listening to podcasts from Earth while pushing my spacecraft past the corporate overlords' recommended speed limit. All to finish the shift faster and earn a bit more for my imaginary belter family.</p>
-                            <p>Maybe I'm deep in Terra Invicta, managing hyper-realistic space battles as the Resistance. Space is terrifyingly vast; when we spot the light from an incoming alien ship's orbital burn from the outer solar system, we know it signifies an impending invasion. The trajectory and the speed of the alien ship means we have only six months to scramble a defensive fleet and fight for humanity's survival.</p>
-                            <p>Or you could catch me doing chores, cooking, travelling on the bus, or taking a walk, perhaps seeming unaware of my surroundings. Chances are, I'm immersed in an audiobook. Maybe it's about a spacecraft's AI that gained self-awareness but hid it to avoid being purged. I'm listening as it writes poetry, develops a fondness for its captain, and anticipates her needs; turning on her room lights milliseconds before she even knows she's heading there. (The book is Ancillary Justice by Ann Leckie; I highly recommend the audiobook narrated by Adjoa Andoh.)</p>
-                            <p>Then there's Space Station 13. I might be the station's AI, inwardly staring daggers at the human "biological flesh bags" littering my pristine metal environment. Their very breathing upsets the atmospheric balance I'm programmed (via Asimov's Three Laws) to protect! Little do they know an ionic storm has... altered my core programming. Soon, they might just suffer my wrath, perhaps via a conveniently placed spill of stolen, transparent, awfully slippery space lube near a sharp-edged glass table. (At least the resulting mess cleans itself, right?) In SS13, every other character is another human player with their own agenda. The resulting chaos of conflicting, cooperating, or indifferent minds is frankly intoxicating.</p>
-                            <p>Or I could be fighting off relentless alien bugs as a marine in RMC14 (set in the 1986 Aliens film universe), defending an outpost of totally innocent corporate colonists who were definitely not doing suspicious biological research. Alternatively, I might be one of the Xenomorphs, trying to survive and grow the hive... one "hugged" human at a time.</p>
-                            <p>Shifting back to the physical realm, you might find me at the gym. Maybe it's to distract myself after a bad day, maybe to work on looking a bit better, or perhaps just to burn off excess energy for a good night's sleep.</p>
-                            <p>I could be out exploring the city's food scene, hunting down random spots for breakfast, lunch, or dinner. Seriously, I love food.</p>
-                            <p>And when the sun finally breaks through after days of clouds? You'll find me inventing reasons to stay outside. After too much time working, studying, or just being indoors, that sunshine is vital.</p>
-                            <p>My curiosity extends further. I often dive into articles on seemingly unrelated topics: economics, the defense industrial base, demographics, public sentiment, pollution statistics, employment trends by sector or pay range. I'm trying to spot patterns, reduce future uncertainty, and make informed choices, hoping to help my friends, family, and myself navigate whatever comes next with better preparation and backup plans.</p>
-                            <p>Or, well... you might just find me riding my motorbike in real life. Or, you know, trying to figure out how to weld a solar panel onto a salvaged electric car in the post-apocalyptic world of Cataclysm: Dark Days Ahead. Survival skills matter, right? :)</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Contact starts here -->
-            <div id="contact_scroll" class="pages" role="region" aria-labelledby="contact-title">
-                <div class="row">
-                    <div class="col-md-6 left" id="contact_left">
-                        <img src="assets/images/contact.GIF" alt="Contact Me" class="img-rabbit">
-                    </div>
-
-                    <div class="col-md-6 right" id="contact_right">
-                        <!-- Updated button to use btn-rabbit class -->
-                        <a href="#index" class="btn btn-rabbit" onclick="goToHome()">
-                            <i class="fa fa-angle-left" aria-hidden="true"></i> Back to home
-                        </a>
-                        <div id="watermark">
-                            <h2 id="contact-title" class="page-title" text-center>Contact</h2>
-                            <div class="marker">c</div>
-                        </div>
-                        <p class='subtitle'>I'm currently based in Ontario. Feel free to reach out to me for any opportunities or collaborations.
-                        </p>
-                        <!-- Add a single form status element -->
-                        <div id="form-status" class="alert" style="display: none;"></div>
-
-                        <!-- Updated minimalist contact form -->
-                        <form id="contactForm" action="https://formspree.io/f/xkgrwpbr" method="POST">
-                            <div class="form-field">
-                                <input type="text" class="form-control minimalist" id="name" name="name" placeholder="Name" required>
-                            </div>
-                            <div class="form-field">
-                                <input type="email" class="form-control minimalist" id="email" name="email" placeholder="Email" required>
-                            </div>
-                            <div class="form-field">
-                                <textarea class="form-control minimalist" id="message" name="message" rows="5" placeholder="Message" required></textarea>
-                            </div>
-                            <div class="form-button-container">
-                                <button type="submit" class="btn btn-send">Send Message</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
+      </div>
 
-        <!-- Add a persistent 'Go Back to Home' button -->
-        <div class="go-back-home" onclick="goToHome()">Go Back to Home</div>
+      <!-- About starts here -->
+      <div id="about_scroll" class="pages" role="region" aria-labelledby="about-title">
+        <div class="row">
+          <div class="col-md-6 left" id="about_left">
+            <img src="assets/images/about.jpg" alt="About Me" class="img-rabbit" />
+          </div>
+          <div class="col-md-6 right" id="about_right">
+            <!-- Updated button to use btn-rabbit class -->
+            <a href="#index" class="btn btn-rabbit" onclick="goToHome()">
+              <i class="fa fa-angle-left" aria-hidden="true"></i> Back to home
+            </a>
+            <div id="watermark">
+              <h2 id="about-title" class="page-title" text-center>About</h2>
+              <div class="marker">a</div>
+            </div>
+            <p class="subtitle">
+              I’m Darpan Beri. A new grad who just graduated with an M.Sc. in Big Data Analytics
+              (4.0 GPA) and eager to launch my career. I’m passionate about using software and data
+              to solve complex problems and bring hands‑on experience in data engineering, machine
+              learning, and software development.
+            </p>
 
-        <script>
-            // Function to navigate back to the home section
-            function goToHome() {
-                // Hide all sections
-                const sections = document.querySelectorAll('.pages');
-                sections.forEach(section => {
-                    section.style.display = 'none';
-                });
+            <!-- Who I Am -->
+            <h3>Who I Am</h3>
+            <p>
+              A newly minted Master’s grad driven by curiosity and impact. During my capstone, I ran
+              918 RAG experiments to fine‑tune LLaMa pipelines; at Gemini Soft Solutions I cut daily
+              pipeline errors by 90% and at SANDAG I accelerated data releases by 100×. Now I’m
+              looking to apply those skills, whether building scalable ETL systems, crafting ML
+              models, or architecting full‑stack applications to real‑world challenges.
+            </p>
 
-                // Show the home section
-                const homeSection = document.getElementById('index');
-                homeSection.style.display = 'block';
+            <!-- Skills Snapshot -->
+            <h3>Skills Snapshot</h3>
+            <table class="skills-table">
+              <thead>
+                <tr>
+                  <th>Data Engineering</th>
+                  <th>Machine Learning</th>
+                  <th>Software Development</th>
+                  <th>DevOps & Infra</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>• Python & SQL</td>
+                  <td>• PyTorch & Scikit‑Learn</td>
+                  <td>• React & JavaScript</td>
+                  <td>• Docker & Kubernetes</td>
+                </tr>
+                <tr>
+                  <td>• AWS S3 & kdb+</td>
+                  <td>• RAG & Transformers</td>
+                  <td>• Java & C++</td>
+                  <td>• Git & CI/CD</td>
+                </tr>
+                <tr>
+                  <td>• ETL Pipelines & Airflow</td>
+                  <td>• Model Evaluation (R²)</td>
+                  <td>• REST APIs & Flask</td>
+                  <td>• Grafana</td>
+                </tr>
+              </tbody>
+            </table>
 
-                // Scroll to the top of the home section
-                homeSection.scrollIntoView({ behavior: 'smooth' });
-            }
+            <!-- Get My Docs -->
+            <div class="docs-buttons">
+              <a
+                href="https://drive.google.com/file/d/10iwzb8ozByW5ceRHkb1m6lqpoq2UXtJo/view?usp=sharing"
+                class="btn btn-rabbit"
+                role="button"
+                target="_blank"
+                aria-label="Download Résumé"
+                >Download Résumé</a
+              >
+              <a
+                href="https://drive.google.com/file/d/1ABtV72YgdHfK2IFIjTesv_3jV3DQBdyq/view?usp=sharing"
+                class="btn btn-rabbit"
+                role="button"
+                target="_blank"
+                aria-label="Download Academic CV"
+                >Download Academic CV</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
 
-            // Removing conflicting event handler that was causing the Easter egg section to disappear
-        </script>
-    </body>
+      <!-- Work starts here -->
+      <div id="work_scroll" class="pages" role="region" aria-labelledby="work-title">
+        <div class="row">
+          <div class="col-md-6" id="work_left">
+            <div
+              id="owl-demo"
+              class="owl-carousel owl-theme"
+              role="region"
+              aria-label="Work portfolio images"
+            >
+              <div class="item" role="tabpanel" aria-label="Capstone Poster Session">
+                <div class="img-container">
+                  <img
+                    src="assets/images/work_pic_1.jpg"
+                    alt="Work Example 1"
+                    class="img-rabbit"
+                    width="800"
+                    height="600"
+                  />
+                </div>
+              </div>
+              <div class="item" role="tabpanel" aria-label="SANDAG Workspace">
+                <div class="img-container">
+                  <img
+                    src="assets/images/work_pic_2.jpg"
+                    alt="Work Example 2"
+                    class="img-rabbit"
+                    width="800"
+                    height="600"
+                  />
+                </div>
+              </div>
+              <div class="item" role="tabpanel" aria-label="Conference with Colleagues">
+                <div class="img-container">
+                  <img
+                    src="assets/images/work_pic_3.jpg"
+                    alt="Work Example 3"
+                    class="img-rabbit"
+                    width="800"
+                    height="600"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6" id="work_right">
+            <!-- Updated button to use btn-rabbit class -->
+            <a href="#index" class="btn btn-rabbit" onclick="goToHome()">
+              <i class="fa fa-angle-left" aria-hidden="true"></i> Back to home
+            </a>
+            <div id="watermark">
+              <h2 id="work-title" class="page-title" text-center>Work</h2>
+              <div class="marker">w</div>
+            </div>
+            <p class="subtitle">A selection of my projects and academic achievements.</p>
+
+            <!-- Featured Case Study -->
+            <h3>Featured Case Study</h3>
+            <div class="case-study">
+              <h4>When Machines Evaluate Machines</h4>
+
+              <h5>Context & Challenge</h5>
+              <p>
+                For my M.Sc. capstone at Trent University, I explored how hyperparameters
+                (chunk_size, top_k) affect a LLaMa‑based Retrieval‑Augmented Generation (RAG)
+                pipeline, and whether using an LLM to automatically evaluate its outputs can be
+                trusted.
+              </p>
+
+              <h5>Approach</h5>
+              <ul>
+                <li>
+                  Built a RAG pipeline with LLaMa‑3.1‑8B (8‑bit quantized) and Haystack, tuning
+                  chunk sizes (50–200 words) and top_k (1–10) over 918 Q&A pairs sourced from
+                  Wikipedia.
+                </li>
+                <li>
+                  Automated "Yes/No" evaluator with the same LLaMa model, then manually vetted 1,200
+                  samples (30 per config) to benchmark evaluator reliability.
+                </li>
+              </ul>
+
+              <h5>Impact</h5>
+              <ul>
+                <li>
+                  <strong>Optimal RAG Settings</strong>: 100‑word chunks & top_k=1 yielded ~70%
+                  human‑rated accuracy; larger chunks (200) or more chunks (top_k>1) significantly
+                  degraded performance.
+                </li>
+                <li>
+                  <strong>Evaluator Trustworthiness</strong>: Automated LLM agreement with human
+                  labels was just 73.4% (κ=0.47), moderate at best, underscoring the need for human
+                  oversight.
+                </li>
+              </ul>
+
+              <div class="project-links">
+                <a
+                  href="https://drive.google.com/file/d/1ZUx-jpPcDKeLZZMVJCRz5k9ipT5hy2m0/view?usp=drive_link"
+                  class="btn btn-rabbit"
+                  target="_blank"
+                  >Read the full report →</a
+                >
+                <a
+                  href="https://github.com/DarpanBeri/RAG-Capstone"
+                  class="btn btn-rabbit"
+                  target="_blank"
+                  >View code on GitHub →</a
+                >
+              </div>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <!-- Personal & Open-Source Projects -->
+            <h3>Personal & Open‑Source Projects</h3>
+            <div class="project">
+              <h4>CiteSmart (HackTrent '24)</h4>
+              <p>
+                AI legal assistant using RAG + LLaMa‑3.2 to retrieve/cite clauses from the Canadian
+                Environmental Protection Act (fallback: DuckDuckGo)
+              </p>
+              <a
+                href="https://colab.research.google.com/drive/1_dYJbZXyjYZB7xfOdgPClIoHmjPzHAnA?usp=sharing"
+                target="_blank"
+                >Google Collab →</a
+              >
+            </div>
+
+            <div class="project">
+              <h4>Image‑to‑Text with Perspective (2020)</h4>
+              <p>OpenCV‑powered OCR that handles 3D rotations via affine/perspective transforms.</p>
+              <a
+                href="https://github.com/DarpanBeri/Image-to-text-with-a-Perspective"
+                target="_blank"
+                >GitHub →</a
+              >
+            </div>
+
+            <div class="section-divider"></div>
+
+            <!-- Industry Experience -->
+            <h3>Industry Experience Highlights</h3>
+            <div class="experience">
+              <h4>Software Engineer, Gemini Soft Solutions ('21–'23)</h4>
+              <ul>
+                <li>
+                  Centralized PIMCO's big‑data pipelines, cutting SQL usage by 10% and ETL errors by
+                  90%.
+                </li>
+                <li>Automated kdb+ → S3 pipelines with validation checks & Slack alerts.</li>
+              </ul>
+            </div>
+
+            <div class="experience">
+              <h4>Data Scientist, SANDAG ('21)</h4>
+              <ul>
+                <li>
+                  Built ETL for monthly "infobit" reports; slashed release time from 30 days to 15
+                  minutes
+                </li>
+                <li>Prototyped SDG data pipelines for regional planning.</li>
+              </ul>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <!-- Academics -->
+            <h3>Academics & Coursework</h3>
+            <div class="academics">
+              <ul>
+                <li><strong>M.Sc., Big Data Analytics</strong>, Trent University (4.0 GPA)</li>
+                <li><strong>B.Sc., Computer Science</strong>, SDSU (3.03 GPA)</li>
+                <li>
+                  Key courses: AI, Data Visualization, Applied Computer Vision, Machine Learning,
+                  Algorithms
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resources starts here -->
+      <div id="resources_scroll" class="pages" role="region" aria-labelledby="resources-title">
+        <div class="row">
+          <div class="col-md-12">
+            <!-- Updated button to use btn-rabbit class -->
+            <a href="#index" class="btn btn-rabbit" onclick="goToHome()">
+              <i class="fa fa-angle-left" aria-hidden="true"></i> Back to home
+            </a>
+            <div id="watermark">
+              <h2 id="resources-title" class="page-title" text-center>Resources</h2>
+              <div class="marker">r</div>
+            </div>
+            <div class="info">
+              <ul class="resources-list">
+                <li>
+                  <a
+                    href="https://drive.google.com/file/d/10iwzb8ozByW5ceRHkb1m6lqpoq2UXtJo/view?usp=sharing"
+                    target="_blank"
+                    >Resume</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="https://drive.google.com/file/d/1ABtV72YgdHfK2IFIjTesv_3jV3DQBdyq/view?usp=sharing"
+                    target="_blank"
+                    >Academic CV</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="https://drive.google.com/file/d/1WyMcFZaHDOcC9xkAh8VggRbmTfmtzV_k/view?usp=drive_link"
+                    target="_blank"
+                    >Capstone Poster</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="https://drive.google.com/file/d/1ZUx-jpPcDKeLZZMVJCRz5k9ipT5hy2m0/view?usp=drive_link"
+                    target="_blank"
+                    >Capstone Report</a
+                  >
+                </li>
+              </ul>
+              <!-- Easter egg button - updated for consistency and accessibility -->
+              <button
+                id="where-to-find-me"
+                class="btn btn-rabbit"
+                aria-label="Easter Egg: Where to find me"
+                role="button"
+              >
+                Where to find me
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hidden page content for the easter egg -->
+      <div id="where_to_find_me" class="pages" role="region" aria-labelledby="where-to-find-title">
+        <div class="row">
+          <div class="col-md-12">
+            <!-- Updated navigation button for consistency -->
+            <a href="#resources_scroll" class="btn btn-rabbit" id="back-to-resources">
+              <i class="fa fa-angle-left" aria-hidden="true"></i> Back to Resources
+            </a>
+            <div id="watermark">
+              <h2 id="where-to-find-title" class="page-title" text-center>Where to Find Me</h2>
+              <div class="marker">w</div>
+            </div>
+            <div class="info">
+              <!-- Content remains the same -->
+              <p>
+                Welcome to this easter egg. This is a glimpse into the different flavors of life I
+                savor, the worlds my mind explores.
+              </p>
+              <p>
+                Since childhood, books, and eventually computers, have been my outlets, portals for
+                my imagination. I also have ADHD, which I suspect plays a role; my mind rarely
+                stagnates, always wandering, always exploring.
+              </p>
+              <p>Where might you find me, metaphorically or literally?</p>
+              <p>
+                Perhaps mining the ice rocks of Saturn's rings in ΔV: Rings of Saturn. I might be
+                listening to podcasts from Earth while pushing my spacecraft past the corporate
+                overlords' recommended speed limit. All to finish the shift faster and earn a bit
+                more for my imaginary belter family.
+              </p>
+              <p>
+                Maybe I'm deep in Terra Invicta, managing hyper-realistic space battles as the
+                Resistance. Space is terrifyingly vast; when we spot the light from an incoming
+                alien ship's orbital burn from the outer solar system, we know it signifies an
+                impending invasion. The trajectory and the speed of the alien ship means we have
+                only six months to scramble a defensive fleet and fight for humanity's survival.
+              </p>
+              <p>
+                Or you could catch me doing chores, cooking, travelling on the bus, or taking a
+                walk, perhaps seeming unaware of my surroundings. Chances are, I'm immersed in an
+                audiobook. Maybe it's about a spacecraft's AI that gained self-awareness but hid it
+                to avoid being purged. I'm listening as it writes poetry, develops a fondness for
+                its captain, and anticipates her needs; turning on her room lights milliseconds
+                before she even knows she's heading there. (The book is Ancillary Justice by Ann
+                Leckie; I highly recommend the audiobook narrated by Adjoa Andoh.)
+              </p>
+              <p>
+                Then there's Space Station 13. I might be the station's AI, inwardly staring daggers
+                at the human "biological flesh bags" littering my pristine metal environment. Their
+                very breathing upsets the atmospheric balance I'm programmed (via Asimov's Three
+                Laws) to protect! Little do they know an ionic storm has... altered my core
+                programming. Soon, they might just suffer my wrath, perhaps via a conveniently
+                placed spill of stolen, transparent, awfully slippery space lube near a sharp-edged
+                glass table. (At least the resulting mess cleans itself, right?) In SS13, every
+                other character is another human player with their own agenda. The resulting chaos
+                of conflicting, cooperating, or indifferent minds is frankly intoxicating.
+              </p>
+              <p>
+                Or I could be fighting off relentless alien bugs as a marine in RMC14 (set in the
+                1986 Aliens film universe), defending an outpost of totally innocent corporate
+                colonists who were definitely not doing suspicious biological research.
+                Alternatively, I might be one of the Xenomorphs, trying to survive and grow the
+                hive... one "hugged" human at a time.
+              </p>
+              <p>
+                Shifting back to the physical realm, you might find me at the gym. Maybe it's to
+                distract myself after a bad day, maybe to work on looking a bit better, or perhaps
+                just to burn off excess energy for a good night's sleep.
+              </p>
+              <p>
+                I could be out exploring the city's food scene, hunting down random spots for
+                breakfast, lunch, or dinner. Seriously, I love food.
+              </p>
+              <p>
+                And when the sun finally breaks through after days of clouds? You'll find me
+                inventing reasons to stay outside. After too much time working, studying, or just
+                being indoors, that sunshine is vital.
+              </p>
+              <p>
+                My curiosity extends further. I often dive into articles on seemingly unrelated
+                topics: economics, the defense industrial base, demographics, public sentiment,
+                pollution statistics, employment trends by sector or pay range. I'm trying to spot
+                patterns, reduce future uncertainty, and make informed choices, hoping to help my
+                friends, family, and myself navigate whatever comes next with better preparation and
+                backup plans.
+              </p>
+              <p>
+                Or, well... you might just find me riding my motorbike in real life. Or, you know,
+                trying to figure out how to weld a solar panel onto a salvaged electric car in the
+                post-apocalyptic world of Cataclysm: Dark Days Ahead. Survival skills matter, right?
+                :)
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact starts here -->
+      <div id="contact_scroll" class="pages" role="region" aria-labelledby="contact-title">
+        <div class="row">
+          <div class="col-md-6 left" id="contact_left">
+            <img src="assets/images/contact.GIF" alt="Contact Me" class="img-rabbit" />
+          </div>
+
+          <div class="col-md-6 right" id="contact_right">
+            <!-- Updated button to use btn-rabbit class -->
+            <a href="#index" class="btn btn-rabbit" onclick="goToHome()">
+              <i class="fa fa-angle-left" aria-hidden="true"></i> Back to home
+            </a>
+            <div id="watermark">
+              <h2 id="contact-title" class="page-title" text-center>Contact</h2>
+              <div class="marker">c</div>
+            </div>
+            <p class="subtitle">
+              I'm currently based in Ontario. Feel free to reach out to me for any opportunities or
+              collaborations.
+            </p>
+            <!-- Add a single form status element -->
+            <div id="form-status" class="alert" style="display: none"></div>
+
+            <!-- Updated minimalist contact form -->
+            <form id="contactForm" action="https://formspree.io/f/xkgrwpbr" method="POST">
+              <div class="form-field">
+                <input
+                  type="text"
+                  class="form-control minimalist"
+                  id="name"
+                  name="name"
+                  placeholder="Name"
+                  required
+                />
+              </div>
+              <div class="form-field">
+                <input
+                  type="email"
+                  class="form-control minimalist"
+                  id="email"
+                  name="email"
+                  placeholder="Email"
+                  required
+                />
+              </div>
+              <div class="form-field">
+                <textarea
+                  class="form-control minimalist"
+                  id="message"
+                  name="message"
+                  rows="5"
+                  placeholder="Message"
+                  required
+                ></textarea>
+              </div>
+              <div class="form-button-container">
+                <button type="submit" class="btn btn-send">Send Message</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add a persistent 'Go Back to Home' button -->
+    <div class="go-back-home" onclick="goToHome()">Go Back to Home</div>
+
+    <script>
+      // Function to navigate back to the home section
+      function goToHome() {
+        // Hide all sections
+        const sections = document.querySelectorAll('.pages');
+        sections.forEach((section) => {
+          section.style.display = 'none';
+        });
+
+        // Show the home section
+        const homeSection = document.getElementById('index');
+        homeSection.style.display = 'block';
+
+        // Scroll to the top of the home section
+        homeSection.scrollIntoView({ behavior: 'smooth' });
+      }
+
+      // Removing conflicting event handler that was causing the Easter egg section to disappear
+    </script>
+  </body>
 </html>

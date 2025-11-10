@@ -1,12 +1,14 @@
 # Technical Specification
 
 ## Project Organization
+
 - Active development in root directory
 - Reference materials in old_website/ (excluded from version control)
 - Version control via Git with GitHub Pages deployment
 - .gitignore configured for reference files and system artifacts
 
 ## Current Architecture
+
 - Base template: rabbit-master
 - Custom modifications from old_website
 - Bootstrap-based responsive design
@@ -17,6 +19,7 @@
 - Google Analytics 4 for user tracking
 
 ### Typography System
+
 - Primary Fonts
   - Headings: "Josefin Sans", sans-serif
   - Body: "Crimson", serif
@@ -45,6 +48,7 @@
 ## Component Analysis
 
 ### Header/Navigation
+
 - Vertical navigation with animated transitions
 - Social media links with hover effects
 - Responsive avatar image
@@ -56,6 +60,7 @@
   - High contrast styling
 
 ### Sections
+
 1. Home
    - Full-height landing page
    - Responsive avatar with optimized loading
@@ -94,6 +99,7 @@
    - Rate limiting protection
 
 ## Technical Improvements
+
 1. Performance
    - Lazy loading for images
    - Optimized GIF loading behavior
@@ -122,6 +128,7 @@
    - Consistent button behavior
 
 ## Browser Support
+
 - Modern Chromium browsers (Chrome, Edge, Opera)
 - Firefox
 - Safari
@@ -131,6 +138,7 @@
   - Samsung Internet
 
 ## Security Measures
+
 - Form protection via Formspree
 - External links with noopener
 - Content-Security-Policy ready
@@ -142,6 +150,7 @@
 - Subresource Integrity (SRI) checks for all external scripts and stylesheets
 
 ## Analytics & Tracking
+
 - Google Analytics 4 integration
   - Event tracking implementation
     - Document downloads
@@ -159,6 +168,7 @@
   - Error rate monitoring
 
 ## Development Workflow
+
 - Git-based version control
 - Documentation-driven development
 - Systematic testing approach
@@ -174,6 +184,7 @@
 This section supersedes the previous ad-hoc “Implementation Details for Priority Improvements”. It defines a comprehensive, automated framework to validate and improve any AI-generated or edited content end-to-end.
 
 ### Objectives
+
 - Normalize and format code and content consistently.
 - Validate HTML, accessibility, links, SEO, and performance budgets.
 - Enforce tests and coverage for behavior changes.
@@ -181,6 +192,7 @@ This section supersedes the previous ad-hoc “Implementation Details for Priori
 - Automate checks pre-commit and in CI to keep main stable.
 
 ### Tooling Overview
+
 - Formatters/Linters: Prettier, ESLint, Stylelint, Markdownlint
 - HTML Validation: html-validate
 - Accessibility: jest-axe (unit), pa11y/axe (page-level in CI)
@@ -192,6 +204,7 @@ This section supersedes the previous ad-hoc “Implementation Details for Priori
 - Bots: Semantic Pull Requests, Dependabot
 
 ### Guardrail Rules (non-exhaustive)
+
 - No inline event handlers (e.g., `onclick=`) — handlers must be in JS modules.
 - External `target="_blank"` links must include `rel="noopener noreferrer"`.
 - Use semantic elements for interactivity (`<button>` not `div role="button">`).
@@ -200,6 +213,7 @@ This section supersedes the previous ad-hoc “Implementation Details for Priori
 - Maintain tests and coverage for changed behavior.
 
 ### CI Gates (summary)
+
 - Lint and format checks must pass.
 - HTML validation, link check, and accessibility checks must pass.
 - Unit tests with coverage thresholds must pass; coverage uploaded to Codecov.
@@ -207,6 +221,7 @@ This section supersedes the previous ad-hoc “Implementation Details for Priori
 - Lighthouse budgets must be met.
 
 ### PR Sequencing (high-level)
+
 - PR 1: Repo hygiene, templates, CODEOWNERS, SPEC alignment (this plan).
 - PR 2: Tooling bootstrap (package.json, configs, Husky + lint-staged, initial unit tests).
 - PR 3: CI (lint + unit + coverage + html-validate + markdownlint + stylelint) and Codecov.

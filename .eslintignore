@@ -1,0 +1,3 @@
+# Ignore vendor/minified JS files from linting
+assets/js/*.min.js
+assets/js/bootstrap.min.js

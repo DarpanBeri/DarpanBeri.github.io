@@ -1,10 +1,12 @@
 ## Summary
+
 Describe the change and why it’s needed.
 
 ## Checklist
+
 - [ ] Uses personal account for commits (per-repo config)
 - [ ] No inline JavaScript or unsafe patterns
-- [ ] External links with target="_blank" include rel="noopener noreferrer"
+- [ ] External links with target="\_blank" include rel="noopener noreferrer"
 - [ ] Lint/format pass locally (`npm run lint` / `npm run format:check`)
 - [ ] Unit tests updated/added (`npm run test`)
 - [ ] Coverage maintained or improved (`npm run test:coverage`)
@@ -15,7 +17,9 @@ Describe the change and why it’s needed.
 ## Screenshots or recording (if UI change)
 
 ## Test plan
+
 - Steps and commands to verify locally
 
 ## Related issues
+
 Closes #
