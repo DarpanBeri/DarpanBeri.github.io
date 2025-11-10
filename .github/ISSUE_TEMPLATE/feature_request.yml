@@ -1,0 +1,27 @@
+name: Feature request
+description: Propose an enhancement
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: What is the user problem or opportunity?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: What is your suggested change?
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: What other approaches did you consider?
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact and risks
+      description: List any risks, edge cases, or performance concerns.

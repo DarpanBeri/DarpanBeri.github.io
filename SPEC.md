@@ -169,53 +169,50 @@
 - Analytics-driven improvements
 - Regular documentation updates
 
-## Implementation Details for Priority Improvements
+## AI Cleanup and Guardrails Implementation Plan
 
-### 1. Easter Egg Button Fix [COMPLETED]
-- Implementation:
-  - Fixed conflicting event handlers by removing inline JavaScript in HTML
-  - Implemented consistent fade-in/fade-out animations using the site's existing `switchSection()` function
-  - Added event propagation control with `e.preventDefault()` and `e.stopPropagation()`
-  - Improved history API handling with proper URL updates
-  - Enhanced accessibility with keyboard navigation and focus management
-  - Added proper event tracking for analytics
+This section supersedes the previous ad-hoc “Implementation Details for Priority Improvements”. It defines a comprehensive, automated framework to validate and improve any AI-generated or edited content end-to-end.
 
-### 2. Form Submission Issues
-- Issue: Contact form may not provide proper feedback on submission
-- Implementation:
-  - Updated Formspree integration with proper AJAX handling
-  - Added clear success and error states with accessible feedback
-  - Implemented input validation before submission
-  - Added loading state during form submission
-  - Redesigned with minimalist form styling featuring:
-    - Clean input fields with subtle borders
-    - Placeholder text instead of floating labels
-    - Consistent typography with the rest of the site
-    - Elegant "Send Message" button styling
-  - Tested with screen readers and keyboard navigation
-  - Monitoring submission events in Google Analytics
+### Objectives
+- Normalize and format code and content consistently.
+- Validate HTML, accessibility, links, SEO, and performance budgets.
+- Enforce tests and coverage for behavior changes.
+- Block unsafe patterns (inline JS, missing rel on external links, non-semantic controls).
+- Automate checks pre-commit and in CI to keep main stable.
 
-### 3. iOS Scrolling Fix
-- Issue: Pull-to-refresh behavior triggers page reload on iOS
-- Implementation:
-  - Add `overscroll-behavior-y: none` to body element
-  - Implement custom bounce effect for iOS devices
-  - Test on multiple iOS devices and versions
-  - Ensure fix doesn't affect normal scrolling behavior
+### Tooling Overview
+- Formatters/Linters: Prettier, ESLint, Stylelint, Markdownlint
+- HTML Validation: html-validate
+- Accessibility: jest-axe (unit), pa11y/axe (page-level in CI)
+- Links: lychee link checker
+- Tests: Jest (unit + coverage), Playwright (E2E smoke)
+- Performance: Lighthouse CI with budgets (Performance ≥ 90; Total JS ≤ 250 KB)
+- Prose: Vale (Google developer style)
+- CI: GitHub Actions (lint, tests, coverage upload to Codecov, validation, E2E)
+- Bots: Semantic Pull Requests, Dependabot
 
-### 4. Image Optimization Plan
-- Implementation:
-  - Convert all images to WebP format with PNG fallback
-  - Implement responsive images with srcset attribute
-  - Add loading="lazy" attribute to images below the fold
-  - Optimize GIF file or replace with video format
-  - Implement placeholder strategy for better perceived performance
+### Guardrail Rules (non-exhaustive)
+- No inline event handlers (e.g., `onclick=`) — handlers must be in JS modules.
+- External `target="_blank"` links must include `rel="noopener noreferrer"`.
+- Use semantic elements for interactivity (`<button>` not `div role="button">`).
+- Accessible feedback: `#form-status` must have `role="status"` and `aria-live="polite"`.
+- Respect `prefers-reduced-motion` for animations.
+- Maintain tests and coverage for changed behavior.
 
-### 5. Code Minification
-- Implementation:
-  - Set up build process with Gulp or similar tool
-  - Minify CSS files with cssnano
-  - Minify JS files with terser
-  - Implement HTML minification
-  - Configure proper source maps for development
-  - Create deployment script for GitHub Pages
+### CI Gates (summary)
+- Lint and format checks must pass.
+- HTML validation, link check, and accessibility checks must pass.
+- Unit tests with coverage thresholds must pass; coverage uploaded to Codecov.
+- E2E smoke tests must pass.
+- Lighthouse budgets must be met.
+
+### PR Sequencing (high-level)
+- PR 1: Repo hygiene, templates, CODEOWNERS, SPEC alignment (this plan).
+- PR 2: Tooling bootstrap (package.json, configs, Husky + lint-staged, initial unit tests).
+- PR 3: CI (lint + unit + coverage + html-validate + markdownlint + stylelint) and Codecov.
+- PR 4: Link and accessibility checks in CI (lychee, pa11y/axe, jest-axe fragments).
+- PR 5: Playwright E2E and workflow.
+- PR 6: PR bots (Semantic PRs, Dependabot).
+- PR 7: Performance budgets via Lighthouse CI and Vale prose lint in CI.
+
+Any future scope changes should update this plan here.
