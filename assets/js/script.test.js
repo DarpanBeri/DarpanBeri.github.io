@@ -36,6 +36,53 @@ describe('Email Validation', () => {
     expect(isValidEmail('')).toBe(false);
     expect(isValidEmail(null)).toBe(false);
   });
+
+  // Additional Email Validation tests for edge cases and branch logic
+  test('trims whitespace and validates', () => {
+    expect(isValidEmail('  user@example.com  ')).toBe(true);
+  });
+
+  test('rejects consecutive dots anywhere', () => {
+    expect(isValidEmail('user..name@example.com')).toBe(false);
+    expect(isValidEmail('user@exa..mple.com')).toBe(false);
+  });
+
+  test('rejects dot immediately after @', () => {
+    expect(isValidEmail('user@.example.com')).toBe(false);
+  });
+
+  test('rejects invalid non-string types', () => {
+    [123, true, {}, [], undefined].forEach((v) => {
+      expect(isValidEmail(v)).toBe(false);
+    });
+  });
+
+  test('rejects TLD shorter than 2 characters', () => {
+    expect(isValidEmail('user@example.c')).toBe(false);
+  });
+
+  test('accepts multi-part alphabetic TLD chain', () => {
+    expect(isValidEmail('user@sub.domain.co.uk')).toBe(true);
+  });
+
+  test('rejects domain label starting/ending with hyphen', () => {
+    expect(isValidEmail('user@-example.com')).toBe(false);
+    expect(isValidEmail('user@example-.com')).toBe(false);
+  });
+
+  test('rejects local part starting/ending with hyphen', () => {
+    expect(isValidEmail('-user@example.com')).toBe(false);
+    expect(isValidEmail('user-@example.com')).toBe(false);
+  });
+
+  test('rejects unicode or non-ASCII in local or domain', () => {
+    expect(isValidEmail('用户@例子.公司')).toBe(false);
+    expect(isValidEmail('user@domäin.com')).toBe(false);
+  });
+
+  test('rejects multiple @ signs', () => {
+    expect(isValidEmail('user@@example.com')).toBe(false);
+  });
 });
 
 describe('Theme Initialization', () => {
@@ -71,5 +118,30 @@ describe('Theme Initialization', () => {
     const theme = initializeTheme();
     expect(setAttributeSpy).toHaveBeenCalledWith('data-theme', 'light');
     expect(theme).toBe('light');
+  });
+
+  // Additional Theme Initialization tests for edge cases and branch logic
+  test('applies arbitrary saved theme string', () => {
+    getItemSpy.mockReturnValue('blue');
+    const theme = initializeTheme();
+    expect(setAttributeSpy).toHaveBeenCalledWith('data-theme', 'blue');
+    expect(theme).toBe('blue');
+  });
+
+  test('falls back to light when saved value is empty string', () => {
+    getItemSpy.mockReturnValue('');
+    const theme = initializeTheme();
+    expect(setAttributeSpy).toHaveBeenCalledWith('data-theme', 'light');
+    expect(theme).toBe('light');
+  });
+
+  test('handles missing localStorage gracefully', () => {
+    const origStorage = globalThis.localStorage;
+    // eslint-disable-next-line no-global-assign
+    delete globalThis.localStorage;
+    const theme = initializeTheme();
+    expect(getItemSpy).not.toHaveBeenCalled();
+    expect(setAttributeSpy).toHaveBeenCalledWith('data-theme', 'light');
+    globalThis.localStorage = origStorage;
   });
 });
