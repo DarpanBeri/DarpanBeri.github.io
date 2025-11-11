@@ -1907,3 +1907,13 @@ body {
 #owl-demo .owl-dot {
   pointer-events: auto !important;
 }
+
+/* DEBUG: global pointer-events restore during diagnosis */
+* {
+  pointer-events: auto !important;
+}
+
+/* DEBUG: outline potential full-viewport overlays */
+.debug-outline {
+  outline: 2px dashed red !important;
+}

@@ -605,6 +605,95 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
   });
 }
 
+/* DEBUG: Temporary overlay diagnostics (will be removed after root cause is found) */
+(function () {
+  if (typeof window === 'undefined' || typeof document === 'undefined') return;
+  const DEBUG_OVERLAY = true;
+  if (!DEBUG_OVERLAY) return;
+
+  function computedInfo(el) {
+    try {
+      const cs = window.getComputedStyle(el);
+      return {
+        tag: (el.tagName || '').toLowerCase(),
+        id: el.id || '',
+        class: typeof el.className === 'string' ? el.className : '',
+        position: cs.position,
+        zIndex: cs.zIndex,
+        pointerEvents: cs.pointerEvents,
+        opacity: cs.opacity,
+        display: cs.display,
+      };
+    } catch (_e) {
+      return {
+        tag: (el.tagName || '').toLowerCase(),
+        id: el.id || '',
+        class: '',
+        position: '',
+        zIndex: '',
+        pointerEvents: '',
+        opacity: '',
+        display: '',
+      };
+    }
+  }
+
+  function logPoint(x, y, label) {
+    const el = document.elementFromPoint(x, y);
+    if (el) {
+      console.log('[DEBUG] elementFromPoint', label, { x, y }, computedInfo(el), el);
+    } else {
+      console.log('[DEBUG] elementFromPoint', label, { x, y }, 'null');
+    }
+  }
+
+  function scanOverlays() {
+    const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+    const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+    const thresholdW = vw * 0.9;
+    const thresholdH = vh * 0.9;
+
+    document.querySelectorAll('body *').forEach((el) => {
+      const cs = window.getComputedStyle(el);
+      if (cs.position === 'fixed' || cs.position === 'absolute') {
+        const rect = el.getBoundingClientRect();
+        const coversViewport =
+          rect.width >= thresholdW &&
+          rect.height >= thresholdH &&
+          rect.top <= 10 &&
+          rect.left <= 10;
+        if (coversViewport) {
+          el.classList.add('debug-outline');
+          console.log('[DEBUG] potential overlay', computedInfo(el), rect, el);
+        }
+      }
+    });
+  }
+
+  window.addEventListener('load', function () {
+    const w = window.innerWidth || document.documentElement.clientWidth || 0;
+    const h = window.innerHeight || document.documentElement.clientHeight || 0;
+
+    // Defer a tick so layout settles
+    setTimeout(function () {
+      logPoint(Math.floor(w / 2), Math.floor(h / 2), 'center');
+      logPoint(10, 10, 'top-left');
+      logPoint(Math.max(0, w - 10), Math.max(0, h - 10), 'bottom-right');
+      scanOverlays();
+    }, 50);
+  });
+
+  document.addEventListener(
+    'click',
+    function (e) {
+      const el = e.target;
+      const rect = el && el.getBoundingClientRect ? el.getBoundingClientRect() : null;
+      console.log('[DEBUG] click target', computedInfo(el), rect, el);
+    },
+    true
+  );
+})();
+
 // Export for Node/CommonJS (Jest)
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { isValidEmail, initializeTheme };
