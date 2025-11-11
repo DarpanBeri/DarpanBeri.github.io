@@ -43,10 +43,20 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
       nav: true,
       navText: ['<i class="fa fa-angle-left"></i>', '<i class="fa fa-angle-right"></i>'],
       dots: true,
+      dotsData: true,
       autoplay: false, // Disable autoplay
       lazyLoad: false, // Disable lazy loading
       smartSpeed: 450,
       responsiveClass: true,
+      onInitialized: function () {
+        labelCarouselDots();
+      },
+      onRefreshed: function () {
+        labelCarouselDots();
+      },
+      onChanged: function () {
+        labelCarouselDots();
+      },
       responsive: {
         0: {
           items: 1,
@@ -58,6 +68,57 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
         },
       },
     });
+
+    // Accessibility: add labels for carousel dots (ensure after Owl initializes)
+    function labelCarouselDots() {
+      $('#owl-demo .owl-dot').each(function (index) {
+        var label = 'Go to slide ' + (index + 1);
+        // Provide multiple naming mechanisms recognized by accessibility APIs
+        $(this).attr('aria-label', label);
+        $(this).attr('title', label);
+        // Ensure element content exists (Pa11y considers element text as a valid accessible name)
+        var span = $(this).find('span');
+        if (span.length === 0) {
+          span = $('<span></span>').appendTo($(this));
+        }
+        span.text('Slide ' + (index + 1)).attr('aria-hidden', 'true');
+      });
+    }
+    // Label when carousel is initialized, refreshed, or changed
+    $('#owl-demo').on(
+      'initialized.owl.carousel refreshed.owl.carousel changed.owl.carousel',
+      function () {
+        labelCarouselDots();
+      }
+    );
+    // In case dots are already rendered, schedule a microtask to label them
+    setTimeout(labelCarouselDots, 0);
+
+    // MutationObserver fallback to ensure labels are present whenever dots are rendered/updated
+    (function ensureDotLabelsWithMutationObserver() {
+      var dotsContainer = document.querySelector('#owl-demo .owl-dots');
+      if (dotsContainer && typeof MutationObserver !== 'undefined') {
+        var observer = new MutationObserver(function () {
+          labelCarouselDots();
+        });
+        observer.observe(dotsContainer, { childList: true, subtree: true });
+        // Initial label attempt in case observer starts after render
+        labelCarouselDots();
+      }
+    })();
+
+    // Polling fallback: repeatedly attempt to label dots for a short time window
+    (function pollDotLabels() {
+      var tries = 0;
+      var maxTries = 50; // ~5 seconds at 100ms intervals
+      var interval = setInterval(function () {
+        labelCarouselDots();
+        tries++;
+        if (tries >= maxTries) {
+          clearInterval(interval);
+        }
+      }, 100);
+    })();
 
     // Helper function for GA4 event tracking
     function trackEvent(eventName, params = {}) {

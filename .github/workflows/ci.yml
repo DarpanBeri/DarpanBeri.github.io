@@ -37,6 +37,12 @@ jobs:
       - name: Run Unit Tests with Coverage
         run: npm run test:coverage
 
+      - name: Validate HTML
+        run: npm run validate:html
+
+      - name: Check Links
+        run: npm run check:links
+
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v6
         env:

@@ -1,0 +1,15 @@
+{
+  "extends": ["html-validate:recommended"],
+  "rules": {
+    "doctype-style": "off",
+    "attr-quotes": "error",
+    "void-style": ["error", { "style": "selfclosing" }],
+    "no-dup-id": "warn",
+    "no-raw-characters": "warn",
+    "unrecognized-char-ref": "warn",
+    "no-implicit-button-type": "warn",
+    "no-redundant-role": "warn",
+    "prefer-native-element": "off",
+    "wcag/h63": "warn"
+  }
+}
