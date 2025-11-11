@@ -81,7 +81,72 @@
       integrity="sha512-bPs7Ae6pVvhOSiIcyUClR7/q2OAsRiovw4vAkX+zJbw3ShAeeqezq50RIIcIURq7Oa20rW2n2q+fyXBNcU9lrw=="
       crossorigin="anonymous"
     ></script>
-    <script defer src="assets/js/script.js"></script>
+    <script defer src="assets/js/script.js?v=1731367001"></script>
+    <script>
+      (function () {
+        try {
+          console.log('[DEBUG] inline index loaded');
+          var badge = document.createElement('div');
+          badge.id = 'debug-badge';
+          badge.textContent = 'DEBUG';
+          badge.style.cssText =
+            'position:fixed;top:6px;left:6px;z-index:2147483647;background:#bb9e7d;color:#fff;font:12px/1.6 sans-serif;padding:2px 6px;border-radius:3px;pointer-events:none;';
+          document.documentElement.appendChild(badge);
+
+          function info(el) {
+            if (!el) return null;
+            var cs = getComputedStyle(el);
+            return {
+              tag: el.tagName.toLowerCase(),
+              id: el.id || '',
+              class: typeof el.className === 'string' ? el.className : '',
+              position: cs.position,
+              zIndex: cs.zIndex,
+              pointerEvents: cs.pointerEvents,
+              width: el.clientWidth,
+              height: el.clientHeight
+            };
+          }
+
+          window.addEventListener(
+            'contextmenu',
+            function (e) {
+              console.log('[DEBUG] contextmenu target', info(e.target), e.target);
+            },
+            true
+          );
+          window.addEventListener(
+            'click',
+            function (e) {
+              console.log('[DEBUG] click target', info(e.target), e.target);
+            },
+            true
+          );
+
+          function probe() {
+            var w = window.innerWidth || document.documentElement.clientWidth || 0;
+            var h = window.innerHeight || document.documentElement.clientHeight || 0;
+            var el = document.elementFromPoint(Math.floor(w / 2), Math.floor(h / 2));
+            if (el) {
+              console.log('[DEBUG] elementFromPoint center', info(el), el);
+              el.classList.add('debug-outline');
+            } else {
+              console.log('[DEBUG] elementFromPoint center null');
+            }
+          }
+
+          if (document.readyState === 'complete') {
+            setTimeout(probe, 50);
+          } else {
+            window.addEventListener('load', function () {
+              setTimeout(probe, 50);
+            });
+          }
+        } catch (err) {
+          console.log('[DEBUG] inline error', err);
+        }
+      })();
+    </script>
 
     <!-- Styles -->
     <link
@@ -128,7 +193,7 @@
       integrity="sha512-TyUaMbYrKFZfQfp+9nQGOEt+vGu4nKzLk0KaV3nFifL3K8n7lzb8DayTzLOK0pNyzxGJzGRSw78e8xqJhURJ3Q=="
       crossorigin="anonymous"
     />
-    <link href="assets/css/main.css" rel="stylesheet" />
+    <link href="assets/css/main.css?v=1731367001" rel="stylesheet" />
     <style>
       .go-back-home {
         background-color: #8e7150;
