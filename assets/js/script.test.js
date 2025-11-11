@@ -139,7 +139,7 @@ describe('Theme Initialization', () => {
     const origStorage = globalThis.localStorage;
     // eslint-disable-next-line no-global-assign
     delete globalThis.localStorage;
-    const theme = initializeTheme();
+    initializeTheme();
     expect(getItemSpy).not.toHaveBeenCalled();
     expect(setAttributeSpy).toHaveBeenCalledWith('data-theme', 'light');
     globalThis.localStorage = origStorage;
