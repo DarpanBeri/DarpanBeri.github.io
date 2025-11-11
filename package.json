@@ -11,7 +11,7 @@
     "lint:markdown": "markdownlint \"**/*.md\" --ignore node_modules --fix",
     "lint": "npm run lint:eslint && npm run lint:style && npm run lint:markdown",
     "test": "jest",
-    "test:coverage": "jest --coverage --coverageReporters=text-summary,lcov",
+    "test:coverage": "jest --coverage",
     "serve": "http-server -p 8080 -c-1 .",
     "check-all": "npm run format:check && npm run lint && npm run test:coverage"
   },
