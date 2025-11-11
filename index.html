@@ -136,12 +136,24 @@
       crossorigin="anonymous"
     />
     <link href="assets/css/main.css" rel="stylesheet" />
+    <style>
+      .go-back-home {
+        background-color: #8e7150;
+        color: #fff;
+      }
+    </style>
   </head>
 
   <body>
     <div class="container main">
       <a href="#index" class="skip-to-main">Skip to main content</a>
-      <button class="theme-toggle" aria-label="Toggle dark mode" aria-pressed="false" role="switch">
+      <button
+        class="theme-toggle"
+        type="button"
+        aria-label="Toggle dark mode"
+        aria-pressed="false"
+        role="switch"
+      >
         <i class="fa fa-moon-o" aria-hidden="true"></i>
         <span class="sr-only">Switch to dark mode</span>
       </button>
@@ -188,23 +200,28 @@
               role="navigation"
               aria-label="Main Navigation"
             >
-              <div id="about" class="btn btn-rabbit" role="button" aria-label="About Section">
+              <button id="about" class="btn btn-rabbit" type="button" aria-label="About Section">
                 About
-              </div>
-              <div id="work" class="btn btn-rabbit" role="button" aria-label="Work Section">
+              </button>
+              <button id="work" class="btn btn-rabbit" type="button" aria-label="Work Section">
                 Work
-              </div>
-              <div
+              </button>
+              <button
                 id="resources"
                 class="btn btn-rabbit"
-                role="button"
+                type="button"
                 aria-label="Resources Section"
               >
                 Resources
-              </div>
-              <div id="contact" class="btn btn-rabbit" role="button" aria-label="Contact Section">
+              </button>
+              <button
+                id="contact"
+                class="btn btn-rabbit"
+                type="button"
+                aria-label="Contact Section"
+              >
                 Contact
-              </div>
+              </button>
             </div>
           </div>
         </div>
@@ -221,7 +238,7 @@
             <a href="#index" class="btn btn-rabbit" onclick="goToHome()">
               <i class="fa fa-angle-left" aria-hidden="true"></i> Back to home
             </a>
-            <div id="watermark">
+            <div id="watermark-about">
               <h2 id="about-title" class="page-title" text-center>About</h2>
               <div class="marker">a</div>
             </div>
@@ -247,10 +264,10 @@
             <table class="skills-table">
               <thead>
                 <tr>
-                  <th>Data Engineering</th>
-                  <th>Machine Learning</th>
-                  <th>Software Development</th>
-                  <th>DevOps & Infra</th>
+                  <th scope="col">Data Engineering</th>
+                  <th scope="col">Machine Learning</th>
+                  <th scope="col">Software Development</th>
+                  <th scope="col">DevOps & Infra</th>
                 </tr>
               </thead>
               <tbody>
@@ -308,7 +325,12 @@
               role="region"
               aria-label="Work portfolio images"
             >
-              <div class="item" role="tabpanel" aria-label="Capstone Poster Session">
+              <div
+                class="item"
+                role="tabpanel"
+                aria-label="Capstone Poster Session"
+                data-dot="Capstone poster slide"
+              >
                 <div class="img-container">
                   <img
                     src="assets/images/work_pic_1.jpg"
@@ -319,7 +341,12 @@
                   />
                 </div>
               </div>
-              <div class="item" role="tabpanel" aria-label="SANDAG Workspace">
+              <div
+                class="item"
+                role="tabpanel"
+                aria-label="SANDAG Workspace"
+                data-dot="SANDAG workspace slide"
+              >
                 <div class="img-container">
                   <img
                     src="assets/images/work_pic_2.jpg"
@@ -330,7 +357,12 @@
                   />
                 </div>
               </div>
-              <div class="item" role="tabpanel" aria-label="Conference with Colleagues">
+              <div
+                class="item"
+                role="tabpanel"
+                aria-label="Conference with Colleagues"
+                data-dot="Conference slide"
+              >
                 <div class="img-container">
                   <img
                     src="assets/images/work_pic_3.jpg"
@@ -349,7 +381,7 @@
             <a href="#index" class="btn btn-rabbit" onclick="goToHome()">
               <i class="fa fa-angle-left" aria-hidden="true"></i> Back to home
             </a>
-            <div id="watermark">
+            <div id="watermark-work">
               <h2 id="work-title" class="page-title" text-center>Work</h2>
               <div class="marker">w</div>
             </div>
@@ -490,7 +522,7 @@
             <a href="#index" class="btn btn-rabbit" onclick="goToHome()">
               <i class="fa fa-angle-left" aria-hidden="true"></i> Back to home
             </a>
-            <div id="watermark">
+            <div id="watermark-resources">
               <h2 id="resources-title" class="page-title" text-center>Resources</h2>
               <div class="marker">r</div>
             </div>
@@ -529,8 +561,8 @@
               <button
                 id="where-to-find-me"
                 class="btn btn-rabbit"
+                type="button"
                 aria-label="Easter Egg: Where to find me"
-                role="button"
               >
                 Where to find me
               </button>
@@ -547,7 +579,7 @@
             <a href="#resources_scroll" class="btn btn-rabbit" id="back-to-resources">
               <i class="fa fa-angle-left" aria-hidden="true"></i> Back to Resources
             </a>
-            <div id="watermark">
+            <div id="watermark-where">
               <h2 id="where-to-find-title" class="page-title" text-center>Where to Find Me</h2>
               <div class="marker">w</div>
             </div>
@@ -648,7 +680,7 @@
             <a href="#index" class="btn btn-rabbit" onclick="goToHome()">
               <i class="fa fa-angle-left" aria-hidden="true"></i> Back to home
             </a>
-            <div id="watermark">
+            <div id="watermark-contact">
               <h2 id="contact-title" class="page-title" text-center>Contact</h2>
               <div class="marker">c</div>
             </div>
@@ -662,6 +694,7 @@
             <!-- Updated minimalist contact form -->
             <form id="contactForm" action="https://formspree.io/f/xkgrwpbr" method="POST">
               <div class="form-field">
+                <label for="name" class="sr-only">Name</label>
                 <input
                   type="text"
                   class="form-control minimalist"
@@ -672,6 +705,7 @@
                 />
               </div>
               <div class="form-field">
+                <label for="email" class="sr-only">Email</label>
                 <input
                   type="email"
                   class="form-control minimalist"
@@ -682,6 +716,7 @@
                 />
               </div>
               <div class="form-field">
+                <label for="message" class="sr-only">Message</label>
                 <textarea
                   class="form-control minimalist"
                   id="message"

@@ -25,6 +25,12 @@
       "env": {
         "node": true
       }
+    },
+    {
+      "files": ["*.js"],
+      "env": {
+        "node": true
+      }
     }
   ],
   "rules": {
