@@ -11,6 +11,8 @@ on:
 jobs:
   build-and-analyze:
     name: Build, Test, and Analyze
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
