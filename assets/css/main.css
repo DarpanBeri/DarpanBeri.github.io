@@ -605,6 +605,8 @@ footer {
   width: 100%;
   position: absolute;
   top: calc(44% - 40px);
+  /* Ensure overlay container does not block interactions outside of actual controls */
+  pointer-events: none;
 }
 
 .owl-next {
@@ -624,6 +626,14 @@ footer {
   padding: 15px 20px;
   margin: 0;
   background-color: var(--bg-color);
+  /* Re-enable pointer events for actual nav buttons */
+  pointer-events: auto;
+}
+
+/* Re-enable pointer events for owl dots as well */
+#owl-demo .owl-dots,
+#owl-demo .owl-dot {
+  pointer-events: auto;
 }
 
 .owl-theme .owl-controls .owl-nav [class*='owl-'] i {
@@ -1856,4 +1866,44 @@ body {
 /* Form validation for minimalist design */
 .form-control.minimalist.is-invalid {
   border-color: #dc3545;
+}
+
+/* Override to re-enable page scrolling and avoid global scroll lock (Option A) */
+html,
+body {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Ensure main container can scroll as intended */
+.container.main {
+  overflow-y: auto;
+}
+
+/* Final enforced scroll/interaction overrides */
+html,
+body {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+.container.main {
+  overflow-y: auto !important;
+}
+
+#index_right,
+.pages,
+.container.main {
+  pointer-events: auto !important;
+}
+
+/* Ensure carousel overlay never blocks interactions except on actual controls */
+.owl-theme .owl-controls {
+  pointer-events: none !important;
+}
+
+.owl-theme .owl-controls .owl-nav [class*='owl-'],
+#owl-demo .owl-dots,
+#owl-demo .owl-dot {
+  pointer-events: auto !important;
 }

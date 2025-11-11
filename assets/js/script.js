@@ -35,39 +35,44 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
     // Hide all pages except index initially
     $('#about_scroll, #work_scroll, #resources_scroll, #contact_scroll, #where_to_find_me').hide();
 
-    // Initialize Owl Carousel first
-    const owl = $('#owl-demo').owlCarousel({
-      items: 1,
-      loop: false, // Disable loop to prevent loading issues
-      margin: 0,
-      nav: true,
-      navText: ['<i class="fa fa-angle-left"></i>', '<i class="fa fa-angle-right"></i>'],
-      dots: true,
-      dotsData: true,
-      autoplay: false, // Disable autoplay
-      lazyLoad: false, // Disable lazy loading
-      smartSpeed: 450,
-      responsiveClass: true,
-      onInitialized: function () {
-        labelCarouselDots();
-      },
-      onRefreshed: function () {
-        labelCarouselDots();
-      },
-      onChanged: function () {
-        labelCarouselDots();
-      },
-      responsive: {
-        0: {
-          items: 1,
-          nav: false,
+    // Initialize Owl Carousel first (guarded)
+    let owl = null;
+    if ($.fn && $.fn.owlCarousel && $('#owl-demo').length) {
+      owl = $('#owl-demo').owlCarousel({
+        items: 1,
+        loop: false, // Disable loop to prevent loading issues
+        margin: 0,
+        nav: true,
+        navText: ['<i class="fa fa-angle-left"></i>', '<i class="fa fa-angle-right"></i>'],
+        dots: true,
+        dotsData: true,
+        autoplay: false, // Disable autoplay
+        lazyLoad: false, // Disable lazy loading
+        smartSpeed: 450,
+        responsiveClass: true,
+        onInitialized: function () {
+          labelCarouselDots();
         },
-        768: {
-          items: 1,
-          nav: true,
+        onRefreshed: function () {
+          labelCarouselDots();
         },
-      },
-    });
+        onChanged: function () {
+          labelCarouselDots();
+        },
+        responsive: {
+          0: {
+            items: 1,
+            nav: false,
+          },
+          768: {
+            items: 1,
+            nav: true,
+          },
+        },
+      });
+    } else {
+      console.warn('OwlCarousel not available or #owl-demo missing; skipping initialization.');
+    }
 
     // Accessibility: add labels for carousel dots (ensure after Owl initializes)
     function labelCarouselDots() {
@@ -133,6 +138,10 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
     function switchSection($hideSection, $showSection) {
       if (isAnimating) return;
       isAnimating = true;
+      // Fail-safe: ensure interaction cannot be blocked if callbacks are missed
+      setTimeout(function () {
+        isAnimating = false;
+      }, 1000);
 
       $hideSection.fadeOut(400, function () {
         $showSection.fadeIn(400, function () {
@@ -269,8 +278,10 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
       switchSection($('#index'), $('#work_scroll'));
       $('#work_left').addClass('animated slideInLeft');
       $('#work_right').addClass('animated slideInRight');
-      // Force carousel refresh
-      owl.trigger('refresh.owl.carousel');
+      // Force carousel refresh (guarded)
+      if (owl && typeof owl.trigger === 'function') {
+        owl.trigger('refresh.owl.carousel');
+      }
     });
 
     $('#resources').click(function () {
@@ -288,15 +299,6 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
       switchSection(currentSection, $('#index'));
       $('#index_left').addClass('animated slideInLeft');
       $('#index_right').addClass('animated slideInRight');
-    });
-
-    // Prevent multiple section transitions
-    $('.pages').on('scroll touchmove mousewheel', function (e) {
-      if (isAnimating) {
-        e.preventDefault();
-        e.stopPropagation();
-        return false;
-      }
     });
 
     // Add touch event handling for mobile
