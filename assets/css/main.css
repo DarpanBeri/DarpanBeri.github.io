@@ -274,6 +274,7 @@ body {
 .owl-carousel .img-rabbit {
   opacity: 0;
 }
+
 /* Ensure active slide image is visible (robust against OwlCarousel clones) */
 .owl-carousel .owl-item.active .img-rabbit {
   opacity: 1;
@@ -1692,6 +1693,7 @@ body {
     max-height: none !important;
     padding-bottom: 40px !important; /* maintain some bottom spacing */
   }
+
   /* Neutralize any flex constraint that may cap height */
   .row {
     flex: none !important;
@@ -1706,6 +1708,7 @@ body {
   gap: 8px;
   margin-top: 12px;
 }
+
 #owl-demo .owl-dot {
   width: 10px;
   height: 10px;
@@ -1715,6 +1718,7 @@ body {
   display: inline-block;
   overflow: hidden; /* hide any residual text */
 }
+
 /* Hide any text nodes/spans inside dots (JS adds a span for a11y) */
 #owl-demo .owl-dot > span {
   display: none !important;
