@@ -57,13 +57,22 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
           lazyLoad: false,
           smartSpeed: 450,
           responsiveClass: true,
-          onInitialized: function () { labelCarouselDots(); },
-          onRefreshed: function () { labelCarouselDots(); },
-          onChanged: function () { labelCarouselDots(); },
+          onInitialized: function () {
+            labelCarouselDots();
+            markActiveImageLoaded();
+          },
+          onRefreshed: function () {
+            labelCarouselDots();
+            markActiveImageLoaded();
+          },
+          onChanged: function () {
+            labelCarouselDots();
+            markActiveImageLoaded();
+          },
           responsive: {
             0: { items: 1, nav: false },
-            768: { items: 1, nav: true }
-          }
+            768: { items: 1, nav: true },
+          },
         });
         owlInitialized = true;
       } else {
@@ -77,7 +86,9 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
         if ($owl && $owl.data('owl.carousel')) {
           $owl.trigger('destroy.owl.carousel');
         }
-      } catch (_) {}
+      } catch (e) {
+        void 0;
+      }
       owl = null;
       owlInitialized = false;
     }
@@ -132,6 +143,19 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
           span = $('<span></span>').appendTo($(this));
         }
         span.text('Slide ' + (index + 1)).attr('aria-hidden', 'true');
+      });
+    }
+    // Make currently active slide's image marked as loaded to ensure visibility for cloned slides
+    function markActiveImageLoaded() {
+      $('#owl-demo .owl-item.active img.img-rabbit').each(function () {
+        const $img = $(this);
+        if (this.complete) {
+          $img.addClass('loaded');
+        } else {
+          $img.on('load', function () {
+            $img.addClass('loaded');
+          });
+        }
       });
     }
     // Label when carousel is initialized, refreshed, or changed
@@ -197,7 +221,11 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
           }
           // Optional callback after section is shown
           if (typeof onShown === 'function') {
-            try { onShown(); } catch (_) {}
+            try {
+              onShown();
+            } catch (e) {
+              void 0;
+            }
           }
         });
       });
@@ -318,7 +346,9 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
     // });
 
     $('#about').click(function () {
-      if ($('#work_scroll').is(':visible')) { destroyOwlIfNeeded(); }
+      if ($('#work_scroll').is(':visible')) {
+        destroyOwlIfNeeded();
+      }
       switchSection($('#index'), $('#about_scroll'));
       $('#about_left').addClass('animated slideInLeft');
       $('#about_right').addClass('animated slideInRight');
@@ -330,18 +360,23 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
         if (owl && typeof owl.trigger === 'function') {
           owl.trigger('refresh.owl.carousel');
         }
+        markActiveImageLoaded();
       });
       $('#work_left').addClass('animated slideInLeft');
       $('#work_right').addClass('animated slideInRight');
     });
 
     $('#resources').click(function () {
-      if ($('#work_scroll').is(':visible')) { destroyOwlIfNeeded(); }
+      if ($('#work_scroll').is(':visible')) {
+        destroyOwlIfNeeded();
+      }
       switchSection($('#index'), $('#resources_scroll'));
     });
 
     $('#contact').click(function () {
-      if ($('#work_scroll').is(':visible')) { destroyOwlIfNeeded(); }
+      if ($('#work_scroll').is(':visible')) {
+        destroyOwlIfNeeded();
+      }
       switchSection($('#index'), $('#contact_scroll'));
       $('#contact_left').addClass('animated slideInLeft');
       $('#contact_right').addClass('animated slideInRight');
@@ -349,7 +384,9 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
 
     $('.back').click(function () {
       const currentSection = $('.pages:visible');
-      if ($('#work_scroll').is(':visible')) { destroyOwlIfNeeded(); }
+      if ($('#work_scroll').is(':visible')) {
+        destroyOwlIfNeeded();
+      }
       switchSection(currentSection, $('#index'));
       $('#index_left').addClass('animated slideInLeft');
       $('#index_right').addClass('animated slideInRight');
@@ -360,7 +397,11 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
       e.preventDefault();
       destroyOwlIfNeeded();
       if (typeof window.goToHome === 'function') {
-        try { window.goToHome(); } catch (_) {}
+        try {
+          window.goToHome();
+        } catch (e) {
+          void 0;
+        }
       } else {
         // Fallback: mimic goToHome if function is unavailable
         $('.pages').hide();
@@ -672,7 +713,6 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
     });
   });
 }
-
 
 // Export for Node/CommonJS (Jest)
 if (typeof module !== 'undefined' && module.exports) {

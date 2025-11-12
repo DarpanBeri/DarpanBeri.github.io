@@ -274,6 +274,10 @@ body {
 .owl-carousel .img-rabbit {
   opacity: 0;
 }
+/* Ensure active slide image is visible (robust against OwlCarousel clones) */
+.owl-carousel .owl-item.active .img-rabbit {
+  opacity: 1;
+}
 
 /* Remove margin for contact image */
 #contact_left .img-rabbit {
