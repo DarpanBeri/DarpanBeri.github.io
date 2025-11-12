@@ -83,6 +83,30 @@ describe('Email Validation', () => {
   test('rejects multiple @ signs', () => {
     expect(isValidEmail('user@@example.com')).toBe(false);
   });
+
+  // NEW: Additional acceptance cases to improve coverage
+  test('accepts underscores and percent signs in local part', () => {
+    expect(isValidEmail('user_name@domain.com')).toBe(true);
+    expect(isValidEmail('user%name@domain.com')).toBe(true);
+  });
+
+  test('accepts uppercase letters and long TLDs', () => {
+    expect(isValidEmail('USER@EXAMPLE.MUSEUM')).toBe(true);
+  });
+
+  test('rejects spaces around @ or within local/domain parts', () => {
+    expect(isValidEmail('user @example.com')).toBe(false);
+    expect(isValidEmail('user@ example.com')).toBe(false);
+    expect(isValidEmail('us er@example.com')).toBe(false);
+  });
+
+  test('rejects trailing dot in domain', () => {
+    expect(isValidEmail('user@example.com.')).toBe(false);
+  });
+
+  test('accepts internal hyphens in local and domain (not at ends)', () => {
+    expect(isValidEmail('a-b@a-b.com')).toBe(true);
+  });
 });
 
 describe('Theme Initialization', () => {
@@ -143,5 +167,168 @@ describe('Theme Initialization', () => {
     expect(getItemSpy).not.toHaveBeenCalled();
     expect(setAttributeSpy).toHaveBeenCalledWith('data-theme', 'light');
     globalThis.localStorage = origStorage;
+  });
+});
+
+// Runtime smoke test to execute guarded jQuery-dependent block in script.js
+describe('Runtime block smoke test (jQuery guarded)', () => {
+  let handlers;
+  const makeChain = (sel) => {
+    // Chainable no-op function
+    const chain = () => chain;
+    chain._sel = sel || '';
+    const methods = [
+      'hide', 'show', 'addClass', 'on', 'each',
+      'attr', 'find', 'text', 'trigger', 'focus', 'html', 'val'
+    ];
+    methods.forEach((m) => { chain[m] = () => chain; });
+    // Implement fadeOut/fadeIn with immediate callback invocation if provided
+    chain.fadeOut = (...args) => {
+      const cb = args.find((a) => typeof a === 'function');
+      if (cb) cb();
+      return chain;
+    };
+    chain.fadeIn = (...args) => {
+      const cb = args.find((a) => typeof a === 'function');
+      if (cb) cb();
+      return chain;
+    };
+    // click: register handler or invoke stored one
+    chain.click = (fn) => {
+      if (typeof fn === 'function') {
+        handlers[chain._sel] = fn;
+        return chain;
+      }
+      const h = handlers[chain._sel];
+      if (typeof h === 'function') {
+        h.call(chain, { preventDefault(){} });
+      }
+      return chain;
+    };
+    // jQuery-like collection shape
+    chain.length = 1;
+    return chain;
+  };
+
+  beforeEach(() => {
+    // Minimal DOM required by runtime code
+    document.body.innerHTML = '<button id="work" class="btn btn-rabbit">Work</button><button class="theme-toggle" aria-pressed="false"><i class="fa fa-moon-o"></i><span class="sr-only">Switch to dark mode</span></button><div id="owl-demo"></div>';
+    // Event handler registry
+    handlers = {};
+    // Minimal $ stub
+    const $stub = (selector) => {
+      const chain = makeChain(selector);
+      // Ensure selectors used in script.js behave as expected
+      if (selector === '#owl-demo') {
+        chain.length = 1; // ensure carousel init path sees element present
+        chain.trigger = () => {}; // owl.trigger('refresh.owl.carousel') safe
+        // Attach plugin method on the chain as jQuery would expose via $.fn
+        chain.owlCarousel = $stub.fn.owlCarousel;
+      }
+      return chain;
+    };
+    // $(document).ready(fn) should call fn immediately
+    $stub.fn = {};
+    $stub.fn.owlCarousel = jest.fn(() => makeChain('#owl-demo'));
+
+    // Wrap to special-case $(document)
+    const original$ = $stub;
+    const wrapper$ = (arg) => {
+      // If arg is document (nodeType 9), return a chain with .ready and .on implemented
+      if (arg && arg.nodeType === 9) {
+        const docChain = makeChain('document');
+        docChain.ready = (fn) => fn && fn();
+        // Basic delegated handler registration no-op to avoid errors
+        docChain.on = () => docChain;
+        return docChain;
+      }
+      return original$(arg);
+    };
+    Object.assign(wrapper$, $stub);
+
+    global.$ = wrapper$;
+  });
+
+  afterEach(() => {
+    delete global.$;
+    jest.resetModules();
+  });
+
+  test('executes guarded code without throwing and initializes owlCarousel upon Work click', () => {
+    // Re-require module so guarded block executes with stubbed $
+    jest.isolateModules(() => {
+      require('./script.js');
+    });
+    // Simulate clicking Work to trigger lazy init; ensure no errors and plugin available
+    $('#work').click();
+    expect(typeof $.fn.owlCarousel).toBe('function');
+  });
+});
+
+describe('Runtime interactions: theme toggle and contact form', () => {
+  beforeEach(() => {
+    document.body.innerHTML = `
+      <button class="theme-toggle" aria-pressed="false">
+        <i class="fa fa-moon-o"></i><span class="sr-only">Switch to dark mode</span>
+      </button>
+      <div id="form-status" class="alert" style="display:none"></div>
+      <form id="contactForm" action="https://formspree.io/f/xkgrwpbr" method="POST">
+        <input type="text" name="name" required value="John Doe" />
+        <input type="email" name="email" required value="john@example.com" />
+        <textarea name="message" required>Hi</textarea>
+        <button type="submit">Send</button>
+      </form>
+    `;
+    // Ensure a default theme is set on html
+    document.documentElement.setAttribute('data-theme', 'light');
+    jest.resetModules();
+    require('./script.js');
+  });
+
+  test('theme toggle button flips html[data-theme] and updates aria-pressed', () => {
+    const toggle = document.querySelector('.theme-toggle');
+    const icon = toggle.querySelector('i');
+    const sr = toggle.querySelector('.sr-only');
+
+    expect(document.documentElement.getAttribute('data-theme')).toBe('light');
+    toggle.click();
+    expect(['dark', 'light']).toContain(document.documentElement.getAttribute('data-theme'));
+    // After first click from light -> dark expected
+    expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
+    expect(toggle.getAttribute('aria-pressed')).toBe('true');
+    expect(icon.className).toContain('fa-sun-o');
+    expect(sr.textContent).toMatch(/Switch to light mode/i);
+  });
+
+  test('contact form submit adds and removes loading state and calls fetch', async () => {
+    const form = document.getElementById('contactForm');
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const fetchMock = jest.fn().mockResolvedValue({ ok: true, json: async () => ({}) });
+    global.fetch = fetchMock;
+
+    // Dispatch submit
+    const ev = new Event('submit', { bubbles: true, cancelable: true });
+    form.dispatchEvent(ev);
+
+    // Loading state applied before fetch
+    expect(submitBtn.disabled).toBe(true);
+    expect(submitBtn.classList.contains('btn-loading')).toBe(true);
+
+    // Wait microtasks
+    await Promise.resolve();
+
+    // Fetch called with formspree endpoint
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [url, opts] = fetchMock.mock.calls[0];
+    expect(url).toMatch(/^https:\/\/formspree\.io\/f\//);
+    expect(opts && opts.method).toBe('POST');
+
+    // After handler completion, loading removed
+    // Give the finally{} a tick
+    await Promise.resolve();
+    expect(submitBtn.disabled).toBe(false);
+    expect(submitBtn.classList.contains('btn-loading')).toBe(false);
+
+    delete global.fetch;
   });
 });

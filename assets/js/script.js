@@ -37,42 +37,87 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
 
     // Initialize Owl Carousel first (guarded)
     let owl = null;
-    if ($.fn && $.fn.owlCarousel && $('#owl-demo').length) {
-      owl = $('#owl-demo').owlCarousel({
-        items: 1,
-        loop: false, // Disable loop to prevent loading issues
-        margin: 0,
-        nav: true,
-        navText: ['<i class="fa fa-angle-left"></i>', '<i class="fa fa-angle-right"></i>'],
-        dots: true,
-        dotsData: true,
-        autoplay: false, // Disable autoplay
-        lazyLoad: false, // Disable lazy loading
-        smartSpeed: 450,
-        responsiveClass: true,
-        onInitialized: function () {
-          labelCarouselDots();
-        },
-        onRefreshed: function () {
-          labelCarouselDots();
-        },
-        onChanged: function () {
-          labelCarouselDots();
-        },
-        responsive: {
-          0: {
-            items: 1,
-            nav: false,
-          },
-          768: {
-            items: 1,
-            nav: true,
-          },
-        },
-      });
-    } else {
-      console.warn('OwlCarousel not available or #owl-demo missing; skipping initialization.');
+    let owlInitialized = false;
+
+    function initOwlIfNeeded() {
+      if (owlInitialized) return;
+      if ($.fn && $.fn.owlCarousel && $('#owl-demo').length) {
+        owl = $('#owl-demo').owlCarousel({
+          items: 1,
+          loop: true,
+          margin: 0,
+          nav: true,
+          navText: ['<i class="fa fa-angle-left"></i>', '<i class="fa fa-angle-right"></i>'],
+          dots: true,
+          dotsData: true,
+          autoplay: true,
+          autoplayTimeout: 3500,
+          autoplayHoverPause: true,
+          autoplaySpeed: 600,
+          lazyLoad: false,
+          smartSpeed: 450,
+          responsiveClass: true,
+          onInitialized: function () { labelCarouselDots(); },
+          onRefreshed: function () { labelCarouselDots(); },
+          onChanged: function () { labelCarouselDots(); },
+          responsive: {
+            0: { items: 1, nav: false },
+            768: { items: 1, nav: true }
+          }
+        });
+        owlInitialized = true;
+      } else {
+        console.warn('OwlCarousel not available or #owl-demo missing; skipping initialization.');
+      }
     }
+
+    function destroyOwlIfNeeded() {
+      try {
+        const $owl = $('#owl-demo');
+        if ($owl && $owl.data('owl.carousel')) {
+          $owl.trigger('destroy.owl.carousel');
+        }
+      } catch (_) {}
+      owl = null;
+      owlInitialized = false;
+    }
+    // OwlCarousel initialization [DISABLED for isolation]
+    // if ($.fn && $.fn.owlCarousel && $('#owl-demo').length) {
+    //   owl = $('#owl-demo').owlCarousel({
+    //     items: 1,
+    //     loop: false, // Disable loop to prevent loading issues
+    //     margin: 0,
+    //     nav: true,
+    //     navText: ['<i class="fa fa-angle-left"></i>', '<i class="fa fa-angle-right"></i>'],
+    //     dots: true,
+    //     dotsData: true,
+    //     autoplay: false, // Disable autoplay
+    //     lazyLoad: false, // Disable lazy loading
+    //     smartSpeed: 450,
+    //     responsiveClass: true,
+    //     onInitialized: function () {
+    //       labelCarouselDots();
+    //     },
+    //     onRefreshed: function () {
+    //       labelCarouselDots();
+    //     },
+    //     onChanged: function () {
+    //       labelCarouselDots();
+    //     },
+    //     responsive: {
+    //       0: {
+    //         items: 1,
+    //         nav: false,
+    //       },
+    //       768: {
+    //         items: 1,
+    //         nav: true,
+    //       },
+    //     },
+    //   });
+    // } else {
+    //   console.warn('OwlCarousel not available or #owl-demo missing; skipping initialization.');
+    // }
 
     // Accessibility: add labels for carousel dots (ensure after Owl initializes)
     function labelCarouselDots() {
@@ -135,7 +180,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
     // Prevent scroll leaking between sections
     let isAnimating = false;
 
-    function switchSection($hideSection, $showSection) {
+    function switchSection($hideSection, $showSection, onShown) {
       if (isAnimating) return;
       isAnimating = true;
       // Fail-safe: ensure interaction cannot be blocked if callbacks are missed
@@ -149,6 +194,10 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
           // Scroll to top of new section on mobile
           if (window.innerWidth <= 767) {
             window.scrollTo(0, 0);
+          }
+          // Optional callback after section is shown
+          if (typeof onShown === 'function') {
+            try { onShown(); } catch (_) {}
           }
         });
       });
@@ -221,74 +270,78 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
       }
     });
 
-    // Keyboard navigation for carousel
-    $(document).keydown(function (e) {
-      if ($('#work_scroll').is(':visible')) {
-        if (e.keyCode === 37) {
-          // Left arrow
-          $('#owl-demo').trigger('prev.owl.carousel');
-        } else if (e.keyCode === 39) {
-          // Right arrow
-          $('#owl-demo').trigger('next.owl.carousel');
-        }
-      }
-    });
+    // Keyboard navigation for carousel [DISABLED for isolation]
+    // $(document).keydown(function (e) {
+    //   if ($('#work_scroll').is(':visible')) {
+    //     if (e.keyCode === 37) {
+    //       // Left arrow
+    //       $('#owl-demo').trigger('prev.owl.carousel');
+    //     } else if (e.keyCode === 39) {
+    //       // Right arrow
+    //       $('#owl-demo').trigger('next.owl.carousel');
+    //     }
+    //   }
+    // });
 
     $('#about_scroll').fadeOut();
     $('#work_scroll').fadeOut();
     $('#resources_scroll').fadeOut();
     $('#contact_scroll').fadeOut();
 
-    // Section navigation with keyboard
-    $(document).keydown(function (e) {
-      if (e.keyCode === 27) {
-        // ESC key
-        $('.pages').fadeOut();
-        $('#index').fadeIn();
-        $('#index_left').addClass('animated slideInLeft');
-        $('#index_right').addClass('animated slideInRight');
-      }
-
-      // Number keys for navigation (1-4)
-      if ($('#index').is(':visible')) {
-        switch (e.keyCode) {
-          case 49: // 1 key
-            $('#about').click();
-            break;
-          case 50: // 2 key
-            $('#work').click();
-            break;
-          case 51: // 3 key
-            $('#resources').click();
-            break;
-          case 52: // 4 key
-            $('#contact').click();
-            break;
-        }
-      }
-    });
+    // Section navigation with keyboard [DISABLED for isolation]
+    // $(document).keydown(function (e) {
+    //   if (e.keyCode === 27) {
+    //     // ESC key
+    //     $('.pages').fadeOut();
+    //     $('#index').fadeIn();
+    //     $('#index_left').addClass('animated slideInLeft');
+    //     $('#index_right').addClass('animated slideInRight');
+    //   }
+    //
+    //   // Number keys for navigation (1-4)
+    //   if ($('#index').is(':visible')) {
+    //     switch (e.keyCode) {
+    //       case 49: // 1 key
+    //         $('#about').click();
+    //         break;
+    //       case 50: // 2 key
+    //         $('#work').click();
+    //         break;
+    //       case 51: // 3 key
+    //         $('#resources').click();
+    //         break;
+    //       case 52: // 4 key
+    //         $('#contact').click();
+    //         break;
+    //     }
+    //   }
+    // });
 
     $('#about').click(function () {
+      if ($('#work_scroll').is(':visible')) { destroyOwlIfNeeded(); }
       switchSection($('#index'), $('#about_scroll'));
       $('#about_left').addClass('animated slideInLeft');
       $('#about_right').addClass('animated slideInRight');
     });
 
     $('#work').click(function () {
-      switchSection($('#index'), $('#work_scroll'));
+      switchSection($('#index'), $('#work_scroll'), function () {
+        initOwlIfNeeded();
+        if (owl && typeof owl.trigger === 'function') {
+          owl.trigger('refresh.owl.carousel');
+        }
+      });
       $('#work_left').addClass('animated slideInLeft');
       $('#work_right').addClass('animated slideInRight');
-      // Force carousel refresh (guarded)
-      if (owl && typeof owl.trigger === 'function') {
-        owl.trigger('refresh.owl.carousel');
-      }
     });
 
     $('#resources').click(function () {
+      if ($('#work_scroll').is(':visible')) { destroyOwlIfNeeded(); }
       switchSection($('#index'), $('#resources_scroll'));
     });
 
     $('#contact').click(function () {
+      if ($('#work_scroll').is(':visible')) { destroyOwlIfNeeded(); }
       switchSection($('#index'), $('#contact_scroll'));
       $('#contact_left').addClass('animated slideInLeft');
       $('#contact_right').addClass('animated slideInRight');
@@ -296,34 +349,49 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
 
     $('.back').click(function () {
       const currentSection = $('.pages:visible');
+      if ($('#work_scroll').is(':visible')) { destroyOwlIfNeeded(); }
       switchSection(currentSection, $('#index'));
       $('#index_left').addClass('animated slideInLeft');
       $('#index_right').addClass('animated slideInRight');
     });
 
-    // Add touch event handling for mobile
-    let touchStartY;
-
-    $(document).on('touchstart', function (e) {
-      touchStartY = e.originalEvent.touches[0].clientY;
-    });
-
-    $(document).on('touchend', function (e) {
-      if (isAnimating) return;
-
-      const touchEndY = e.originalEvent.changedTouches[0].clientY;
-      const deltaY = touchEndY - touchStartY;
-
-      // If significant vertical swipe
-      if (Math.abs(deltaY) > 50) {
-        const $currentSection = $('.pages:visible');
-
-        // Swipe up - go to next section
-        if (deltaY < 0 && $currentSection.is('#index')) {
-          $('#about').click();
-        }
+    // Ensure Owl is destroyed when using "Back to home" controls (links or persistent bar)
+    $(document).on('click', 'a[href="#index"], .go-back-home', function (e) {
+      e.preventDefault();
+      destroyOwlIfNeeded();
+      if (typeof window.goToHome === 'function') {
+        try { window.goToHome(); } catch (_) {}
+      } else {
+        // Fallback: mimic goToHome if function is unavailable
+        $('.pages').hide();
+        $('#index').show();
+        window.scrollTo(0, 0);
       }
     });
+
+    // Add touch event handling for mobile [DISABLED for isolation]
+    // let touchStartY;
+    //
+    // $(document).on('touchstart', function (e) {
+    //   touchStartY = e.originalEvent.touches[0].clientY;
+    // });
+    //
+    // $(document).on('touchend', function (e) {
+    //   if (isAnimating) return;
+    //
+    //   const touchEndY = e.originalEvent.changedTouches[0].clientY;
+    //   const deltaY = touchEndY - touchStartY;
+    //
+    //   // If significant vertical swipe
+    //   if (Math.abs(deltaY) > 50) {
+    //     const $currentSection = $('.pages:visible');
+    //
+    //     // Swipe up - go to next section
+    //     if (deltaY < 0 && $currentSection.is('#index')) {
+    //       $('#about').click();
+    //     }
+    //   }
+    // });
 
     // Handle orientation change
     window.addEventListener('orientationchange', function () {
@@ -605,94 +673,6 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
   });
 }
 
-/* DEBUG: Temporary overlay diagnostics (will be removed after root cause is found) */
-(function () {
-  if (typeof window === 'undefined' || typeof document === 'undefined') return;
-  const DEBUG_OVERLAY = true;
-  if (!DEBUG_OVERLAY) return;
-
-  function computedInfo(el) {
-    try {
-      const cs = window.getComputedStyle(el);
-      return {
-        tag: (el.tagName || '').toLowerCase(),
-        id: el.id || '',
-        class: typeof el.className === 'string' ? el.className : '',
-        position: cs.position,
-        zIndex: cs.zIndex,
-        pointerEvents: cs.pointerEvents,
-        opacity: cs.opacity,
-        display: cs.display,
-      };
-    } catch (_e) {
-      return {
-        tag: (el.tagName || '').toLowerCase(),
-        id: el.id || '',
-        class: '',
-        position: '',
-        zIndex: '',
-        pointerEvents: '',
-        opacity: '',
-        display: '',
-      };
-    }
-  }
-
-  function logPoint(x, y, label) {
-    const el = document.elementFromPoint(x, y);
-    if (el) {
-      console.log('[DEBUG] elementFromPoint', label, { x, y }, computedInfo(el), el);
-    } else {
-      console.log('[DEBUG] elementFromPoint', label, { x, y }, 'null');
-    }
-  }
-
-  function scanOverlays() {
-    const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-    const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
-    const thresholdW = vw * 0.9;
-    const thresholdH = vh * 0.9;
-
-    document.querySelectorAll('body *').forEach((el) => {
-      const cs = window.getComputedStyle(el);
-      if (cs.position === 'fixed' || cs.position === 'absolute') {
-        const rect = el.getBoundingClientRect();
-        const coversViewport =
-          rect.width >= thresholdW &&
-          rect.height >= thresholdH &&
-          rect.top <= 10 &&
-          rect.left <= 10;
-        if (coversViewport) {
-          el.classList.add('debug-outline');
-          console.log('[DEBUG] potential overlay', computedInfo(el), rect, el);
-        }
-      }
-    });
-  }
-
-  window.addEventListener('load', function () {
-    const w = window.innerWidth || document.documentElement.clientWidth || 0;
-    const h = window.innerHeight || document.documentElement.clientHeight || 0;
-
-    // Defer a tick so layout settles
-    setTimeout(function () {
-      logPoint(Math.floor(w / 2), Math.floor(h / 2), 'center');
-      logPoint(10, 10, 'top-left');
-      logPoint(Math.max(0, w - 10), Math.max(0, h - 10), 'bottom-right');
-      scanOverlays();
-    }, 50);
-  });
-
-  document.addEventListener(
-    'click',
-    function (e) {
-      const el = e.target;
-      const rect = el && el.getBoundingClientRect ? el.getBoundingClientRect() : null;
-      console.log('[DEBUG] click target', computedInfo(el), rect, el);
-    },
-    true
-  );
-})();
 
 // Export for Node/CommonJS (Jest)
 if (typeof module !== 'undefined' && module.exports) {

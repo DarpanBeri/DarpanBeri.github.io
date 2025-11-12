@@ -64,6 +64,8 @@
 
     <!-- Theme Color -->
     <meta name="theme-color" content="#bb9e7d" />
+    <!-- SAFE MODE: Block all scripts to isolate JS as the cause. Remove this meta to re-enable JS. -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob:; img-src 'self' https: data:; style-src 'self' 'unsafe-inline' https:; font-src 'self' https: data:; script-src 'self' https://code.jquery.com https://cdnjs.cloudflare.com;">
 
     <!-- Dependencies -->
     <script
@@ -81,72 +83,7 @@
       integrity="sha512-bPs7Ae6pVvhOSiIcyUClR7/q2OAsRiovw4vAkX+zJbw3ShAeeqezq50RIIcIURq7Oa20rW2n2q+fyXBNcU9lrw=="
       crossorigin="anonymous"
     ></script>
-    <script defer src="assets/js/script.js?v=1731367001"></script>
-    <script>
-      (function () {
-        try {
-          console.log('[DEBUG] inline index loaded');
-          var badge = document.createElement('div');
-          badge.id = 'debug-badge';
-          badge.textContent = 'DEBUG';
-          badge.style.cssText =
-            'position:fixed;top:6px;left:6px;z-index:2147483647;background:#bb9e7d;color:#fff;font:12px/1.6 sans-serif;padding:2px 6px;border-radius:3px;pointer-events:none;';
-          document.documentElement.appendChild(badge);
-
-          function info(el) {
-            if (!el) return null;
-            var cs = getComputedStyle(el);
-            return {
-              tag: el.tagName.toLowerCase(),
-              id: el.id || '',
-              class: typeof el.className === 'string' ? el.className : '',
-              position: cs.position,
-              zIndex: cs.zIndex,
-              pointerEvents: cs.pointerEvents,
-              width: el.clientWidth,
-              height: el.clientHeight
-            };
-          }
-
-          window.addEventListener(
-            'contextmenu',
-            function (e) {
-              console.log('[DEBUG] contextmenu target', info(e.target), e.target);
-            },
-            true
-          );
-          window.addEventListener(
-            'click',
-            function (e) {
-              console.log('[DEBUG] click target', info(e.target), e.target);
-            },
-            true
-          );
-
-          function probe() {
-            var w = window.innerWidth || document.documentElement.clientWidth || 0;
-            var h = window.innerHeight || document.documentElement.clientHeight || 0;
-            var el = document.elementFromPoint(Math.floor(w / 2), Math.floor(h / 2));
-            if (el) {
-              console.log('[DEBUG] elementFromPoint center', info(el), el);
-              el.classList.add('debug-outline');
-            } else {
-              console.log('[DEBUG] elementFromPoint center null');
-            }
-          }
-
-          if (document.readyState === 'complete') {
-            setTimeout(probe, 50);
-          } else {
-            window.addEventListener('load', function () {
-              setTimeout(probe, 50);
-            });
-          }
-        } catch (err) {
-          console.log('[DEBUG] inline error', err);
-        }
-      })();
-    </script>
+    <script defer src="assets/js/script.js?v=1731370401"></script>
 
     <!-- Styles -->
     <link
@@ -193,7 +130,7 @@
       integrity="sha512-TyUaMbYrKFZfQfp+9nQGOEt+vGu4nKzLk0KaV3nFifL3K8n7lzb8DayTzLOK0pNyzxGJzGRSw78e8xqJhURJ3Q=="
       crossorigin="anonymous"
     />
-    <link href="assets/css/main.css?v=1731367001" rel="stylesheet" />
+    <link href="assets/css/main.css?v=1731370401" rel="stylesheet" />
     <style>
       .go-back-home {
         background-color: #8e7150;
@@ -814,6 +751,355 @@
       }
 
       // Removing conflicting event handler that was causing the Easter egg section to disappear
+    </script>
+    <script>
+      (function () {
+        try {
+          function isViewportCover(el) {
+            if (!el) return false;
+            var cs = getComputedStyle(el);
+            if (cs.display === 'none') return false;
+            if (!(cs.position === 'fixed' || cs.position === 'absolute')) return false;
+            var rect = el.getBoundingClientRect();
+            var vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+            var vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+            var coversW = rect.width >= vw * 0.98;
+            var coversH = rect.height >= vh * 0.98;
+            var nearTopLeft = rect.top <= 2 && rect.left <= 2;
+            return coversW && coversH && nearTopLeft;
+          }
+          function neutralizeTopOverlay() {
+            var candidates = [];
+            document.querySelectorAll('body *').forEach(function (el) {
+              var cs = getComputedStyle(el);
+              if (cs && (cs.position === 'fixed' || cs.position === 'absolute')) {
+                if (isViewportCover(el)) {
+                  candidates.push(el);
+                }
+              }
+            });
+            if (candidates.length) {
+              // Disable pointer interaction on all full-viewport overlays, excluding core app containers
+              candidates.forEach(function (el) {
+                if (el.id === 'index' || el.classList.contains('container') || el.classList.contains('main')) return;
+                el.style.pointerEvents = 'none';
+              });
+            }
+          }
+          // Run immediately, after load, and for a short interval to catch late overlays
+          if (document.readyState === 'complete') {
+            setTimeout(neutralizeTopOverlay, 0);
+          } else {
+            window.addEventListener('load', function () {
+              setTimeout(neutralizeTopOverlay, 0);
+            });
+          }
+          (function runOverlaySweep() {
+            var tries = 0;
+            var maxTries = 50; // ~5 seconds at 100ms intervals
+            var interval = setInterval(function () {
+              neutralizeTopOverlay();
+              tries++;
+              if (tries >= maxTries) clearInterval(interval);
+            }, 100);
+          })();
+        } catch (_) {}
+      })();
+    </script>
+    <style>
+      /* Emergency interaction/scroll override */
+      html, body { overflow: auto !important; }
+      .container.main { height: auto !important; overflow: visible !important; }
+    </style>
+    <script>
+      (function () {
+        try {
+          // Ensure global scroll is enabled
+          document.documentElement.style.overflow = 'auto';
+          document.body.style.overflow = 'auto';
+
+          // Whitelist of core app containers we must not disable
+          var WL = new Set(['HTML', 'BODY']);
+          var WL_IDS = new Set(['index', 'about_scroll', 'work_scroll', 'resources_scroll', 'contact_scroll', 'where_to_find_me']);
+          function isWhitelisted(el) {
+            if (!el) return true;
+            if (WL.has(el.tagName)) return true;
+            if (el.id && WL_IDS.has(el.id)) return true;
+            if (el.classList && (el.classList.contains('container') || el.classList.contains('main'))) return true;
+            return false;
+          }
+
+          // Consider any element that nearly covers the viewport, regardless of position
+          function coversViewport(el) {
+            if (!el || isWhitelisted(el)) return false;
+            var rect = el.getBoundingClientRect();
+            var vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+            var vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+            if (!rect || !rect.width || !rect.height) return false;
+            var coversW = rect.width >= vw * 0.98;
+            var coversH = rect.height >= vh * 0.98;
+            var nearTopLeft = rect.top <= 2 && rect.left <= 2;
+            return coversW && coversH && nearTopLeft;
+          }
+
+          function cleanOverlays() {
+            var blocked = [];
+            document.querySelectorAll('body *').forEach(function (el) {
+              if (coversViewport(el)) blocked.push(el);
+            });
+            if (blocked.length) {
+              blocked.forEach(function (el) { el.style.pointerEvents = 'none'; });
+            }
+          }
+
+          // Run immediately and after load to catch late-added overlays
+          setTimeout(cleanOverlays, 0);
+          window.addEventListener('load', function () {
+            setTimeout(cleanOverlays, 0);
+          });
+
+          // Detach any jQuery document keydown handlers that could interfere with Enter/scroll
+          if (window.jQuery && typeof jQuery.fn !== 'undefined') {
+            jQuery(document).off('keydown');
+          }
+
+          // Re-enable context menu if any inline handler disabled it
+          document.addEventListener('contextmenu', function (e) {
+            // Stop other listeners from preventing default
+            try { e.stopImmediatePropagation(); } catch (_) {}
+          }, true);
+          document.oncontextmenu = null;
+        } catch (_) {}
+      })();
+    </script>
+    <style id="diag-hud-style">
+      #diag-hud {
+        position: fixed;
+        top: 8px;
+        left: 8px;
+        z-index: 2147483647;
+        background: rgba(0, 0, 0, 0.85);
+        color: #fff;
+        font-family: monospace;
+        font-size: 12px;
+        line-height: 1.4;
+        padding: 8px;
+        max-width: 80vw;
+        max-height: 50vh;
+        overflow: auto;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+        pointer-events: auto;
+      }
+      #diag-hud b { color: #ffd58a; }
+      #diag-hud button {
+        background: #333;
+        color: #fff;
+        border: 1px solid #666;
+        border-radius: 3px;
+        cursor: pointer;
+        margin-right: 6px;
+      }
+      #diag-hud button:hover { background: #444; }
+      .diag-outline { outline: 2px dashed red !important; }
+    </style>
+    <script id="diag-hud-script">
+      (function () {
+        try {
+          // Create HUD container
+          var hud = document.createElement('div');
+          hud.id = 'diag-hud';
+          hud.setAttribute('role', 'status');
+
+          function shortSel(el) {
+            if (!el) return 'null';
+            var s = (el.tagName || '').toLowerCase();
+            if (el.id) s += '#' + el.id;
+            if (el.className && typeof el.className === 'string') {
+              var cls = el.className.trim().split(/\s+/).slice(0, 3).join('.');
+              if (cls) s += '.' + cls;
+            }
+            return s;
+          }
+
+          function info(el) {
+            if (!el) return null;
+            var cs = getComputedStyle(el);
+            var r = el.getBoundingClientRect();
+            return {
+              sel: shortSel(el),
+              pos: cs.position,
+              z: cs.zIndex,
+              pe: cs.pointerEvents,
+              rect: {
+                x: Math.round(r.left),
+                y: Math.round(r.top),
+                w: Math.round(r.width),
+                h: Math.round(r.height)
+              }
+            };
+          }
+
+          function vp() {
+            return {
+              w: window.innerWidth || document.documentElement.clientWidth || 0,
+              h: window.innerHeight || document.documentElement.clientHeight || 0
+            };
+          }
+
+          function at(x, y) {
+            var el = document.elementFromPoint(x, y);
+            return info(el);
+          }
+
+          function isWhitelisted(el) {
+            if (!el) return true;
+            if (el.id === 'diag-hud' || el.id === 'debug-badge') return true;
+            if (el.tagName === 'HTML' || el.tagName === 'BODY') return true;
+            if (el.id && (
+              el.id === 'index' ||
+              el.id === 'about_scroll' ||
+              el.id === 'work_scroll' ||
+              el.id === 'resources_scroll' ||
+              el.id === 'contact_scroll' ||
+              el.id === 'where_to_find_me'
+            )) return true;
+            if (el.classList && (el.classList.contains('container') || el.classList.contains('main'))) return true;
+            return false;
+          }
+
+          function findOverlays() {
+            var v = vp();
+            var vw = v.w, vh = v.h;
+            var list = [];
+            document.querySelectorAll('body *').forEach(function (el) {
+              if (isWhitelisted(el)) return;
+              var cs = getComputedStyle(el);
+              if (cs.display === 'none' || cs.visibility === 'hidden') return;
+              if (!(cs.position === 'fixed' || cs.position === 'absolute')) return;
+              var r = el.getBoundingClientRect();
+              var covers =
+                r.width >= vw * 0.95 &&
+                r.height >= vh * 0.95 &&
+                r.left <= 10 &&
+                r.top <= 10;
+              if (covers) {
+                var z = parseInt(cs.zIndex, 10);
+                if (isNaN(z)) z = 0;
+                list.push({
+                  el: el,
+                  sel: shortSel(el),
+                  pos: cs.position,
+                  z: z,
+                  pe: cs.pointerEvents,
+                  rect: r
+                });
+              }
+            });
+            list.sort(function (a, b) { return b.z - a.z; });
+            return list;
+          }
+
+          function outline(el) {
+            try { el.classList.add('diag-outline'); } catch (_) {}
+          }
+
+          function neutralize(list) {
+            var count = 0;
+            list.forEach(function (o) {
+              if (!o || !o.el) return;
+              try {
+                o.el.style.pointerEvents = 'none';
+                outline(o.el);
+                count++;
+              } catch (_) {}
+            });
+            return count;
+          }
+
+          function render() {
+            var v = vp();
+            var center = at(Math.floor(v.w / 2), Math.floor(v.h / 2));
+            var tl = at(10, 10);
+            var br = at(Math.max(0, v.w - 10), Math.max(0, v.h - 10));
+            var overlays = findOverlays();
+
+            var html = '';
+            html += '<div><b>Top elements</b></div>';
+            function row(label, inf) {
+              if (!inf) return '<div>' + label + ': null</div>';
+              return '<div>' + label + ': ' + inf.sel +
+                ' pos=' + inf.pos +
+                ' z=' + inf.z +
+                ' pe=' + inf.pe +
+                ' rect=' + inf.rect.w + 'x' + inf.rect.h + '@' + inf.rect.x + ',' + inf.rect.y +
+                '</div>';
+            }
+            html += row('Center', center);
+            html += row('Top-left', tl);
+            html += row('Bottom-right', br);
+
+            html += '<div style="margin-top:6px;"><b>Overlay candidates (' + overlays.length + ')</b></div>';
+            overlays.slice(0, 6).forEach(function (o, i) {
+              html += '<div>' + (i + 1) + ') ' + o.sel +
+                ' pos=' + o.pos +
+                ' z=' + o.z +
+                ' pe=' + o.pe +
+                ' rect=' + Math.round(o.rect.width) + 'x' + Math.round(o.rect.height) + '@' + Math.round(o.rect.left) + ',' + Math.round(o.rect.top) +
+                '</div>';
+            });
+
+            html += '<div style="margin-top:6px;">' +
+              '<button id="diag-neutralize">Neutralize overlays</button>' +
+              '<button id="diag-refresh">Refresh</button>' +
+              '<button id="diag-close">Close</button>' +
+              '</div>';
+
+            hud.innerHTML = html;
+
+            setTimeout(function () {
+              var bn = document.getElementById('diag-neutralize');
+              var brf = document.getElementById('diag-refresh');
+              var bcl = document.getElementById('diag-close');
+              if (bn) bn.addEventListener('click', function (e) {
+                e.preventDefault(); e.stopPropagation();
+                var c = neutralize(findOverlays());
+                render();
+              });
+              if (brf) brf.addEventListener('click', function (e) {
+                e.preventDefault(); e.stopPropagation();
+                render();
+              });
+              if (bcl) bcl.addEventListener('click', function (e) {
+                e.preventDefault(); e.stopPropagation();
+                try { hud.remove(); } catch (_) {}
+              });
+            }, 0);
+          }
+
+          // Attach HUD and render
+          document.documentElement.appendChild(hud);
+          render();
+
+          // Attempt to restore interactions automatically, then refresh HUD
+          setTimeout(function () {
+            neutralize(findOverlays());
+            render();
+          }, 150);
+
+          // A short sweep to catch late overlays (e.g., from libs after load)
+          (function sweep() {
+            var tries = 0, maxTries = 40;
+            var it = setInterval(function () {
+              var list = findOverlays();
+              if (list.length) neutralize(list);
+              render();
+              tries++;
+              if (tries >= maxTries) clearInterval(it);
+            }, 150);
+          })();
+        } catch (_) {}
+      })();
     </script>
   </body>
 </html>

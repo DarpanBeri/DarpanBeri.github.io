@@ -112,7 +112,7 @@ body {
 /* Desktop styles */
 @media (width >= 768px) {
   body {
-    overflow: hidden;
+    overflow: auto;
   }
 
   .container.main {
@@ -642,7 +642,7 @@ footer {
 
 .owl-theme .owl-controls .owl-nav [class*='owl-']:hover {
   background-color: var(--accent-color);
-  border-color: var (--accent-color);
+  border-color: var(--accent-color);
 }
 
 .owl-theme .owl-controls .owl-nav [class*='owl-']:hover i {
@@ -1485,7 +1485,7 @@ li {
 /* Desktop-specific container and scrolling */
 @media (width >= 768px) {
   body {
-    overflow: hidden;
+    overflow: auto;
   }
 
   .container.main {
@@ -1521,7 +1521,7 @@ li {
 /* Desktop-specific layout and scrolling */
 @media (width >= 768px) {
   body {
-    overflow: hidden;
+    overflow: auto;
     height: 100vh;
   }
 
@@ -1591,7 +1591,7 @@ li {
   }
 
   body {
-    overflow: hidden;
+    overflow: auto;
   }
 
   .container.main {
@@ -1641,7 +1641,7 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  overflow: auto;
 }
 
 /* Desktop layout */
@@ -1868,52 +1868,48 @@ body {
   border-color: #dc3545;
 }
 
-/* Override to re-enable page scrolling and avoid global scroll lock (Option A) */
-html,
-body {
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-
-/* Ensure main container can scroll as intended */
+/* Layout fix: allow container to grow with content and avoid internal scrolling */
 .container.main {
-  overflow-y: auto;
+  height: auto !important;
+  min-height: 100vh !important;
+  overflow: visible !important;
 }
 
-/* Final enforced scroll/interaction overrides */
-html,
-body {
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
+/* On desktop, ensure the main container is not a flex container that constrains height */
+@media (width >= 768px) {
+  .container.main {
+    display: block !important;
+    max-height: none !important;
+    padding-bottom: 40px !important; /* maintain some bottom spacing */
+  }
+  /* Neutralize any flex constraint that may cap height */
+  .row {
+    flex: none !important;
+  }
 }
 
-.container.main {
-  overflow-y: auto !important;
+/* Owl dots: render as simple bullets; keep accessible names via aria-label */
+#owl-demo .owl-dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
 }
-
-#index_right,
-.pages,
-.container.main {
-  pointer-events: auto !important;
-}
-
-/* Ensure carousel overlay never blocks interactions except on actual controls */
-.owl-theme .owl-controls {
-  pointer-events: none !important;
-}
-
-.owl-theme .owl-controls .owl-nav [class*='owl-'],
-#owl-demo .owl-dots,
 #owl-demo .owl-dot {
-  pointer-events: auto !important;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #cfcfcf;
+  border: 1px solid var(--border-color);
+  display: inline-block;
+  overflow: hidden; /* hide any residual text */
 }
-
-/* DEBUG: global pointer-events restore during diagnosis */
-* {
-  pointer-events: auto !important;
+#owl-demo .owl-dot.active {
+  background: var(--accent-color);
+  border-color: var(--accent-color);
 }
-
-/* DEBUG: outline potential full-viewport overlays */
-.debug-outline {
-  outline: 2px dashed red !important;
+/* Hide any text nodes/spans inside dots (JS adds a span for a11y) */
+#owl-demo .owl-dot > span {
+  display: none !important;
 }
