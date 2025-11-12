@@ -59,15 +59,12 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
           responsiveClass: true,
           onInitialized: function () {
             labelCarouselDots();
-            markActiveImageLoaded();
           },
           onRefreshed: function () {
             labelCarouselDots();
-            markActiveImageLoaded();
           },
           onChanged: function () {
             labelCarouselDots();
-            markActiveImageLoaded();
           },
           responsive: {
             0: { items: 1, nav: false },
@@ -87,7 +84,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
           $owl.trigger('destroy.owl.carousel');
         }
       } catch (e) {
-        void 0;
+        // Intentionally ignoring errors in this context
       }
       owl = null;
       owlInitialized = false;
@@ -143,19 +140,6 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
           span = $('<span></span>').appendTo($(this));
         }
         span.text('Slide ' + (index + 1)).attr('aria-hidden', 'true');
-      });
-    }
-    // Make currently active slide's image marked as loaded to ensure visibility for cloned slides
-    function markActiveImageLoaded() {
-      $('#owl-demo .owl-item.active img.img-rabbit').each(function () {
-        const $img = $(this);
-        if (this.complete) {
-          $img.addClass('loaded');
-        } else {
-          $img.on('load', function () {
-            $img.addClass('loaded');
-          });
-        }
       });
     }
     // Label when carousel is initialized, refreshed, or changed
@@ -224,7 +208,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
             try {
               onShown();
             } catch (e) {
-              void 0;
+              // Intentionally ignoring errors in this context
             }
           }
         });
@@ -360,7 +344,6 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
         if (owl && typeof owl.trigger === 'function') {
           owl.trigger('refresh.owl.carousel');
         }
-        markActiveImageLoaded();
       });
       $('#work_left').addClass('animated slideInLeft');
       $('#work_right').addClass('animated slideInRight');
@@ -400,7 +383,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
         try {
           window.goToHome();
         } catch (e) {
-          void 0;
+          // Intentionally ignoring errors in this context
         }
       } else {
         // Fallback: mimic goToHome if function is unavailable

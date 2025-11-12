@@ -266,10 +266,6 @@ body {
   margin: 0;
 }
 
-.img-rabbit.loaded {
-  opacity: 1;
-}
-
 /* Prevent image flicker */
 .owl-carousel .img-rabbit {
   opacity: 0;

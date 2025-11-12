@@ -304,7 +304,7 @@ describe('Runtime interactions: theme toggle and contact form', () => {
         jest.spyOn(window.history, 'pushState').mockImplementation(() => {});
       }
     } catch (_) {
-      void 0;
+      // Intentionally ignoring errors in this context
     }
     if (typeof Element !== 'undefined' && !Element.prototype.scrollIntoView) {
       Element.prototype.scrollIntoView = function () {};
@@ -324,7 +324,7 @@ describe('Runtime interactions: theme toggle and contact form', () => {
       try {
         if (typeof cb === 'function') cb();
       } catch (_) {
-        void 0;
+        // Intentionally ignoring errors in this context
       }
       return 0;
     };
@@ -452,7 +452,7 @@ describe('Runtime interactions: theme toggle and contact form', () => {
       try {
         localStorage.setItem('theme', newTheme);
       } catch (_) {
-        void 0;
+        // Intentionally ignoring errors in this context
       }
       themeIcon.className = newTheme === 'dark' ? 'fa fa-sun-o' : 'fa fa-moon-o';
       themeToggle.setAttribute('aria-pressed', newTheme === 'dark');
@@ -480,7 +480,7 @@ describe('Runtime interactions: theme toggle and contact form', () => {
             headers: { Accept: 'application/json' },
           });
         } catch (_) {
-          void 0; // ignore for unit test purposes
+          // Intentionally ignoring errors in this context
         } finally {
           // Remove loading state
           submitBtn.disabled = false;
