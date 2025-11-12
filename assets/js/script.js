@@ -365,16 +365,6 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
       $('#contact_right').addClass('animated slideInRight');
     });
 
-    $('.back').click(function () {
-      const currentSection = $('.pages:visible');
-      if ($('#work_scroll').is(':visible')) {
-        destroyOwlIfNeeded();
-      }
-      switchSection(currentSection, $('#index'));
-      $('#index_left').addClass('animated slideInLeft');
-      $('#index_right').addClass('animated slideInRight');
-    });
-
     // Ensure Owl is destroyed when using "Back to home" controls (links or persistent bar)
     $(document).on('click', 'a[href="#index"], .go-back-home', function (e) {
       e.preventDefault();
@@ -597,13 +587,6 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
       });
     });
 
-    // Easter egg interaction tracking
-    $('#where-to-find-me').click(function () {
-      trackEvent('easter_egg_click', {
-        name: 'where_to_find_me',
-      });
-    });
-
     // Carousel interaction tracking
     $('#owl-demo').on('changed.owl.carousel', function (event) {
       trackEvent('carousel_slide', {
@@ -669,30 +652,6 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
       setTimeout(() => {
         $('#where-to-find-me').focus();
       }, 500);
-    });
-  });
-
-  // Ensure proper functionality for the 'Back to Home' button
-  document.addEventListener('DOMContentLoaded', function () {
-    const backButtons = document.querySelectorAll('.back');
-
-    backButtons.forEach((button) => {
-      button.addEventListener('click', function (event) {
-        event.preventDefault();
-
-        // Hide all sections
-        const sections = document.querySelectorAll('.pages');
-        sections.forEach((section) => {
-          section.style.display = 'none';
-        });
-
-        // Show the home section
-        const homeSection = document.getElementById('index');
-        homeSection.style.display = 'block';
-
-        // Scroll to the top of the home section
-        homeSection.scrollIntoView({ behavior: 'smooth' });
-      });
     });
   });
 }
