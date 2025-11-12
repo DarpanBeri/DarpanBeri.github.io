@@ -139,6 +139,53 @@
         background-color: #8e7150;
         color: #fff;
       }
+
+      /* Moved from body to satisfy HTML validation */
+      html,
+      body {
+        overflow: auto !important;
+      }
+      .container.main {
+        height: auto !important;
+        overflow: visible !important;
+      }
+
+      /* diag-hud styles moved from body */
+      #diag-hud {
+        position: fixed;
+        top: 8px;
+        left: 8px;
+        z-index: 2147483647;
+        background: rgba(0, 0, 0, 0.85);
+        color: #fff;
+        font-family: monospace;
+        font-size: 12px;
+        line-height: 1.4;
+        padding: 8px;
+        max-width: 80vw;
+        max-height: 50vh;
+        overflow: auto;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+        pointer-events: auto;
+      }
+      #diag-hud b {
+        color: #ffd58a;
+      }
+      #diag-hud button {
+        background: #333;
+        color: #fff;
+        border: 1px solid #666;
+        border-radius: 3px;
+        cursor: pointer;
+        margin-right: 6px;
+      }
+      #diag-hud button:hover {
+        background: #444;
+      }
+      .diag-outline {
+        outline: 2px dashed red !important;
+      }
     </style>
   </head>
 
@@ -814,17 +861,6 @@
         } catch (_) {}
       })();
     </script>
-    <style>
-      /* Emergency interaction/scroll override */
-      html,
-      body {
-        overflow: auto !important;
-      }
-      .container.main {
-        height: auto !important;
-        overflow: visible !important;
-      }
-    </style>
     <script>
       (function () {
         try {
@@ -905,43 +941,6 @@
         } catch (_) {}
       })();
     </script>
-    <style id="diag-hud-style">
-      #diag-hud {
-        position: fixed;
-        top: 8px;
-        left: 8px;
-        z-index: 2147483647;
-        background: rgba(0, 0, 0, 0.85);
-        color: #fff;
-        font-family: monospace;
-        font-size: 12px;
-        line-height: 1.4;
-        padding: 8px;
-        max-width: 80vw;
-        max-height: 50vh;
-        overflow: auto;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 4px;
-        pointer-events: auto;
-      }
-      #diag-hud b {
-        color: #ffd58a;
-      }
-      #diag-hud button {
-        background: #333;
-        color: #fff;
-        border: 1px solid #666;
-        border-radius: 3px;
-        cursor: pointer;
-        margin-right: 6px;
-      }
-      #diag-hud button:hover {
-        background: #444;
-      }
-      .diag-outline {
-        outline: 2px dashed red !important;
-      }
-    </style>
     <script id="diag-hud-script">
       (function () {
         try {
