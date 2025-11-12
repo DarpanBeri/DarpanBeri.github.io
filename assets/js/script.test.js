@@ -178,10 +178,22 @@ describe('Runtime block smoke test (jQuery guarded)', () => {
     const chain = () => chain;
     chain._sel = sel || '';
     const methods = [
-      'hide', 'show', 'addClass', 'on', 'each',
-      'attr', 'find', 'text', 'trigger', 'focus', 'html', 'val'
+      'hide',
+      'show',
+      'addClass',
+      'on',
+      'each',
+      'attr',
+      'find',
+      'text',
+      'trigger',
+      'focus',
+      'html',
+      'val',
     ];
-    methods.forEach((m) => { chain[m] = () => chain; });
+    methods.forEach((m) => {
+      chain[m] = () => chain;
+    });
     // Implement fadeOut/fadeIn with immediate callback invocation if provided
     chain.fadeOut = (...args) => {
       const cb = args.find((a) => typeof a === 'function');
@@ -201,7 +213,7 @@ describe('Runtime block smoke test (jQuery guarded)', () => {
       }
       const h = handlers[chain._sel];
       if (typeof h === 'function') {
-        h.call(chain, { preventDefault(){} });
+        h.call(chain, { preventDefault() {} });
       }
       return chain;
     };
@@ -212,7 +224,8 @@ describe('Runtime block smoke test (jQuery guarded)', () => {
 
   beforeEach(() => {
     // Minimal DOM required by runtime code
-    document.body.innerHTML = '<button id="work" class="btn btn-rabbit">Work</button><button class="theme-toggle" aria-pressed="false"><i class="fa fa-moon-o"></i><span class="sr-only">Switch to dark mode</span></button><div id="owl-demo"></div>';
+    document.body.innerHTML =
+      '<button id="work" class="btn btn-rabbit">Work</button><button class="theme-toggle" aria-pressed="false"><i class="fa fa-moon-o"></i><span class="sr-only">Switch to dark mode</span></button><div id="owl-demo"></div>';
     // Event handler registry
     handlers = {};
     // Minimal $ stub

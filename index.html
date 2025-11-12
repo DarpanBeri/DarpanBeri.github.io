@@ -65,7 +65,10 @@
     <!-- Theme Color -->
     <meta name="theme-color" content="#bb9e7d" />
     <!-- SAFE MODE: Block all scripts to isolate JS as the cause. Remove this meta to re-enable JS. -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob:; img-src 'self' https: data:; style-src 'self' 'unsafe-inline' https:; font-src 'self' https: data:; script-src 'self' https://code.jquery.com https://cdnjs.cloudflare.com;">
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self' https: data: blob:; img-src 'self' https: data:; style-src 'self' 'unsafe-inline' https:; font-src 'self' https: data:; script-src 'self' https://code.jquery.com https://cdnjs.cloudflare.com;"
+    />
 
     <!-- Dependencies -->
     <script
@@ -412,8 +415,8 @@
               <ul>
                 <li>
                   <strong>Optimal RAG Settings</strong>: 100‑word chunks &amp; top_k=1 yielded ~70%
-                  human‑rated accuracy; larger chunks (200) or more chunks (top_k&gt;1) significantly
-                  degraded performance.
+                  human‑rated accuracy; larger chunks (200) or more chunks (top_k&gt;1)
+                  significantly degraded performance.
                 </li>
                 <li>
                   <strong>Evaluator Trustworthiness</strong>: Automated LLM agreement with human
@@ -781,7 +784,12 @@
             if (candidates.length) {
               // Disable pointer interaction on all full-viewport overlays, excluding core app containers
               candidates.forEach(function (el) {
-                if (el.id === 'index' || el.classList.contains('container') || el.classList.contains('main')) return;
+                if (
+                  el.id === 'index' ||
+                  el.classList.contains('container') ||
+                  el.classList.contains('main')
+                )
+                  return;
                 el.style.pointerEvents = 'none';
               });
             }
@@ -808,8 +816,14 @@
     </script>
     <style>
       /* Emergency interaction/scroll override */
-      html, body { overflow: auto !important; }
-      .container.main { height: auto !important; overflow: visible !important; }
+      html,
+      body {
+        overflow: auto !important;
+      }
+      .container.main {
+        height: auto !important;
+        overflow: visible !important;
+      }
     </style>
     <script>
       (function () {
@@ -820,12 +834,23 @@
 
           // Whitelist of core app containers we must not disable
           var WL = new Set(['HTML', 'BODY']);
-          var WL_IDS = new Set(['index', 'about_scroll', 'work_scroll', 'resources_scroll', 'contact_scroll', 'where_to_find_me']);
+          var WL_IDS = new Set([
+            'index',
+            'about_scroll',
+            'work_scroll',
+            'resources_scroll',
+            'contact_scroll',
+            'where_to_find_me',
+          ]);
           function isWhitelisted(el) {
             if (!el) return true;
             if (WL.has(el.tagName)) return true;
             if (el.id && WL_IDS.has(el.id)) return true;
-            if (el.classList && (el.classList.contains('container') || el.classList.contains('main'))) return true;
+            if (
+              el.classList &&
+              (el.classList.contains('container') || el.classList.contains('main'))
+            )
+              return true;
             return false;
           }
 
@@ -848,7 +873,9 @@
               if (coversViewport(el)) blocked.push(el);
             });
             if (blocked.length) {
-              blocked.forEach(function (el) { el.style.pointerEvents = 'none'; });
+              blocked.forEach(function (el) {
+                el.style.pointerEvents = 'none';
+              });
             }
           }
 
@@ -864,10 +891,16 @@
           }
 
           // Re-enable context menu if any inline handler disabled it
-          document.addEventListener('contextmenu', function (e) {
-            // Stop other listeners from preventing default
-            try { e.stopImmediatePropagation(); } catch (_) {}
-          }, true);
+          document.addEventListener(
+            'contextmenu',
+            function (e) {
+              // Stop other listeners from preventing default
+              try {
+                e.stopImmediatePropagation();
+              } catch (_) {}
+            },
+            true
+          );
           document.oncontextmenu = null;
         } catch (_) {}
       })();
@@ -891,7 +924,9 @@
         border-radius: 4px;
         pointer-events: auto;
       }
-      #diag-hud b { color: #ffd58a; }
+      #diag-hud b {
+        color: #ffd58a;
+      }
       #diag-hud button {
         background: #333;
         color: #fff;
@@ -900,8 +935,12 @@
         cursor: pointer;
         margin-right: 6px;
       }
-      #diag-hud button:hover { background: #444; }
-      .diag-outline { outline: 2px dashed red !important; }
+      #diag-hud button:hover {
+        background: #444;
+      }
+      .diag-outline {
+        outline: 2px dashed red !important;
+      }
     </style>
     <script id="diag-hud-script">
       (function () {
@@ -935,15 +974,15 @@
                 x: Math.round(r.left),
                 y: Math.round(r.top),
                 w: Math.round(r.width),
-                h: Math.round(r.height)
-              }
+                h: Math.round(r.height),
+              },
             };
           }
 
           function vp() {
             return {
               w: window.innerWidth || document.documentElement.clientWidth || 0,
-              h: window.innerHeight || document.documentElement.clientHeight || 0
+              h: window.innerHeight || document.documentElement.clientHeight || 0,
             };
           }
 
@@ -956,21 +995,28 @@
             if (!el) return true;
             if (el.id === 'diag-hud' || el.id === 'debug-badge') return true;
             if (el.tagName === 'HTML' || el.tagName === 'BODY') return true;
-            if (el.id && (
-              el.id === 'index' ||
-              el.id === 'about_scroll' ||
-              el.id === 'work_scroll' ||
-              el.id === 'resources_scroll' ||
-              el.id === 'contact_scroll' ||
-              el.id === 'where_to_find_me'
-            )) return true;
-            if (el.classList && (el.classList.contains('container') || el.classList.contains('main'))) return true;
+            if (
+              el.id &&
+              (el.id === 'index' ||
+                el.id === 'about_scroll' ||
+                el.id === 'work_scroll' ||
+                el.id === 'resources_scroll' ||
+                el.id === 'contact_scroll' ||
+                el.id === 'where_to_find_me')
+            )
+              return true;
+            if (
+              el.classList &&
+              (el.classList.contains('container') || el.classList.contains('main'))
+            )
+              return true;
             return false;
           }
 
           function findOverlays() {
             var v = vp();
-            var vw = v.w, vh = v.h;
+            var vw = v.w,
+              vh = v.h;
             var list = [];
             document.querySelectorAll('body *').forEach(function (el) {
               if (isWhitelisted(el)) return;
@@ -979,10 +1025,7 @@
               if (!(cs.position === 'fixed' || cs.position === 'absolute')) return;
               var r = el.getBoundingClientRect();
               var covers =
-                r.width >= vw * 0.95 &&
-                r.height >= vh * 0.95 &&
-                r.left <= 10 &&
-                r.top <= 10;
+                r.width >= vw * 0.95 && r.height >= vh * 0.95 && r.left <= 10 && r.top <= 10;
               if (covers) {
                 var z = parseInt(cs.zIndex, 10);
                 if (isNaN(z)) z = 0;
@@ -992,16 +1035,20 @@
                   pos: cs.position,
                   z: z,
                   pe: cs.pointerEvents,
-                  rect: r
+                  rect: r,
                 });
               }
             });
-            list.sort(function (a, b) { return b.z - a.z; });
+            list.sort(function (a, b) {
+              return b.z - a.z;
+            });
             return list;
           }
 
           function outline(el) {
-            try { el.classList.add('diag-outline'); } catch (_) {}
+            try {
+              el.classList.add('diag-outline');
+            } catch (_) {}
           }
 
           function neutralize(list) {
@@ -1028,28 +1075,61 @@
             html += '<div><b>Top elements</b></div>';
             function row(label, inf) {
               if (!inf) return '<div>' + label + ': null</div>';
-              return '<div>' + label + ': ' + inf.sel +
-                ' pos=' + inf.pos +
-                ' z=' + inf.z +
-                ' pe=' + inf.pe +
-                ' rect=' + inf.rect.w + 'x' + inf.rect.h + '@' + inf.rect.x + ',' + inf.rect.y +
-                '</div>';
+              return (
+                '<div>' +
+                label +
+                ': ' +
+                inf.sel +
+                ' pos=' +
+                inf.pos +
+                ' z=' +
+                inf.z +
+                ' pe=' +
+                inf.pe +
+                ' rect=' +
+                inf.rect.w +
+                'x' +
+                inf.rect.h +
+                '@' +
+                inf.rect.x +
+                ',' +
+                inf.rect.y +
+                '</div>'
+              );
             }
             html += row('Center', center);
             html += row('Top-left', tl);
             html += row('Bottom-right', br);
 
-            html += '<div style="margin-top:6px;"><b>Overlay candidates (' + overlays.length + ')</b></div>';
+            html +=
+              '<div style="margin-top:6px;"><b>Overlay candidates (' +
+              overlays.length +
+              ')</b></div>';
             overlays.slice(0, 6).forEach(function (o, i) {
-              html += '<div>' + (i + 1) + ') ' + o.sel +
-                ' pos=' + o.pos +
-                ' z=' + o.z +
-                ' pe=' + o.pe +
-                ' rect=' + Math.round(o.rect.width) + 'x' + Math.round(o.rect.height) + '@' + Math.round(o.rect.left) + ',' + Math.round(o.rect.top) +
+              html +=
+                '<div>' +
+                (i + 1) +
+                ') ' +
+                o.sel +
+                ' pos=' +
+                o.pos +
+                ' z=' +
+                o.z +
+                ' pe=' +
+                o.pe +
+                ' rect=' +
+                Math.round(o.rect.width) +
+                'x' +
+                Math.round(o.rect.height) +
+                '@' +
+                Math.round(o.rect.left) +
+                ',' +
+                Math.round(o.rect.top) +
                 '</div>';
             });
 
-            html += '<div style="margin-top:6px;">' +
+            html +=
+              '<div style="margin-top:6px;">' +
               '<button id="diag-neutralize">Neutralize overlays</button>' +
               '<button id="diag-refresh">Refresh</button>' +
               '<button id="diag-close">Close</button>' +
@@ -1061,19 +1141,27 @@
               var bn = document.getElementById('diag-neutralize');
               var brf = document.getElementById('diag-refresh');
               var bcl = document.getElementById('diag-close');
-              if (bn) bn.addEventListener('click', function (e) {
-                e.preventDefault(); e.stopPropagation();
-                var c = neutralize(findOverlays());
-                render();
-              });
-              if (brf) brf.addEventListener('click', function (e) {
-                e.preventDefault(); e.stopPropagation();
-                render();
-              });
-              if (bcl) bcl.addEventListener('click', function (e) {
-                e.preventDefault(); e.stopPropagation();
-                try { hud.remove(); } catch (_) {}
-              });
+              if (bn)
+                bn.addEventListener('click', function (e) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  var c = neutralize(findOverlays());
+                  render();
+                });
+              if (brf)
+                brf.addEventListener('click', function (e) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  render();
+                });
+              if (bcl)
+                bcl.addEventListener('click', function (e) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  try {
+                    hud.remove();
+                  } catch (_) {}
+                });
             }, 0);
           }
 
@@ -1089,7 +1177,8 @@
 
           // A short sweep to catch late overlays (e.g., from libs after load)
           (function sweep() {
-            var tries = 0, maxTries = 40;
+            var tries = 0,
+              maxTries = 40;
             var it = setInterval(function () {
               var list = findOverlays();
               if (list.length) neutralize(list);

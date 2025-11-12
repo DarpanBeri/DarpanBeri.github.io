@@ -5,8 +5,8 @@ module.exports = {
   collectCoverage: true,
   collectCoverageFrom: [
     'assets/js/**/*.js',
-    '!assets/js/**/*.min.js' // Exclude vendor/minified files from coverage
+    '!assets/js/**/*.min.js', // Exclude vendor/minified files from coverage
   ], // Measure coverage on app JS
   coverageReporters: ['text-summary', 'lcov'],
-  clearMocks: true
+  clearMocks: true,
 };
