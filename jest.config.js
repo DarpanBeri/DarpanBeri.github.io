@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   testEnvironment: 'jsdom',
   testMatch: ['**/*.test.js'], // Only run Jest unit tests
   testPathIgnorePatterns: ['/node_modules/', '/tests/'], // Ignore Playwright E2E tests
@@ -9,4 +9,7 @@ module.exports = {
   ], // Measure coverage on app JS
   coverageReporters: ['text-summary', 'lcov'],
   clearMocks: true,
+  setupFilesAfterEnv: ['<rootDir>/tests/jest.setup.js'],
+  // Ensure Jest does not transform files and lets Node handle native ESM
+  transform: {},
 };

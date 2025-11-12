@@ -1,10 +1,9 @@
-/** @type {import('@playwright/test').PlaywrightTestConfig} */
-const config = {
+import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
   testDir: './tests',
   reporter: [['list']],
   use: {
     headless: true,
   },
-};
-
-module.exports = config;
+});
