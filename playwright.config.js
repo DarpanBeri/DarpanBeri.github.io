@@ -3,8 +3,8 @@ const config = {
   testDir: './tests',
   reporter: [['list']],
   use: {
-    headless: true
-  }
+    headless: true,
+  },
 };
 
 module.exports = config;

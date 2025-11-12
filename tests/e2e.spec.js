@@ -82,10 +82,22 @@ test.describe('Portfolio E2E', () => {
     await expect(nextArrow).toBeVisible();
     await expect(prevArrow).toBeVisible();
 
+    // Assert currently active slide's image is visible
+    const activeSlide = page.locator('#owl-demo .owl-item.active');
+    await expect(activeSlide).toBeVisible();
+    const activeImg = activeSlide.locator('img.img-rabbit').first();
+    await expect(activeImg).toBeVisible();
+
     // Capture active dot index, click next, and verify it changed
     const before = await activeDotIndex(page);
     await nextArrow.click();
     await expect.poll(() => activeDotIndex(page)).not.toBe(before);
+
+    // Assert new active slide's image is visible
+    const newActiveSlide = page.locator('#owl-demo .owl-item.active');
+    await expect(newActiveSlide).toBeVisible();
+    const newActiveImg = newActiveSlide.locator('img.img-rabbit').first();
+    await expect(newActiveImg).toBeVisible();
   });
 
   test('Theme Toggle switches data-theme', async ({ page }) => {
@@ -100,8 +112,6 @@ test.describe('Portfolio E2E', () => {
 
     await toggle.click();
 
-    await expect
-      .poll(async () => (await html.getAttribute('data-theme')) || '')
-      .not.toBe(initial);
+    await expect.poll(async () => (await html.getAttribute('data-theme')) || '').not.toBe(initial);
   });
 });

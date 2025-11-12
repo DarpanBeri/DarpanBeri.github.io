@@ -266,16 +266,13 @@ body {
   margin: 0;
 }
 
-.img-rabbit.loaded {
-  opacity: 1;
-}
-
 /* Prevent image flicker */
 .owl-carousel .img-rabbit {
   opacity: 0;
 }
 
-.owl-carousel.owl-loaded .img-rabbit {
+/* Ensure active slide image is visible (robust against OwlCarousel clones) */
+.owl-carousel .owl-item.active .img-rabbit {
   opacity: 1;
 }
 
@@ -324,12 +321,10 @@ p {
   line-height: 1.75em;
 }
 
-h1,
 h2,
 h3,
 h4,
-h5,
-h6 {
+h5 {
   color: var(--heading-color);
   font-weight: 700;
   line-height: 1em;
@@ -356,7 +351,6 @@ h5 {
   line-height: 1.5em;
 }
 
-em,
 i {
   font-style: italic;
 }
@@ -369,25 +363,6 @@ ul {
 
 ul li {
   padding-left: 0.5em;
-}
-
-ul.icons {
-  cursor: default;
-  list-style: none;
-  padding-left: 0;
-}
-
-ul.icons li {
-  display: inline-block;
-  padding: 0 1em 0 0;
-}
-
-ul.icons li:last-child {
-  padding-right: 0 !important;
-}
-
-ul.icons li .icon::before {
-  font-size: 1.25em;
 }
 
 .page-title {
@@ -440,11 +415,6 @@ ul.icons li .icon::before {
   .logo img {
     width: 200px;
   }
-}
-
-footer {
-  padding: 22px 0 10px;
-  font-style: italic;
 }
 
 .back {
@@ -512,17 +482,9 @@ footer {
   font-family: 'Josefin Sans', sans-serif;
 }
 
-.fa-heartbeat {
-  color: #bb9e7d;
-}
-
 ::selection {
   color: #fff;
   background-color: #bb9e7d;
-}
-
-.bottom {
-  padding-right: 20px;
 }
 
 .page-title {
@@ -571,20 +533,6 @@ footer {
   bottom: -7px;
 }
 
-#watermark .marker {
-  position: absolute;
-  font-size: 60px;
-  opacity: 0.1;
-  font-family: 'Josefin Sans', sans-serif;
-  text-transform: uppercase;
-  left: 0;
-  top: -5px;
-}
-
-#watermark {
-  position: relative;
-}
-
 .item {
   background-color: #313131;
   color: #f9f9f9;
@@ -598,55 +546,10 @@ footer {
   /* margin-left: 0px; */
 }
 
-.owl-theme .owl-controls {
-  margin-top: 10px;
-  margin-right: 10px;
-  text-align: center;
-  width: 100%;
-  position: absolute;
-  top: calc(44% - 40px);
-  /* Ensure overlay container does not block interactions outside of actual controls */
-  pointer-events: none;
-}
-
-.owl-next {
-  right: 0;
-  padding-right: 1px;
-}
-
-.owl-prev {
-  left: 0;
-  padding-left: 1px;
-}
-
-.owl-theme .owl-controls .owl-nav [class*='owl-'] {
-  position: absolute;
-  border-radius: 0;
-  font-size: 21px;
-  padding: 15px 20px;
-  margin: 0;
-  background-color: var(--bg-color);
-  /* Re-enable pointer events for actual nav buttons */
-  pointer-events: auto;
-}
-
 /* Re-enable pointer events for owl dots as well */
 #owl-demo .owl-dots,
 #owl-demo .owl-dot {
   pointer-events: auto;
-}
-
-.owl-theme .owl-controls .owl-nav [class*='owl-'] i {
-  color: #333;
-}
-
-.owl-theme .owl-controls .owl-nav [class*='owl-']:hover {
-  background-color: var(--accent-color);
-  border-color: var(--accent-color);
-}
-
-.owl-theme .owl-controls .owl-nav [class*='owl-']:hover i {
-  color: #fff;
 }
 
 @media (width <= 1024px) and (orientation: landscape) {
@@ -672,20 +575,9 @@ footer {
 }
 
 /* Form Validation Styles */
-.invalid-feedback {
-  display: none;
-  color: #dc3545;
-  font-size: 14px;
-  margin-top: 5px;
-  font-family: Crimson, serif;
-}
 
 .form-control.is-invalid {
   border-color: #dc3545;
-}
-
-.form-control.is-invalid + .invalid-feedback {
-  display: block;
 }
 
 .alert {
@@ -846,21 +738,6 @@ footer {
 }
 
 /* Loading Animations */
-.loading-spinner {
-  display: inline-block;
-  width: 40px;
-  height: 40px;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  margin: -20px 0 0 -20px;
-  border: 3px solid rgb(187 158 125 / 30%);
-  border-radius: 50%;
-  border-top-color: var(--accent-color);
-  animation: spin 1s linear infinite;
-  animation: spin 1s linear infinite;
-  z-index: 1;
-}
 
 @keyframes spin {
   to {
@@ -890,15 +767,6 @@ footer {
 }
 
 /* Error message styling */
-.error-message {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  color: var(--text-color);
-  font-family: Crimson, serif;
-  font-style: italic;
-}
 
 /* Loading state for buttons */
 .btn-loading {
@@ -942,7 +810,6 @@ footer {
 
 /* Fix for iOS form input zoom */
 @media screen and (min-device-pixel-ratio: 0) {
-  select,
   textarea,
   input {
     font-size: 16px !important;
@@ -991,10 +858,6 @@ footer {
 }
 
 /* Accessibility Improvements */
-:focus {
-  outline: 3px solid #bb9e7d !important;
-  outline-offset: 2px;
-}
 
 .btn:focus {
   outline: 3px solid #bb9e7d !important;
@@ -1304,12 +1167,11 @@ body {
 }
 
 /* Headings */
-h1,
+
 h2,
 h3,
 h4,
 h5,
-h6,
 .page-title {
   font-family: 'Josefin Sans', sans-serif;
   color: var(--heading-color);
@@ -1415,20 +1277,6 @@ li {
 }
 
 /* Loading spinner */
-.loading-spinner {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 40px;
-  height: 40px;
-  margin: -20px 0 0 -20px;
-  border: 3px solid rgb(187 158 125 / 30%);
-  border-radius: 50%;
-  border-top-color: var(--accent-color);
-  animation: spin 1s linear infinite;
-  animation: spin 1s linear infinite;
-  z-index: 1;
-}
 
 @keyframes spin {
   to {
@@ -1742,49 +1590,8 @@ body {
 }
 
 /* Update styles for Back to home button to match other buttons */
-.back-to-home {
-  display: inline-block;
-  font-family: 'Josefin Sans', sans-serif;
-  font-style: italic;
-  padding: 10px 20px;
-  margin-bottom: 20px;
-  border: 1px solid var(--border-color);
-  background-color: var(--btn-bg);
-  color: var(--btn-text);
-  cursor: pointer;
-  transition: all 0.4s ease-in-out;
-  transition: all 0.4s ease-in-out;
-  transition: all 0.4s ease-in-out;
-  transition: all 0.4s ease-in-out;
-  text-decoration: none;
-  font-size: 16px;
-  letter-spacing: 0.5px;
-  border-radius: 0 !important;
-}
-
-.back-to-home:hover {
-  color: #fff;
-  background-color: var(--accent-color);
-  border-color: var(--accent-color);
-}
-
-.back-to-home:focus {
-  outline: 2px solid var(--accent-color);
-  outline-offset: 2px;
-}
-
-.back-to-home i {
-  margin-right: 10px;
-  font-size: 16px;
-}
 
 /* Improve mobile responsiveness for the back button */
-@media (width <= 767px) {
-  .back-to-home {
-    padding: 8px 15px;
-    font-size: 14px;
-  }
-}
 
 /* Minimalist form styles based on the attached image */
 .form-field {
@@ -1882,6 +1689,7 @@ body {
     max-height: none !important;
     padding-bottom: 40px !important; /* maintain some bottom spacing */
   }
+
   /* Neutralize any flex constraint that may cap height */
   .row {
     flex: none !important;
@@ -1896,6 +1704,7 @@ body {
   gap: 8px;
   margin-top: 12px;
 }
+
 #owl-demo .owl-dot {
   width: 10px;
   height: 10px;
@@ -1905,10 +1714,7 @@ body {
   display: inline-block;
   overflow: hidden; /* hide any residual text */
 }
-#owl-demo .owl-dot.active {
-  background: var(--accent-color);
-  border-color: var(--accent-color);
-}
+
 /* Hide any text nodes/spans inside dots (JS adds a span for a11y) */
 #owl-demo .owl-dot > span {
   display: none !important;
