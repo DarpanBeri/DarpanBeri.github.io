@@ -1,9 +1,6 @@
-const { test, expect } = require('@playwright/test');
-const path = require('path');
-const { pathToFileURL } = require('url');
+import { test, expect } from '@playwright/test';
 
-// Build a file:// URL to the local index.html
-const fileUrl = pathToFileURL(path.resolve(__dirname, '../index.html')).toString();
+const baseUrl = 'http://localhost:8080/';
 
 // Helpers
 async function activeDotIndex(page) {
@@ -14,7 +11,7 @@ async function activeDotIndex(page) {
 
 test.describe('Portfolio E2E', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(fileUrl, { waitUntil: 'load' });
+    await page.goto(baseUrl, { waitUntil: 'load' });
   });
 
   test('Page Load & Initial State', async ({ page }) => {

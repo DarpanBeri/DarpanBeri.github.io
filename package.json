@@ -2,6 +2,7 @@
   "name": "darpanberi.github.io",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "prepare": "husky install",
     "format": "prettier --write .",
@@ -10,13 +11,14 @@
     "lint:style": "stylelint \"assets/css/**/*.css\"",
     "lint:markdown": "markdownlint \"**/*.md\" --ignore node_modules --fix",
     "lint": "npm run lint:eslint && npm run lint:style && npm run lint:markdown",
-    "test": "jest",
-    "test:coverage": "jest --coverage",
+    "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js",
+    "test:coverage": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --coverage",
     "serve": "http-server -p 8080 -c-1 .",
     "validate:html": "html-validate --formatter stylish index.html",
     "check:links": "start-server-and-test 'npm run serve' http://localhost:8080 'linkinator http://localhost:8080 --recurse --skip \"^mailto:,^tel:,^javascript:,linkedin\\\\.com\"'",
     "check:a11y": "start-server-and-test 'npm run serve' http://localhost:8080 'axe http://localhost:8080 --exit'",
-    "check-all": "npm run format:check && npm run lint && npm run test:coverage && npm run validate:html && npm run check:links"
+    "check-all": "npm run format:check && npm run lint && npm run test:coverage && npm run validate:html && npm run check:links",
+    "quality-gate": "npm run format:check && npm run lint && npm run validate:html && npm run check:links && npm run test:coverage && start-server-and-test 'npm run serve' http://localhost:8080 'npx playwright test'"
   },
   "devDependencies": {
     "@axe-core/cli": "^4.7.2",
