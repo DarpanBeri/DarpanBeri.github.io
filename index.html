@@ -54,7 +54,7 @@
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-M6TJLX8T7J"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
+      globalThis.dataLayer = globalThis.dataLayer || [];
       function gtag() {
         dataLayer.push(arguments);
       }
@@ -196,7 +196,7 @@
         class="theme-toggle"
         type="button"
         aria-label="Toggle dark mode"
-        aria-pressed="false"
+        aria-checked="false"
         role="switch"
       >
         <i class="fa fa-moon-o" aria-hidden="true"></i>
@@ -204,13 +204,13 @@
       </button>
 
       <!-- Index starts here -->
-      <div id="index" role="main">
+      <main id="index">
         <div class="row home">
           <div id="index_left" class="col-md-6 left">
             <img
               class="img-rabbit"
               src="assets/images/home.png"
-              alt="Darpan Beri as a child smiling at the camera with his elder sister."
+              alt="Darpan Beri as a child smiling at the camera with his elder sister"
               width="800"
               height="600"
             />
@@ -219,15 +219,14 @@
             <div class="logo">
               <img
                 src="assets/images/avatar.png"
-                alt="Darpan Beri's profile photo."
+                alt="Darpan Beri's profile"
                 width="200"
                 height="200"
               />
               <h4>Darpan Beri</h4>
             </div>
             <p class="home-description">
-              Unlocking Data's Potential, Developing Robust AI Solutions, and Driving Measurable
-              Results: Applying Quantitative Methods to Complex Challenges.
+              Data Scientist & AI Engineer | Building with Data, Code, and Impact.
             </p>
             <div class="social">
               <a href="https://www.linkedin.com/in/darpanberi/" aria-label="LinkedIn Profile"
@@ -240,9 +239,8 @@
                 ><i class="fa fa-envelope" aria-hidden="true"></i
               ></a>
             </div>
-            <div
+            <nav
               class="btn-group-vertical custom_btn animated slideinright"
-              role="navigation"
               aria-label="Main Navigation"
             >
               <button id="about" class="btn btn-rabbit" type="button" aria-label="About Section">
@@ -267,13 +265,13 @@
               >
                 Contact
               </button>
-            </div>
+            </nav>
           </div>
         </div>
-      </div>
+      </main>
 
       <!-- About starts here -->
-      <div id="about_scroll" class="pages" role="region" aria-labelledby="about-title">
+      <section id="about_scroll" class="pages" aria-labelledby="about-title">
         <div class="row">
           <div class="col-md-6 left" id="about_left">
             <img src="assets/images/about.jpg" alt="About Me" class="img-rabbit" />
@@ -285,23 +283,19 @@
             </a>
             <div id="watermark-about">
               <h2 id="about-title" class="page-title text-center">About</h2>
-              <div class="marker">a</div>
             </div>
             <p class="subtitle">
-              I’m Darpan Beri. A new grad who just graduated with an M.Sc. in Big Data Analytics
-              (4.0 GPA) and eager to launch my career. I’m passionate about using software and data
-              to solve complex problems and bring hands‑on experience in data engineering, machine
-              learning, and software development.
+              Data Scientist & AI Engineer | Building with Data, Code, and Impact.
             </p>
 
             <!-- Who I Am -->
             <h3>Who I Am</h3>
             <p>
-              A newly minted Master’s grad driven by curiosity and impact. During my capstone, I ran
-              918 RAG experiments to fine‑tune LLaMa pipelines; at Gemini Soft Solutions I cut daily
-              pipeline errors by 90% and at SANDAG I accelerated data releases by 100×. Now I’m
-              looking to apply those skills, whether building scalable ETL systems, crafting ML
-              models, or architecting full‑stack applications to real‑world challenges.
+              I am a builder who sees the whole picture. I'm passionate about the entire lifecycle
+              of a data product, from the foundational infrastructure to the user-facing
+              application. Whether it's architecting a scalable ETL system, fine-tuning an LLM, or
+              engineering a full-stack feature, I enjoy connecting all the pieces to create a
+              seamless, high-performing solution.
             </p>
 
             <!-- Skills Snapshot -->
@@ -317,22 +311,22 @@
               </thead>
               <tbody>
                 <tr>
-                  <td>• Python &amp; SQL</td>
-                  <td>• PyTorch &amp; Scikit‑Learn</td>
+                  <td>• Python &amp; SQL DBs</td>
+                  <td>• RAG &amp; LLM Fine-Tuning</td>
                   <td>• React &amp; JavaScript</td>
                   <td>• Docker &amp; Kubernetes</td>
                 </tr>
                 <tr>
                   <td>• AWS S3 &amp; kdb+</td>
-                  <td>• RAG &amp; Transformers</td>
+                  <td>• Pipelines &amp; Architecture</td>
                   <td>• Java &amp; C++</td>
                   <td>• Git &amp; CI/CD</td>
                 </tr>
                 <tr>
-                  <td>• ETL Pipelines &amp; Airflow</td>
-                  <td>• Model Evaluation (R²)</td>
+                  <td>• Power BI &amp; Tableau</td>
+                  <td>• Statistical Modeling &amp; Model Evaluation (R²)</td>
                   <td>• REST APIs &amp; Flask</td>
-                  <td>• Grafana</td>
+                  <td>• Jenkins</td>
                 </tr>
               </tbody>
             </table>
@@ -340,34 +334,24 @@
             <!-- Get My Docs -->
             <div class="docs-buttons">
               <a
-                href="https://drive.google.com/file/d/10iwzb8ozByW5ceRHkb1m6lqpoq2UXtJo/view?usp=sharing"
+                href="https://drive.google.com/file/d/1cTC_8tJz2O8JJczGSpvUMZ_VQOVisLn0/view?usp=sharing"
                 class="btn btn-rabbit"
-                role="button"
                 target="_blank"
                 aria-label="Download Résumé"
                 >Download Résumé</a
               >
-              <a
-                href="https://drive.google.com/file/d/1ABtV72YgdHfK2IFIjTesv_3jV3DQBdyq/view?usp=sharing"
-                class="btn btn-rabbit"
-                role="button"
-                target="_blank"
-                aria-label="Download Academic CV"
-                >Download Academic CV</a
-              >
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       <!-- Work starts here -->
-      <div id="work_scroll" class="pages" role="region" aria-labelledby="work-title">
+      <section id="work_scroll" class="pages" aria-labelledby="work-title">
         <div class="row">
           <div class="col-md-6" id="work_left">
-            <div
+            <section
               id="owl-demo"
               class="owl-carousel owl-theme"
-              role="region"
               aria-label="Work portfolio images"
             >
               <div
@@ -418,7 +402,7 @@
                   />
                 </div>
               </div>
-            </div>
+            </section>
           </div>
 
           <div class="col-md-6" id="work_right">
@@ -428,7 +412,6 @@
             </a>
             <div id="watermark-work">
               <h2 id="work-title" class="page-title text-center">Work</h2>
-              <div class="marker">w</div>
             </div>
             <p class="subtitle">A selection of my projects and academic achievements.</p>
 
@@ -557,10 +540,10 @@
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       <!-- Resources starts here -->
-      <div id="resources_scroll" class="pages" role="region" aria-labelledby="resources-title">
+      <section id="resources_scroll" class="pages" aria-labelledby="resources-title">
         <div class="row">
           <div class="col-md-12">
             <!-- Updated button to use btn-rabbit class -->
@@ -569,22 +552,14 @@
             </a>
             <div id="watermark-resources">
               <h2 id="resources-title" class="page-title text-center">Resources</h2>
-              <div class="marker">r</div>
             </div>
             <div class="info">
               <ul class="resources-list">
                 <li>
                   <a
-                    href="https://drive.google.com/file/d/10iwzb8ozByW5ceRHkb1m6lqpoq2UXtJo/view?usp=sharing"
+                    href="https://drive.google.com/file/d/1cTC_8tJz2O8JJczGSpvUMZ_VQOVisLn0/view?usp=sharing"
                     target="_blank"
                     >Resume</a
-                  >
-                </li>
-                <li>
-                  <a
-                    href="https://drive.google.com/file/d/1ABtV72YgdHfK2IFIjTesv_3jV3DQBdyq/view?usp=sharing"
-                    target="_blank"
-                    >Academic CV</a
                   >
                 </li>
                 <li>
@@ -614,10 +589,10 @@
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       <!-- Hidden page content for the easter egg -->
-      <div id="where_to_find_me" class="pages" role="region" aria-labelledby="where-to-find-title">
+      <section id="where_to_find_me" class="pages" aria-labelledby="where-to-find-title">
         <div class="row">
           <div class="col-md-12">
             <!-- Updated navigation button for consistency -->
@@ -626,7 +601,6 @@
             </a>
             <div id="watermark-where">
               <h2 id="where-to-find-title" class="page-title text-center">Where to Find Me</h2>
-              <div class="marker">w</div>
             </div>
             <div class="info">
               <!-- Content remains the same -->
@@ -711,10 +685,10 @@
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       <!-- Contact starts here -->
-      <div id="contact_scroll" class="pages" role="region" aria-labelledby="contact-title">
+      <section id="contact_scroll" class="pages" aria-labelledby="contact-title">
         <div class="row">
           <div class="col-md-6 left" id="contact_left">
             <img src="assets/images/contact.GIF" alt="Contact Me" class="img-rabbit" />
@@ -727,10 +701,9 @@
             </a>
             <div id="watermark-contact">
               <h2 id="contact-title" class="page-title text-center">Contact</h2>
-              <div class="marker">c</div>
             </div>
             <p class="subtitle">
-              I'm currently based in Ontario. Feel free to reach out to me for any opportunities or
+              I'm currently based in Quebec. Feel free to reach out to me for any opportunities or
               collaborations.
             </p>
             <!-- Add a single form status element -->
@@ -777,11 +750,13 @@
             </form>
           </div>
         </div>
-      </div>
+      </section>
     </div>
 
     <!-- Add a persistent 'Go Back to Home' button -->
-    <div class="go-back-home" onclick="goToHome()">Go Back to Home</div>
+    <button class="go-back-home" onclick="goToHome()" type="button" aria-label="Go back to home">
+      Go Back to Home
+    </button>
 
     <script>
       // Function to navigate back to the home section
@@ -811,8 +786,14 @@
             if (cs.display === 'none') return false;
             if (!(cs.position === 'fixed' || cs.position === 'absolute')) return false;
             var rect = el.getBoundingClientRect();
-            var vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-            var vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+            var vw = Math.max(
+              document.documentElement.clientWidth || 0,
+              globalThis.innerWidth || 0
+            );
+            var vh = Math.max(
+              document.documentElement.clientHeight || 0,
+              globalThis.innerHeight || 0
+            );
             var coversW = rect.width >= vw * 0.98;
             var coversH = rect.height >= vh * 0.98;
             var nearTopLeft = rect.top <= 2 && rect.left <= 2;
@@ -858,7 +839,9 @@
               if (tries >= maxTries) clearInterval(interval);
             }, 100);
           })();
-        } catch (_) {}
+        } catch (error) {
+          console.error('Error in overlay neutralization:', error);
+        }
       })();
     </script>
     <script>
@@ -894,8 +877,14 @@
           function coversViewport(el) {
             if (!el || isWhitelisted(el)) return false;
             var rect = el.getBoundingClientRect();
-            var vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-            var vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+            var vw = Math.max(
+              document.documentElement.clientWidth || 0,
+              globalThis.innerWidth || 0
+            );
+            var vh = Math.max(
+              document.documentElement.clientHeight || 0,
+              globalThis.innerHeight || 0
+            );
             if (!rect || !rect.width || !rect.height) return false;
             var coversW = rect.width >= vw * 0.98;
             var coversH = rect.height >= vh * 0.98;
@@ -922,7 +911,7 @@
           });
 
           // Detach any jQuery document keydown handlers that could interfere with Enter/scroll
-          if (window.jQuery && typeof jQuery.fn !== 'undefined') {
+          if (globalThis.jQuery && globalThis.jQuery.fn !== undefined) {
             jQuery(document).off('keydown');
           }
 
@@ -933,12 +922,16 @@
               // Stop other listeners from preventing default
               try {
                 e.stopImmediatePropagation();
-              } catch (_) {}
+              } catch (error) {
+                console.error('Error in context menu handler:', error);
+              }
             },
             true
           );
           document.oncontextmenu = null;
-        } catch (_) {}
+        } catch (error) {
+          console.error('Error in overlay cleanup:', error);
+        }
       })();
     </script>
     <script id="diag-hud-script">
@@ -948,6 +941,32 @@
           var hud = document.createElement('div');
           hud.id = 'diag-hud';
           hud.setAttribute('role', 'status');
+
+          // Move row function to outer scope
+          function row(label, inf) {
+            if (!inf) return '<div>' + label + ': null</div>';
+            return (
+              '<div>' +
+              label +
+              ': ' +
+              inf.sel +
+              ' pos=' +
+              inf.pos +
+              ' z=' +
+              inf.z +
+              ' pe=' +
+              inf.pe +
+              ' rect=' +
+              inf.rect.w +
+              'x' +
+              inf.rect.h +
+              '@' +
+              inf.rect.x +
+              ',' +
+              inf.rect.y +
+              '</div>'
+            );
+          }
 
           function shortSel(el) {
             if (!el) return 'null';
@@ -980,8 +999,8 @@
 
           function vp() {
             return {
-              w: window.innerWidth || document.documentElement.clientWidth || 0,
-              h: window.innerHeight || document.documentElement.clientHeight || 0,
+              w: globalThis.innerWidth || document.documentElement.clientWidth || 0,
+              h: globalThis.innerHeight || document.documentElement.clientHeight || 0,
             };
           }
 
@@ -1026,8 +1045,8 @@
               var covers =
                 r.width >= vw * 0.95 && r.height >= vh * 0.95 && r.left <= 10 && r.top <= 10;
               if (covers) {
-                var z = parseInt(cs.zIndex, 10);
-                if (isNaN(z)) z = 0;
+                var z = Number.parseInt(cs.zIndex, 10);
+                if (Number.isNaN(z)) z = 0;
                 list.push({
                   el: el,
                   sel: shortSel(el),
@@ -1047,7 +1066,9 @@
           function outline(el) {
             try {
               el.classList.add('diag-outline');
-            } catch (_) {}
+            } catch (error) {
+              console.error('Error adding outline:', error);
+            }
           }
 
           function neutralize(list) {
@@ -1058,7 +1079,9 @@
                 o.el.style.pointerEvents = 'none';
                 outline(o.el);
                 count++;
-              } catch (_) {}
+              } catch (error) {
+                console.error('Error neutralizing overlay:', error);
+              }
             });
             return count;
           }
@@ -1072,30 +1095,6 @@
 
             var html = '';
             html += '<div><b>Top elements</b></div>';
-            function row(label, inf) {
-              if (!inf) return '<div>' + label + ': null</div>';
-              return (
-                '<div>' +
-                label +
-                ': ' +
-                inf.sel +
-                ' pos=' +
-                inf.pos +
-                ' z=' +
-                inf.z +
-                ' pe=' +
-                inf.pe +
-                ' rect=' +
-                inf.rect.w +
-                'x' +
-                inf.rect.h +
-                '@' +
-                inf.rect.x +
-                ',' +
-                inf.rect.y +
-                '</div>'
-              );
-            }
             html += row('Center', center);
             html += row('Top-left', tl);
             html += row('Bottom-right', br);
@@ -1144,7 +1143,7 @@
                 bn.addEventListener('click', function (e) {
                   e.preventDefault();
                   e.stopPropagation();
-                  var c = neutralize(findOverlays());
+                  neutralize(findOverlays());
                   render();
                 });
               if (brf)
@@ -1159,7 +1158,9 @@
                   e.stopPropagation();
                   try {
                     hud.remove();
-                  } catch (_) {}
+                  } catch (error) {
+                    console.error('Error removing HUD:', error);
+                  }
                 });
             }, 0);
           }
@@ -1186,7 +1187,9 @@
               if (tries >= maxTries) clearInterval(it);
             }, 150);
           })();
-        } catch (_) {}
+        } catch (error) {
+          console.error('Error in diagnostic HUD:', error);
+        }
       })();
     </script>
   </body>

@@ -1,6 +1,6 @@
 const { test, expect } = require('@playwright/test');
-const path = require('path');
-const { pathToFileURL } = require('url');
+const path = require('node:path');
+const { pathToFileURL } = require('node:url');
 
 // Build a file:// URL to the local index.html
 const fileUrl = pathToFileURL(path.resolve(__dirname, '../index.html')).toString();

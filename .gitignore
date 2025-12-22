@@ -24,3 +24,7 @@ node_modules/
 # Temporary files
 *.tmp
 *.log
+
+# Test coverage reports
+coverage/
+test-results/
