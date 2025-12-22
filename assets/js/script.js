@@ -13,21 +13,29 @@ function isValidEmail(email) {
   return true;
 }
 
+// Helper function for GA4 event tracking (outer scope for reusability)
+function trackEvent(eventName, params = {}) {
+  if (typeof gtag === 'function') {
+    gtag('event', eventName, params);
+  }
+}
+
 // Theme initialization function (exported for tests)
 function initializeTheme() {
-  const savedTheme =
-    typeof globalThis.localStorage !== 'undefined'
-      ? globalThis.localStorage.getItem('theme')
-      : null;
+  const savedTheme = globalThis.localStorage?.getItem('theme') ?? null;
   const theme = savedTheme || 'light'; // default to light
-  if (typeof globalThis.document !== 'undefined' && globalThis.document.documentElement) {
+  if (globalThis.document?.documentElement) {
     globalThis.document.documentElement.setAttribute('data-theme', theme);
   }
   return theme;
 }
 
 // Wrap all browser-specific code to avoid executing in Node/Jest
-if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $ !== 'undefined') {
+if (
+  globalThis.window !== undefined &&
+  globalThis.document !== undefined &&
+  globalThis.$ !== undefined
+) {
   // Initialize theme handling before DOM ready
   initializeTheme();
 
@@ -41,7 +49,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
 
     function initOwlIfNeeded() {
       if (owlInitialized) return;
-      if ($.fn && $.fn.owlCarousel && $('#owl-demo').length) {
+      if ($.fn?.owlCarousel && $('#owl-demo').length) {
         owl = $('#owl-demo').owlCarousel({
           items: 1,
           loop: true,
@@ -83,8 +91,8 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
         if ($owl && $owl.data('owl.carousel')) {
           $owl.trigger('destroy.owl.carousel');
         }
-      } catch (e) {
-        // Intentionally ignoring errors in this context
+      } catch (error) {
+        console.error('Error destroying owl carousel:', error);
       }
       owl = null;
       owlInitialized = false;
@@ -130,12 +138,12 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
     // Accessibility: add labels for carousel dots (ensure after Owl initializes)
     function labelCarouselDots() {
       $('#owl-demo .owl-dot').each(function (index) {
-        var label = 'Go to slide ' + (index + 1);
+        const label = 'Go to slide ' + (index + 1);
         // Provide multiple naming mechanisms recognized by accessibility APIs
         $(this).attr('aria-label', label);
         $(this).attr('title', label);
         // Ensure element content exists (Pa11y considers element text as a valid accessible name)
-        var span = $(this).find('span');
+        let span = $(this).find('span');
         if (span.length === 0) {
           span = $('<span></span>').appendTo($(this));
         }
@@ -154,9 +162,9 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
 
     // MutationObserver fallback to ensure labels are present whenever dots are rendered/updated
     (function ensureDotLabelsWithMutationObserver() {
-      var dotsContainer = document.querySelector('#owl-demo .owl-dots');
+      const dotsContainer = document.querySelector('#owl-demo .owl-dots');
       if (dotsContainer && typeof MutationObserver !== 'undefined') {
-        var observer = new MutationObserver(function () {
+        const observer = new MutationObserver(function () {
           labelCarouselDots();
         });
         observer.observe(dotsContainer, { childList: true, subtree: true });
@@ -167,9 +175,9 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
 
     // Polling fallback: repeatedly attempt to label dots for a short time window
     (function pollDotLabels() {
-      var tries = 0;
-      var maxTries = 50; // ~5 seconds at 100ms intervals
-      var interval = setInterval(function () {
+      let tries = 0;
+      const maxTries = 50; // ~5 seconds at 100ms intervals
+      const interval = setInterval(function () {
         labelCarouselDots();
         tries++;
         if (tries >= maxTries) {
@@ -177,13 +185,6 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
         }
       }, 100);
     })();
-
-    // Helper function for GA4 event tracking
-    function trackEvent(eventName, params = {}) {
-      if (typeof gtag === 'function') {
-        gtag('event', eventName, params);
-      }
-    }
 
     // Prevent scroll leaking between sections
     let isAnimating = false;
@@ -200,15 +201,15 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
         $showSection.fadeIn(400, function () {
           isAnimating = false;
           // Scroll to top of new section on mobile
-          if (window.innerWidth <= 767) {
-            window.scrollTo(0, 0);
+          if (globalThis.innerWidth <= 767) {
+            globalThis.scrollTo(0, 0);
           }
           // Optional callback after section is shown
-          if (typeof onShown === 'function') {
+          if (onShown !== undefined) {
             try {
               onShown();
-            } catch (e) {
-              // Intentionally ignoring errors in this context
+            } catch (error) {
+              console.error('Error in onShown callback:', error);
             }
           }
         });
@@ -246,17 +247,18 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
 
     // Theme toggle handler
     function toggleTheme() {
-      const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+      const currentTheme = document.documentElement.dataset.theme || 'light';
       const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
 
-      document.documentElement.setAttribute('data-theme', newTheme);
+      document.documentElement.dataset.theme = newTheme;
       localStorage.setItem('theme', newTheme);
 
       // Update icon and ARIA attributes
-      themeIcon.className = newTheme === 'dark' ? 'fa fa-sun-o' : 'fa fa-moon-o';
+      const iconClass = newTheme === 'dark' ? 'fa fa-sun-o' : 'fa fa-moon-o';
+      themeIcon.className = iconClass;
       themeToggle.setAttribute('aria-pressed', newTheme === 'dark');
-      themeToggle.querySelector('.sr-only').textContent =
-        newTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+      const srText = newTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+      themeToggle.querySelector('.sr-only').textContent = srText;
 
       // Track theme change if GA is available
       if (typeof gtag === 'function') {
@@ -267,11 +269,12 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
     }
 
     // Initialize theme toggle state
-    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-    themeIcon.className = currentTheme === 'dark' ? 'fa fa-sun-o' : 'fa fa-moon-o';
+    const currentTheme = document.documentElement.dataset.theme || 'light';
+    const initialIconClass = currentTheme === 'dark' ? 'fa fa-sun-o' : 'fa fa-moon-o';
+    themeIcon.className = initialIconClass;
     themeToggle.setAttribute('aria-pressed', currentTheme === 'dark');
-    themeToggle.querySelector('.sr-only').textContent =
-      currentTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+    const initialSrText = currentTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+    themeToggle.querySelector('.sr-only').textContent = initialSrText;
 
     // Add theme toggle event listeners
     themeToggle.addEventListener('click', toggleTheme);
@@ -341,7 +344,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
     $('#work').click(function () {
       switchSection($('#index'), $('#work_scroll'), function () {
         initOwlIfNeeded();
-        if (owl && typeof owl.trigger === 'function') {
+        if (owl?.trigger) {
           owl.trigger('refresh.owl.carousel');
         }
       });
@@ -369,17 +372,17 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
     $(document).on('click', 'a[href="#index"], .go-back-home', function (e) {
       e.preventDefault();
       destroyOwlIfNeeded();
-      if (typeof window.goToHome === 'function') {
+      if (globalThis.goToHome !== undefined) {
         try {
-          window.goToHome();
-        } catch (e) {
-          // Intentionally ignoring errors in this context
+          globalThis.goToHome();
+        } catch (error) {
+          console.error('Error calling goToHome:', error);
         }
       } else {
         // Fallback: mimic goToHome if function is unavailable
         $('.pages').hide();
         $('#index').show();
-        window.scrollTo(0, 0);
+        globalThis.scrollTo(0, 0);
       }
     });
 
@@ -408,7 +411,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
     // });
 
     // Handle orientation change
-    window.addEventListener('orientationchange', function () {
+    globalThis.addEventListener('orientationchange', function () {
       // Wait for orientation change to complete
       setTimeout(function () {
         // Reset any ongoing animations
@@ -419,7 +422,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
         $currentSection.hide().show(0);
 
         // Ensure proper scroll position
-        window.scrollTo(0, 0);
+        globalThis.scrollTo(0, 0);
       }, 200);
     });
 
@@ -615,8 +618,8 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof $
         $('#where_to_find_me').fadeIn(400, function () {
           isAnimating = false;
           // Scroll to top of new section on mobile
-          if (window.innerWidth <= 767) {
-            window.scrollTo(0, 0);
+          if (globalThis.innerWidth <= 767) {
+            globalThis.scrollTo(0, 0);
           }
         });
 

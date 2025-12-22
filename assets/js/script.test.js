@@ -207,12 +207,12 @@ describe('Runtime block smoke test (jQuery guarded)', () => {
     };
     // click: register handler or invoke stored one
     chain.click = (fn) => {
-      if (typeof fn === 'function') {
+      if (fn !== undefined) {
         handlers[chain._sel] = fn;
         return chain;
       }
       const h = handlers[chain._sel];
-      if (typeof h === 'function') {
+      if (h !== undefined) {
         h.call(chain, { preventDefault() {} });
       }
       return chain;
@@ -248,9 +248,9 @@ describe('Runtime block smoke test (jQuery guarded)', () => {
     const original$ = $stub;
     const wrapper$ = (arg) => {
       // If arg is document (nodeType 9), return a chain with .ready and .on implemented
-      if (arg && arg.nodeType === 9) {
+      if (arg?.nodeType === 9) {
         const docChain = makeChain('document');
-        docChain.ready = (fn) => fn && fn();
+        docChain.ready = (fn) => fn?.();
         // Basic delegated handler registration no-op to avoid errors
         docChain.on = () => docChain;
         return docChain;
@@ -259,11 +259,11 @@ describe('Runtime block smoke test (jQuery guarded)', () => {
     };
     Object.assign(wrapper$, $stub);
 
-    global.$ = wrapper$;
+    globalThis.$ = wrapper$;
   });
 
   afterEach(() => {
-    delete global.$;
+    delete globalThis.$;
     jest.resetModules();
   });
 
@@ -293,55 +293,69 @@ describe('Runtime interactions: theme toggle and contact form', () => {
       </form>
     `;
     // Ensure a default theme is set on html
-    document.documentElement.setAttribute('data-theme', 'light');
+    document.documentElement.dataset.theme = 'light';
 
     // Neutralize browser-only APIs that can throw under jsdom
-    if (typeof window.scrollTo !== 'function') {
-      window.scrollTo = () => {};
+    if (globalThis.scrollTo === undefined) {
+      globalThis.scrollTo = () => {};
     }
     try {
-      if (window.history && typeof window.history.pushState === 'function') {
-        jest.spyOn(window.history, 'pushState').mockImplementation(() => {});
+      if (globalThis.history?.pushState) {
+        jest.spyOn(globalThis.history, 'pushState').mockImplementation(() => {});
       }
-    } catch (_) {
-      // Intentionally ignoring errors in this context
+    } catch (error) {
+      console.error('Error setting up history spy:', error);
     }
     if (typeof Element !== 'undefined' && !Element.prototype.scrollIntoView) {
       Element.prototype.scrollIntoView = function () {};
     }
 
     // Further neutralize window-level events and timers that can cause jsdom DOMExceptions
-    const origWinAddEventListener = window.addEventListener;
-    window.addEventListener = (type, listener) => {
-      if (type === 'load' || type === 'orientationchange' || type === 'resize') {
+    const origWinAddEventListener = globalThis.addEventListener;
+    const shouldIgnoreEvent = (type) =>
+      type === 'load' || type === 'orientationchange' || type === 'resize';
+    globalThis.addEventListener = (type, listener) => {
+      if (shouldIgnoreEvent(type)) {
         return;
       }
-      return origWinAddEventListener.call(window, type, listener);
+      return origWinAddEventListener.call(globalThis, type, listener);
     };
-    global.setInterval = jest.fn(() => 0);
-    global.clearInterval = jest.fn();
-    global.setTimeout = (cb, _ms) => {
-      try {
-        if (typeof cb === 'function') cb();
-      } catch (_) {
-        // Intentionally ignoring errors in this context
+    globalThis.setInterval = jest.fn(() => 0);
+    globalThis.clearInterval = jest.fn();
+    globalThis.setTimeout = (cb, _ms) => {
+      if (cb !== undefined) {
+        try {
+          cb();
+        } catch (error) {
+          console.error('Error in setTimeout callback:', error);
+        }
       }
       return 0;
     };
     // Avoid diag-hud elementAt/overlay code relying on elementFromPoint
-    if (typeof document.elementFromPoint !== 'function') {
+    if (document.elementFromPoint === undefined) {
       document.elementFromPoint = () => null;
     } else {
       jest.spyOn(document, 'elementFromPoint').mockImplementation(() => null);
     }
 
+    // Helper functions to reduce nesting depth
+    const handleAttrGet = (el, name) => el.dataset[name] || el.getAttribute(name);
+    const handleAttrSet = (el, name, value) => {
+      if (name.startsWith('data-')) {
+        el.dataset[name.slice(5)] = value;
+      } else {
+        el.setAttribute(name, value);
+      }
+    };
+
     // Minimal jQuery-like stub so $(document).ready in script.js runs and binds listeners
     const $stub = (arg) => {
       // Special-case document to implement .ready()
-      if (arg && arg.nodeType === 9) {
+      if (arg?.nodeType === 9) {
         return {
           ready: (fn) => {
-            if (typeof fn === 'function') fn();
+            if (fn !== undefined) fn();
           },
           on: () => {},
         };
@@ -350,7 +364,7 @@ describe('Runtime interactions: theme toggle and contact form', () => {
       let el = null;
       if (typeof arg === 'string') {
         el = document.querySelector(arg);
-      } else if (arg && arg.nodeType === 1) {
+      } else if (arg?.nodeType === 1) {
         el = arg;
       }
       const chain = {
@@ -366,12 +380,12 @@ describe('Runtime interactions: theme toggle and contact form', () => {
           return chain;
         },
         on: (type, handler) => {
-          if (el && typeof handler === 'function') el.addEventListener(type, handler);
+          if (el && handler !== undefined) el.addEventListener(type, handler);
           return chain;
         },
         click: (fn) => {
           if (!el) return chain;
-          if (typeof fn === 'function') {
+          if (fn !== undefined) {
             el.addEventListener('click', fn);
           }
           // Do not auto-trigger clicks when no handler is provided; jQuery's .click()
@@ -381,12 +395,12 @@ describe('Runtime interactions: theme toggle and contact form', () => {
         each: () => chain,
         attr: (name, value) => {
           if (!el) return chain;
-          if (value === undefined) return el.getAttribute(name);
-          el.setAttribute(name, value);
+          if (value === undefined) return handleAttrGet(el, name);
+          handleAttrSet(el, name, value);
           return chain;
         },
         find: (sel) => {
-          const child = el ? el.querySelector(sel) : null;
+          const child = el?.querySelector(sel);
           return $stub(child || sel);
         },
         text: (t) => {
@@ -395,7 +409,7 @@ describe('Runtime interactions: theme toggle and contact form', () => {
         },
         trigger: () => chain,
         focus: () => {
-          if (el && el.focus) el.focus();
+          if (el?.focus) el.focus();
           return chain;
         },
         html: (h) => {
@@ -426,7 +440,8 @@ describe('Runtime interactions: theme toggle and contact form', () => {
           }
           try {
             return el.matches(sel);
-          } catch (_) {
+          } catch (error) {
+            console.error('Error matching selector:', error);
             return false;
           }
         },
@@ -434,7 +449,7 @@ describe('Runtime interactions: theme toggle and contact form', () => {
       return chain;
     };
     $stub.fn = {};
-    global.$ = $stub;
+    globalThis.$ = $stub;
 
     jest.resetModules();
 
@@ -446,13 +461,13 @@ describe('Runtime interactions: theme toggle and contact form', () => {
     const themeIcon = themeToggle.querySelector('i');
     const sr = themeToggle.querySelector('.sr-only');
     function toggleTheme() {
-      const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+      const currentTheme = document.documentElement.dataset.theme || 'light';
       const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', newTheme);
+      document.documentElement.dataset.theme = newTheme;
       try {
         localStorage.setItem('theme', newTheme);
-      } catch (_) {
-        // Intentionally ignoring errors in this context
+      } catch (error) {
+        console.error('Error saving theme to localStorage:', error);
       }
       themeIcon.className = newTheme === 'dark' ? 'fa fa-sun-o' : 'fa fa-moon-o';
       themeToggle.setAttribute('aria-pressed', newTheme === 'dark');
@@ -479,8 +494,8 @@ describe('Runtime interactions: theme toggle and contact form', () => {
             body: formData,
             headers: { Accept: 'application/json' },
           });
-        } catch (_) {
-          // Intentionally ignoring errors in this context
+        } catch (error) {
+          console.error('Error submitting form:', error);
         } finally {
           // Remove loading state
           submitBtn.disabled = false;
@@ -495,11 +510,11 @@ describe('Runtime interactions: theme toggle and contact form', () => {
     const icon = toggle.querySelector('i');
     const sr = toggle.querySelector('.sr-only');
 
-    expect(document.documentElement.getAttribute('data-theme')).toBe('light');
+    expect(document.documentElement.dataset.theme).toBe('light');
     toggle.click();
-    expect(['dark', 'light']).toContain(document.documentElement.getAttribute('data-theme'));
+    expect(['dark', 'light']).toContain(document.documentElement.dataset.theme);
     // After first click from light -> dark expected
-    expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
+    expect(document.documentElement.dataset.theme).toBe('dark');
     expect(toggle.getAttribute('aria-pressed')).toBe('true');
     expect(icon.className).toContain('fa-sun-o');
     expect(sr.textContent).toMatch(/Switch to light mode/i);
@@ -509,7 +524,7 @@ describe('Runtime interactions: theme toggle and contact form', () => {
     const form = document.getElementById('contactForm');
     const submitBtn = form.querySelector('button[type="submit"]');
     const fetchMock = jest.fn().mockResolvedValue({ ok: true, json: async () => ({}) });
-    global.fetch = fetchMock;
+    globalThis.fetch = fetchMock;
 
     // Dispatch submit
     const ev = new Event('submit', { bubbles: true, cancelable: true });
@@ -526,7 +541,7 @@ describe('Runtime interactions: theme toggle and contact form', () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
     const [url, opts] = fetchMock.mock.calls[0];
     expect(url).toMatch(/^https:\/\/formspree\.io\/f\//);
-    expect(((opts && opts.method) || '').toUpperCase()).toBe('POST');
+    expect(opts?.method?.toUpperCase()).toBe('POST');
 
     // After handler completion, loading removed
     // Give the finally{} a tick
@@ -534,6 +549,6 @@ describe('Runtime interactions: theme toggle and contact form', () => {
     expect(submitBtn.disabled).toBe(false);
     expect(submitBtn.classList.contains('btn-loading')).toBe(false);
 
-    delete global.fetch;
+    delete globalThis.fetch;
   });
 });
