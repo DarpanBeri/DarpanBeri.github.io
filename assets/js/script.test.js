@@ -459,7 +459,7 @@ describe('Runtime interactions: theme toggle and contact form', () => {
         console.error('Error saving theme to localStorage:', error);
       }
       themeIcon.className = newTheme === 'dark' ? 'fa fa-sun-o' : 'fa fa-moon-o';
-      themeToggle.setAttribute('aria-pressed', newTheme === 'dark');
+      themeToggle.setAttribute('aria-checked', newTheme === 'dark');
       sr.textContent = newTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
     }
     themeToggle.addEventListener('click', toggleTheme);
@@ -500,7 +500,7 @@ describe('Runtime interactions: theme toggle and contact form', () => {
     expect(['dark', 'light']).toContain(document.documentElement.dataset.theme);
     // After first click from light -> dark expected
     expect(document.documentElement.dataset.theme).toBe('dark');
-    expect(toggle.getAttribute('aria-pressed')).toBe('true');
+    expect(toggle.getAttribute('aria-checked')).toBe('true');
     expect(icon.className).toContain('fa-sun-o');
     expect(sr.textContent).toMatch(/Switch to light mode/i);
   });

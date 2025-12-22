@@ -49,8 +49,7 @@ if (
 
     function initOwlIfNeeded() {
       if (owlInitialized) return;
-      const hasOwlCarousel = $.fn?.owlCarousel?.call;
-      if (hasOwlCarousel && $('#owl-demo').length) {
+      if ($.fn?.owlCarousel?.() && $('#owl-demo').length) {
         owl = $('#owl-demo').owlCarousel({
           items: 1,
           loop: true,
@@ -257,7 +256,7 @@ if (
       // Update icon and ARIA attributes
       const iconClass = newTheme === 'dark' ? 'fa fa-sun-o' : 'fa fa-moon-o';
       themeIcon.className = iconClass;
-      themeToggle.setAttribute('aria-pressed', newTheme === 'dark');
+      themeToggle.setAttribute('aria-checked', newTheme === 'dark');
       const srText = newTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
       themeToggle.querySelector('.sr-only').textContent = srText;
 
@@ -273,7 +272,7 @@ if (
     const currentTheme = document.documentElement.dataset.theme || 'light';
     const initialIconClass = currentTheme === 'dark' ? 'fa fa-sun-o' : 'fa fa-moon-o';
     themeIcon.className = initialIconClass;
-    themeToggle.setAttribute('aria-pressed', currentTheme === 'dark');
+    themeToggle.setAttribute('aria-checked', currentTheme === 'dark');
     const initialSrText = currentTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
     themeToggle.querySelector('.sr-only').textContent = initialSrText;
 
@@ -345,9 +344,7 @@ if (
     $('#work').click(function () {
       switchSection($('#index'), $('#work_scroll'), function () {
         initOwlIfNeeded();
-        if (owl && owl.trigger) {
-          owl.trigger('refresh.owl.carousel');
-        }
+        owl?.trigger('refresh.owl.carousel');
       });
       $('#work_left').addClass('animated slideInLeft');
       $('#work_right').addClass('animated slideInRight');
@@ -373,7 +370,7 @@ if (
     $(document).on('click', 'a[href="#index"], .go-back-home', function (e) {
       e.preventDefault();
       destroyOwlIfNeeded();
-      if (globalThis.goToHome) {
+      if (globalThis.goToHome !== undefined) {
         try {
           globalThis.goToHome();
         } catch (error) {
@@ -444,9 +441,17 @@ if (
     // Helper function to show form status
     function showFormStatus(message, type) {
       const statusDiv = $('#form-status');
+      let alertClass;
+      if (type === 'success') {
+        alertClass = 'alert-success';
+      } else if (type === 'error') {
+        alertClass = 'alert-danger';
+      } else {
+        alertClass = 'alert-info';
+      }
       statusDiv
         .removeClass('alert-success alert-danger alert-info')
-        .addClass(`alert-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info'}`)
+        .addClass(alertClass)
         .html(message)
         .fadeIn();
 
@@ -469,13 +474,13 @@ if (
       const inputs = form.querySelectorAll('input[required], textarea[required]');
 
       inputs.forEach((input) => {
-        if (!input.value.trim()) {
+        if (input.value.trim()) {
+          input.setAttribute('aria-invalid', 'false');
+          input.classList.remove('is-invalid');
+        } else {
           isValid = false;
           input.setAttribute('aria-invalid', 'true');
           input.classList.add('is-invalid');
-        } else {
-          input.setAttribute('aria-invalid', 'false');
-          input.classList.remove('is-invalid');
         }
       });
 
@@ -486,16 +491,16 @@ if (
         emailInput.classList.add('is-invalid');
       }
 
-      if (!isValid) {
+      if (isValid) {
+        // Show sending message
+        showFormStatus('Sending...', 'info');
+      } else {
         const firstInvalid = form.querySelector('[aria-invalid="true"]');
         if (firstInvalid) {
           firstInvalid.focus();
         }
         return;
       }
-
-      // Show sending message
-      showFormStatus('Sending...', 'info');
 
       // Disable submit button and show loading state
       const submitBtn = form.querySelector('button[type="submit"]');
@@ -519,11 +524,8 @@ if (
           form.reset();
         } else {
           const responseData = await response.json();
-          if (Object.hasOwn(responseData, 'errors')) {
-            showFormStatus(
-              responseData['errors'].map((error) => error['message']).join(', '),
-              'error'
-            );
+          if (responseData?.errors) {
+            showFormStatus(responseData.errors.map((error) => error.message).join(', '), 'error');
           } else {
             showFormStatus('Oops! There was a problem submitting your form', 'error');
           }
