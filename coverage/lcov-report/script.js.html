@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">32.1% </span>
+                <span class="strong">32.23% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>87/271</span>
+                <span class='fraction'>88/273</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">29.75% </span>
+                <span class="strong">30.08% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>36/121</span>
+                <span class='fraction'>37/123</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">31.81% </span>
+                <span class="strong">31.95% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>84/264</span>
+                <span class='fraction'>85/266</span>
             </div>
         
             
@@ -728,7 +728,9 @@
 <a name='L663'></a><a href='#L663'>663</a>
 <a name='L664'></a><a href='#L664'>664</a>
 <a name='L665'></a><a href='#L665'>665</a>
-<a name='L666'></a><a href='#L666'>666</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L666'></a><a href='#L666'>666</a>
+<a name='L667'></a><a href='#L667'>667</a>
+<a name='L668'></a><a href='#L668'>668</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">43x</span>
 <span class="cline-any cline-yes">37x</span>
@@ -780,6 +782,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1337,6 +1340,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -1420,7 +1424,7 @@ function initializeTheme() {
   const savedTheme = globalThis.localStorage?.getItem('theme') ?? null;
   const theme = savedTheme || 'light'; // default to light
   <span class="missing-if-branch" title="else path not taken" >E</span>if (globalThis.document?.documentElement) {
-    globalThis.document.documentElement.setAttribute('data-theme', theme);
+    globalThis.document.documentElement.dataset.theme = theme;
   }
   return theme;
 }
@@ -1444,7 +1448,8 @@ if (
 &nbsp;
     function initOwlIfNeeded() {
       <span class="missing-if-branch" title="if path not taken" >I</span>if (owlInitialized) <span class="cstat-no" title="statement not covered" >return;</span>
-      <span class="missing-if-branch" title="if path not taken" >I</span>if ($.fn?.owlCarousel &amp;&amp; $('#owl-demo').length) {
+      const hasOwlCarousel = $.fn?.owlCarousel?.call;
+      <span class="missing-if-branch" title="if path not taken" >I</span>if (hasOwlCarousel &amp;&amp; $('#owl-demo').length) {
 <span class="cstat-no" title="statement not covered" >        owl = $('#owl-demo').owlCarousel({</span>
           items: 1,
           loop: true,
@@ -1739,7 +1744,7 @@ if (
     $('#work').click(function () {
       switchSection($('#index'), $('#work_scroll'), function () {
         initOwlIfNeeded();
-        <span class="missing-if-branch" title="if path not taken" >I</span>if (owl?.trigger) {
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (owl &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >owl.trigger)</span> {
 <span class="cstat-no" title="statement not covered" >          owl.trigger('refresh.owl.carousel');</span>
         }
       });
@@ -1767,7 +1772,7 @@ if (
     $(document).on('click', 'a[href="#index"], .go-back-home', <span class="fstat-no" title="function not covered" >fu</span>nction (e) {
 <span class="cstat-no" title="statement not covered" >      e.preventDefault();</span>
 <span class="cstat-no" title="statement not covered" >      destroyOwlIfNeeded();</span>
-<span class="cstat-no" title="statement not covered" >      if (globalThis.goToHome !== undefined) {</span>
+<span class="cstat-no" title="statement not covered" >      if (globalThis.goToHome) {</span>
 <span class="cstat-no" title="statement not covered" >        try {</span>
 <span class="cstat-no" title="statement not covered" >          globalThis.goToHome();</span>
         } catch (error) {
@@ -1823,7 +1828,7 @@ if (
 &nbsp;
     // Handle window resize
     let resizeTimer;
-    $(window).on('resize', <span class="fstat-no" title="function not covered" >fu</span>nction () {
+    $(globalThis).on('resize', <span class="fstat-no" title="function not covered" >fu</span>nction () {
 <span class="cstat-no" title="statement not covered" >      clearTimeout(resizeTimer);</span>
 <span class="cstat-no" title="statement not covered" >      resizeTimer = setTimeout(<span class="fstat-no" title="function not covered" >fu</span>nction () {</span>
         // Reset any ongoing animations
@@ -2002,7 +2007,8 @@ if (
       });
 &nbsp;
       // Use the same switchSection pattern as other navigation
-<span class="cstat-no" title="statement not covered" >      if ($('#where_to_find_me').is(':visible')) {</span>
+      const isEasterEggVisible = <span class="cstat-no" title="statement not covered" >$('#where_to_find_me').is(':visible');</span>
+<span class="cstat-no" title="statement not covered" >      if (isEasterEggVisible) {</span>
 <span class="cstat-no" title="statement not covered" >        switchSection($('#where_to_find_me'), $('#resources_scroll'));</span>
 <span class="cstat-no" title="statement not covered" >        history.pushState(null, '', '#resources_scroll');</span>
       } else {
@@ -2065,7 +2071,7 @@ if (
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-22T16:44:30.977Z
+                at 2025-12-22T16:52:20.768Z
             </div>
         <script src="prettify.js"></script>
         <script>

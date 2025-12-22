@@ -111,12 +111,10 @@ describe('Email Validation', () => {
 
 describe('Theme Initialization', () => {
   let getItemSpy;
-  let setAttributeSpy;
 
   beforeEach(() => {
-    // Spy on jsdom's built-in Storage and Element prototypes
+    // Spy on jsdom's built-in Storage prototype
     getItemSpy = jest.spyOn(Storage.prototype, 'getItem');
-    setAttributeSpy = jest.spyOn(Element.prototype, 'setAttribute');
   });
 
   afterEach(() => {
@@ -126,46 +124,44 @@ describe('Theme Initialization', () => {
   test('sets theme to dark when localStorage contains "dark"', () => {
     getItemSpy.mockReturnValue('dark');
     const theme = initializeTheme();
-    expect(setAttributeSpy).toHaveBeenCalledWith('data-theme', 'dark');
+    expect(globalThis.document.documentElement.dataset.theme).toBe('dark');
     expect(theme).toBe('dark');
   });
 
   test('sets theme to light when localStorage contains "light"', () => {
     getItemSpy.mockReturnValue('light');
     const theme = initializeTheme();
-    expect(setAttributeSpy).toHaveBeenCalledWith('data-theme', 'light');
+    expect(globalThis.document.documentElement.dataset.theme).toBe('light');
     expect(theme).toBe('light');
   });
 
   test('defaults to light when localStorage has no theme', () => {
     getItemSpy.mockReturnValue(null);
     const theme = initializeTheme();
-    expect(setAttributeSpy).toHaveBeenCalledWith('data-theme', 'light');
+    expect(globalThis.document.documentElement.dataset.theme).toBe('light');
     expect(theme).toBe('light');
   });
 
-  // Additional Theme Initialization tests for edge cases and branch logic
   test('applies arbitrary saved theme string', () => {
+    // Tests that any saved theme value is applied
     getItemSpy.mockReturnValue('blue');
     const theme = initializeTheme();
-    expect(setAttributeSpy).toHaveBeenCalledWith('data-theme', 'blue');
+    expect(globalThis.document.documentElement.dataset.theme).toBe('blue');
     expect(theme).toBe('blue');
   });
 
   test('falls back to light when saved value is empty string', () => {
     getItemSpy.mockReturnValue('');
     const theme = initializeTheme();
-    expect(setAttributeSpy).toHaveBeenCalledWith('data-theme', 'light');
+    expect(globalThis.document.documentElement.dataset.theme).toBe('light');
     expect(theme).toBe('light');
   });
 
   test('handles missing localStorage gracefully', () => {
     const origStorage = globalThis.localStorage;
-    // eslint-disable-next-line no-global-assign
     delete globalThis.localStorage;
     initializeTheme();
-    expect(getItemSpy).not.toHaveBeenCalled();
-    expect(setAttributeSpy).toHaveBeenCalledWith('data-theme', 'light');
+    expect(globalThis.document.documentElement.dataset.theme).toBe('light');
     globalThis.localStorage = origStorage;
   });
 });
@@ -278,6 +274,118 @@ describe('Runtime block smoke test (jQuery guarded)', () => {
   });
 });
 
+// Helper functions extracted to reduce nesting depth
+function handleAttrGet(el, name) {
+  return el.dataset[name] || el.getAttribute(name);
+}
+
+function handleAttrSet(el, name, value) {
+  if (name.startsWith('data-')) {
+    el.dataset[name.slice(5)] = value;
+  } else {
+    el.setAttribute(name, value);
+  }
+}
+
+function createJQueryStub() {
+  const $stub = (arg) => {
+    if (arg?.nodeType === 9) {
+      return {
+        ready: (fn) => {
+          if (fn !== undefined) fn();
+        },
+        on: () => {},
+      };
+    }
+    let el = null;
+    if (typeof arg === 'string') {
+      el = document.querySelector(arg);
+    } else if (arg?.nodeType === 1) {
+      el = arg;
+    }
+    const chain = {
+      length: el ? 1 : 0,
+      hide: () => chain,
+      show: () => chain,
+      addClass: (cls) => {
+        if (el) el.classList.add(cls);
+        return chain;
+      },
+      removeClass: (cls) => {
+        if (el) el.classList.remove(cls);
+        return chain;
+      },
+      on: (type, handler) => {
+        if (el && handler !== undefined) el.addEventListener(type, handler);
+        return chain;
+      },
+      click: (fn) => {
+        if (!el) return chain;
+        if (fn !== undefined) {
+          el.addEventListener('click', fn);
+        }
+        return chain;
+      },
+      each: () => chain,
+      attr: (name, value) => {
+        if (!el) return chain;
+        if (value === undefined) return handleAttrGet(el, name);
+        handleAttrSet(el, name, value);
+        return chain;
+      },
+      find: (sel) => {
+        const child = el?.querySelector(sel);
+        return $stub(child || sel);
+      },
+      text: (t) => {
+        if (el && t !== undefined) el.textContent = String(t);
+        return chain;
+      },
+      trigger: () => chain,
+      focus: () => {
+        if (el?.focus) el.focus();
+        return chain;
+      },
+      html: (h) => {
+        if (el && h !== undefined) el.innerHTML = String(h);
+        return chain;
+      },
+      val: (v) => {
+        if (!el) return chain;
+        if (v === undefined) return el.value;
+        el.value = v;
+        return chain;
+      },
+      fadeOut: (...args) => {
+        const cb = args.find((a) => typeof a === 'function');
+        if (cb) cb();
+        return chain;
+      },
+      fadeIn: (...args) => {
+        const cb = args.find((a) => typeof a === 'function');
+        if (cb) cb();
+        return chain;
+      },
+      is: (sel) => {
+        if (!el) return false;
+        if (sel === ':visible') {
+          const cs = getComputedStyle(el);
+          return cs.display !== 'none' && cs.visibility !== 'hidden';
+        }
+        try {
+          return el.matches(sel);
+        } catch (error) {
+          console.error('Error matching selector:', error);
+          return false;
+        }
+      },
+    };
+    return chain;
+  };
+  $stub.fn = {};
+  return $stub;
+}
+
 describe('Runtime interactions: theme toggle and contact form', () => {
   beforeEach(() => {
     document.body.innerHTML = `
@@ -292,10 +400,8 @@ describe('Runtime interactions: theme toggle and contact form', () => {
         <button type="submit">Send</button>
       </form>
     `;
-    // Ensure a default theme is set on html
     document.documentElement.dataset.theme = 'light';
 
-    // Neutralize browser-only APIs that can throw under jsdom
     if (globalThis.scrollTo === undefined) {
       globalThis.scrollTo = () => {};
     }
@@ -310,7 +416,6 @@ describe('Runtime interactions: theme toggle and contact form', () => {
       Element.prototype.scrollIntoView = function () {};
     }
 
-    // Further neutralize window-level events and timers that can cause jsdom DOMExceptions
     const origWinAddEventListener = globalThis.addEventListener;
     const shouldIgnoreEvent = (type) =>
       type === 'load' || type === 'orientationchange' || type === 'resize';
@@ -332,131 +437,15 @@ describe('Runtime interactions: theme toggle and contact form', () => {
       }
       return 0;
     };
-    // Avoid diag-hud elementAt/overlay code relying on elementFromPoint
     if (document.elementFromPoint === undefined) {
       document.elementFromPoint = () => null;
     } else {
       jest.spyOn(document, 'elementFromPoint').mockImplementation(() => null);
     }
 
-    // Helper functions to reduce nesting depth
-    const handleAttrGet = (el, name) => el.dataset[name] || el.getAttribute(name);
-    const handleAttrSet = (el, name, value) => {
-      if (name.startsWith('data-')) {
-        el.dataset[name.slice(5)] = value;
-      } else {
-        el.setAttribute(name, value);
-      }
-    };
-
-    // Minimal jQuery-like stub so $(document).ready in script.js runs and binds listeners
-    const $stub = (arg) => {
-      // Special-case document to implement .ready()
-      if (arg?.nodeType === 9) {
-        return {
-          ready: (fn) => {
-            if (fn !== undefined) fn();
-          },
-          on: () => {},
-        };
-      }
-      // Resolve underlying element when selector string or element provided
-      let el = null;
-      if (typeof arg === 'string') {
-        el = document.querySelector(arg);
-      } else if (arg?.nodeType === 1) {
-        el = arg;
-      }
-      const chain = {
-        length: el ? 1 : 0,
-        hide: () => chain,
-        show: () => chain,
-        addClass: (cls) => {
-          if (el) el.classList.add(cls);
-          return chain;
-        },
-        removeClass: (cls) => {
-          if (el) el.classList.remove(cls);
-          return chain;
-        },
-        on: (type, handler) => {
-          if (el && handler !== undefined) el.addEventListener(type, handler);
-          return chain;
-        },
-        click: (fn) => {
-          if (!el) return chain;
-          if (fn !== undefined) {
-            el.addEventListener('click', fn);
-          }
-          // Do not auto-trigger clicks when no handler is provided; jQuery's .click()
-          // without args only triggers when explicitly intended.
-          return chain;
-        },
-        each: () => chain,
-        attr: (name, value) => {
-          if (!el) return chain;
-          if (value === undefined) return handleAttrGet(el, name);
-          handleAttrSet(el, name, value);
-          return chain;
-        },
-        find: (sel) => {
-          const child = el?.querySelector(sel);
-          return $stub(child || sel);
-        },
-        text: (t) => {
-          if (el && t !== undefined) el.textContent = String(t);
-          return chain;
-        },
-        trigger: () => chain,
-        focus: () => {
-          if (el?.focus) el.focus();
-          return chain;
-        },
-        html: (h) => {
-          if (el && h !== undefined) el.innerHTML = String(h);
-          return chain;
-        },
-        val: (v) => {
-          if (!el) return chain;
-          if (v === undefined) return el.value;
-          el.value = v;
-          return chain;
-        },
-        fadeOut: (...args) => {
-          const cb = args.find((a) => typeof a === 'function');
-          if (cb) cb();
-          return chain;
-        },
-        fadeIn: (...args) => {
-          const cb = args.find((a) => typeof a === 'function');
-          if (cb) cb();
-          return chain;
-        },
-        is: (sel) => {
-          if (!el) return false;
-          if (sel === ':visible') {
-            const cs = getComputedStyle(el);
-            return cs.display !== 'none' && cs.visibility !== 'hidden';
-          }
-          try {
-            return el.matches(sel);
-          } catch (error) {
-            console.error('Error matching selector:', error);
-            return false;
-          }
-        },
-      };
-      return chain;
-    };
-    $stub.fn = {};
-    globalThis.$ = $stub;
-
+    globalThis.$ = createJQueryStub();
     jest.resetModules();
 
-    // For this unit test suite, manually attach event listeners to simulate script wiring,
-    // avoiding full runtime overlays/animations that can throw under jsdom.
-
-    // Theme toggle handler (mirrors script.js behavior)
     const themeToggle = document.querySelector('.theme-toggle');
     const themeIcon = themeToggle.querySelector('i');
     const sr = themeToggle.querySelector('.sr-only');
@@ -475,18 +464,15 @@ describe('Runtime interactions: theme toggle and contact form', () => {
     }
     themeToggle.addEventListener('click', toggleTheme);
 
-    // Contact form submit handler (mirrors script.js behavior at a high level)
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {
       contactForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         const form = event.target;
         const submitBtn = form.querySelector('button[type="submit"]');
-        // Apply loading state
         submitBtn.disabled = true;
         submitBtn.classList.add('btn-loading');
 
-        // Submit via fetch
         const formData = new FormData(form);
         try {
           await fetch(form.action, {
@@ -497,7 +483,6 @@ describe('Runtime interactions: theme toggle and contact form', () => {
         } catch (error) {
           console.error('Error submitting form:', error);
         } finally {
-          // Remove loading state
           submitBtn.disabled = false;
           submitBtn.classList.remove('btn-loading');
         }

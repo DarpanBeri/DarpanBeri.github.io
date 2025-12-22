@@ -25,7 +25,7 @@ function initializeTheme() {
   const savedTheme = globalThis.localStorage?.getItem('theme') ?? null;
   const theme = savedTheme || 'light'; // default to light
   if (globalThis.document?.documentElement) {
-    globalThis.document.documentElement.setAttribute('data-theme', theme);
+    globalThis.document.documentElement.dataset.theme = theme;
   }
   return theme;
 }
@@ -49,7 +49,8 @@ if (
 
     function initOwlIfNeeded() {
       if (owlInitialized) return;
-      if ($.fn?.owlCarousel && $('#owl-demo').length) {
+      const hasOwlCarousel = $.fn?.owlCarousel?.call;
+      if (hasOwlCarousel && $('#owl-demo').length) {
         owl = $('#owl-demo').owlCarousel({
           items: 1,
           loop: true,
@@ -344,7 +345,7 @@ if (
     $('#work').click(function () {
       switchSection($('#index'), $('#work_scroll'), function () {
         initOwlIfNeeded();
-        if (owl?.trigger) {
+        if (owl && owl.trigger) {
           owl.trigger('refresh.owl.carousel');
         }
       });
@@ -372,7 +373,7 @@ if (
     $(document).on('click', 'a[href="#index"], .go-back-home', function (e) {
       e.preventDefault();
       destroyOwlIfNeeded();
-      if (globalThis.goToHome !== undefined) {
+      if (globalThis.goToHome) {
         try {
           globalThis.goToHome();
         } catch (error) {
@@ -428,7 +429,7 @@ if (
 
     // Handle window resize
     let resizeTimer;
-    $(window).on('resize', function () {
+    $(globalThis).on('resize', function () {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(function () {
         // Reset any ongoing animations
@@ -607,7 +608,8 @@ if (
       });
 
       // Use the same switchSection pattern as other navigation
-      if ($('#where_to_find_me').is(':visible')) {
+      const isEasterEggVisible = $('#where_to_find_me').is(':visible');
+      if (isEasterEggVisible) {
         switchSection($('#where_to_find_me'), $('#resources_scroll'));
         history.pushState(null, '', '#resources_scroll');
       } else {
