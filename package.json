@@ -6,7 +6,7 @@
     "prepare": "husky install",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "lint:eslint": "eslint --ext .js .",
+    "lint:eslint": "eslint .",
     "lint:style": "stylelint \"assets/css/**/*.css\"",
     "lint:markdown": "markdownlint \"**/*.md\" --ignore node_modules --fix",
     "lint": "npm run lint:eslint && npm run lint:style && npm run lint:markdown",
