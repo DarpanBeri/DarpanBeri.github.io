@@ -12,7 +12,7 @@ Describe the change and why it’s needed.
 - [ ] Coverage maintained or improved (`npm run test:coverage`)
 - [ ] E2E tests updated/added if UI behavior changed
 - [ ] A11y/HTML/link checks pass locally (when applicable)
-- [ ] Documentation updated (README/SPEC) as needed
+- [ ] Documentation updated (README) as needed
 
 ## Screenshots or recording (if UI change)
 
