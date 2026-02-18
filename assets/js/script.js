@@ -88,7 +88,7 @@ if (
     function destroyOwlIfNeeded() {
       try {
         const $owl = $('#owl-demo');
-        if ($owl && $owl.data('owl.carousel')) {
+        if ($owl?.data('owl.carousel')) {
           $owl.trigger('destroy.owl.carousel');
         }
       } catch (error) {
@@ -290,17 +290,17 @@ if (
     $(document).on('click', 'a[href="#index"], .go-back-home', function (e) {
       e.preventDefault();
       destroyOwlIfNeeded();
-      if (globalThis.goToHome !== undefined) {
+      if (globalThis.goToHome === undefined) {
+        // Fallback: mimic goToHome if function is unavailable
+        $('.pages').hide();
+        $('#index').show();
+        globalThis.scrollTo(0, 0);
+      } else {
         try {
           globalThis.goToHome();
         } catch (error) {
           console.error('Error calling goToHome:', error);
         }
-      } else {
-        // Fallback: mimic goToHome if function is unavailable
-        $('.pages').hide();
-        $('#index').show();
-        globalThis.scrollTo(0, 0);
       }
     });
 

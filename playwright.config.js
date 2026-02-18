@@ -7,7 +7,7 @@ const config = {
     headless: process.env.PWHEADED !== '1',
     // Set PWSLOWMO=<ms> to slow down each action so you can watch what's being clicked
     // Example: $env:PWSLOWMO=800; npm run test:e2e:debug
-    slowMo: process.env.PWSLOWMO ? parseInt(process.env.PWSLOWMO, 10) : 0,
+    slowMo: process.env.PWSLOWMO ? Number.parseInt(process.env.PWSLOWMO, 10) : 0,
   },
 };
 
