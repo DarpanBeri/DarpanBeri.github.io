@@ -1,4 +1,7 @@
-# Darpan Beri - Portfolio Website
+# Darpan Beri — Portfolio Website
+
+[![CI](https://github.com/DarpanBeri/DarpanBeri.github.io/actions/workflows/ci.yml/badge.svg)](https://github.com/DarpanBeri/DarpanBeri.github.io/actions/workflows/ci.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=DarpanBeri_DarpanBeri.github.io&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=DarpanBeri_DarpanBeri.github.io)
 
 ## Description
 
@@ -8,13 +11,13 @@ Personal portfolio website showcasing my projects, skills, and professional expe
 
 - Responsive mobile-first design
 - Dark/light theme toggle
-- Interactive project showcase
-- Contact form with validation
-- Document downloads section
+- Interactive project showcase with carousel
+- Contact form with AJAX submission and validation
+- Document downloads section (resume, CV, capstone materials)
 - Google Analytics 4 tracking
 - Easter egg content
 - Accessibility optimizations
-- Subresource Integrity (SRI) security
+- Subresource Integrity (SRI) on all CDN resources
 
 ## Technologies Used
 
@@ -23,7 +26,7 @@ Personal portfolio website showcasing my projects, skills, and professional expe
 - jQuery 3.7.1 (with SRI)
 - Font Awesome 4.7.0 (with SRI)
 - Owl Carousel 2.3.4 (with SRI)
-- Formspree for form handling
+- Formspree for contact form handling
 - Google Analytics 4
 
 ## Project Structure
@@ -31,16 +34,24 @@ Personal portfolio website showcasing my projects, skills, and professional expe
 ```text
 DarpanBeri.github.io/
 ├── assets/
-│   ├── css/         # Stylesheets
-│   ├── fonts/       # Font Awesome fonts
-│   ├── images/      # Website images
-│   └── js/          # JavaScript files
-├── index.html       # Main webpage
-├── CHANGELOG.md     # Development history
-├── LICENSE.txt      # MIT License
-├── README.md        # Project documentation
-└── SPEC.md         # Technical specifications
+│   ├── css/              # Stylesheets (main.css + vendored Bootstrap/FA)
+│   ├── fonts/            # Font Awesome font files
+│   ├── images/           # Website images
+│   └── js/               # JavaScript (script.js, script.test.js, bootstrap.min.js)
+├── tests/
+│   └── e2e.spec.js       # Playwright end-to-end tests
+├── .github/
+│   ├── workflows/ci.yml  # GitHub Actions CI pipeline
+│   └── ISSUE_TEMPLATE/   # Bug report & feature request templates
+├── index.html            # Main webpage
+├── LICENSE.txt           # MIT License
+└── README.md             # This file
 ```
+
+## Prerequisites
+
+- **Node.js** ≥ 20
+- **npm** ≥ 10
 
 ## Setup and Installation
 
@@ -48,14 +59,53 @@ DarpanBeri.github.io/
 
    ```bash
    git clone https://github.com/DarpanBeri/DarpanBeri.github.io.git
+   cd DarpanBeri.github.io
    ```
 
-2. Open `index.html` in a web browser
-3. For local development:
-   - Use a local server (e.g., Live Server VS Code extension)
-   - Enable JavaScript for full functionality
-   - Contact form requires production deployment to work
-   - Check Google Analytics in debug mode
+2. Install dependencies (also installs Husky pre-commit hooks):
+
+   ```bash
+   npm install
+   ```
+
+3. Open `index.html` in a web browser, or use the local dev server:
+
+   ```bash
+   npm run serve
+   # → http://localhost:8080
+   ```
+
+> **Note:** The contact form requires a production Formspree endpoint to submit successfully. Google Analytics events are visible in GA4 DebugView when running locally.
+
+## Developer Workflow
+
+All quality checks are available as npm scripts:
+
+| Script                  | Description                                                    |
+| ----------------------- | -------------------------------------------------------------- |
+| `npm run format`        | Auto-format all files with Prettier                            |
+| `npm run format:check`  | Check formatting without modifying files (used by CI)          |
+| `npm run lint`          | Run ESLint + Stylelint + markdownlint                          |
+| `npm test`              | Run Jest unit tests                                            |
+| `npm run test:coverage` | Run Jest with LCOV coverage report                             |
+| `npm run validate:html` | Validate `index.html` with html-validate                       |
+| `npm run check:links`   | Spin up local server and scan for broken links                 |
+| `npm run check:a11y`    | Spin up local server and run axe accessibility audit           |
+| `npm run check-all`     | Run format check + lint + tests + HTML validation + link check |
+| `npx playwright test`   | Run Playwright end-to-end tests                                |
+
+Pre-commit hooks (Husky + lint-staged) automatically run Prettier and ESLint on staged files before every commit.
+
+### CI Pipeline
+
+The GitHub Actions workflow (`.github/workflows/ci.yml`) runs on every push and pull request to `master`:
+
+1. Format check
+2. Lint (ESLint, Stylelint, markdownlint)
+3. Unit tests with coverage
+4. HTML validation
+5. Link check
+6. SonarCloud static analysis
 
 ## Resources
 
@@ -75,61 +125,19 @@ The website uses Google Analytics 4 to track:
 - Carousel interactions
 - Easter egg discoveries
 
-## Production Notes
-
-- Contact form uses Formspree.
-- Form includes validation and error handling
-- All external links use noopener for security
-- Cross-browser tested and optimized
-- Accessibility features implemented
-- All CDN resources protected with Subresource Integrity (SRI) checks
-
 ## Contact Form
 
-The contact form is integrated with [Formspree](https://formspree.io/) for handling submissions. It uses AJAX to submit the form without reloading the page. The following features are implemented:
+The contact form is integrated with [Formspree](https://formspree.io/) and submits asynchronously without a page reload.
 
-- **AJAX Submission**: The form submits asynchronously using the Fetch API.
-- **Validation**: Input fields are validated for required values and proper email format.
-- **Loading State**: A loading indicator is displayed on the submit button during submission.
-- **Feedback**: Success or error messages are displayed to the user after submission.
-- **Minimalist Design**: Clean, modern interface with placeholder text and subtle styling.
-
-### How to Use
-
-1. Navigate to the "Contact" section of the website.
-2. Fill in the required fields (Name, Email, and Message).
-3. Click the "Send Message" button.
-4. A success message will appear if the submission is successful. Otherwise, an error message will be displayed.
-
-### Troubleshooting
-
-- Ensure the Formspree endpoint (`action` attribute in the form) is correctly configured.
-- Check the browser console for any errors if the form does not work as expected.
-
-## Future Improvements
-
-### Performance Optimizations
-
-- Implement responsive image loading with lazy loading
-- Minify CSS, JS and HTML files for faster load times
-- Enhance PWA features for offline capabilities
-
-### Content & UX Enhancements
-
-- Improve text information to make content more accessible to non-technical visitors
-- Enhance grammar and sentence structure throughout the website
-- Add project filtering capabilities for easier navigation
-
-### Technical Improvements
-
-- Conduct Code Security Audit
-- Implement additional accessibility enhancements
-- Optimize animations and transitions for smoother performance
+- **Validation**: Required fields and email format are validated client-side before submission
+- **Loading state**: Submit button shows a loading indicator during the request
+- **Feedback**: Success or error messages are displayed after submission
+- **Troubleshooting**: If the form does not submit, verify the Formspree endpoint in the `action` attribute of the `<form>` tag and check the browser console for errors
 
 ## Contributing
 
-This is a personal portfolio website, but if you find any bugs or have suggestions, feel free to open an issue.
+This is a personal portfolio website, but bug reports and suggestions are welcome — open a GitHub issue using the provided templates.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
+This project is licensed under the MIT License — see [LICENSE.txt](LICENSE.txt) for details.
