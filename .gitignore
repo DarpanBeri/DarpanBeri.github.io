@@ -28,3 +28,7 @@ node_modules/
 # Test coverage reports
 coverage/
 test-results/
+playwright-report/
+
+# Husky v9 internal directory
+.husky/_/
