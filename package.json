@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "prepare": "husky install",
+    "prepare": "husky",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint:eslint": "eslint .",
@@ -16,14 +16,16 @@
     "validate:html": "html-validate --formatter stylish index.html",
     "check:links": "start-server-and-test 'npm run serve' http://localhost:8080 'linkinator http://localhost:8080 --recurse --skip \"^mailto:,^tel:,^javascript:,linkedin\\\\.com\"'",
     "check:a11y": "start-server-and-test 'npm run serve' http://localhost:8080 'axe http://localhost:8080 --exit'",
-    "check-all": "npm run format:check && npm run lint && npm run test:coverage && npm run validate:html && npm run check:links"
+    "test:e2e": "playwright test",
+    "test:e2e:debug": "playwright test --headed",
+    "check-all": "npm run format:check && npm run lint && npm run test:coverage && npm run test:e2e && npm run validate:html && npm run check:links"
   },
   "devDependencies": {
     "@axe-core/cli": "^4.7.2",
     "@eslint/js": "^9.0.0",
     "@html-validate/stylish": "^4.3.0",
     "@playwright/test": "^1.56.1",
-    "@testing-library/dom": "^9.3.1",
+    "baseline-browser-mapping": "^2.9.19",
     "eslint": "^9.0.0",
     "eslint-plugin-promise": "^7.0.0",
     "globals": "^15.0.0",
@@ -37,7 +39,6 @@
     "markdownlint": "^0.40.0",
     "markdownlint-cli": "^0.47.0",
     "prettier": "^3.2.5",
-    "purgecss": "^7.0.2",
     "start-server-and-test": "^2.1.2",
     "stylelint": "^16.6.1",
     "stylelint-config-standard": "^36.0.0"
@@ -54,9 +55,6 @@
     ]
   },
   "overrides": {
-    "purgecss": {
-      "glob": ">=11.1.0"
-    },
     "markdownlint-cli": {
       "glob": ">=11.1.0"
     }

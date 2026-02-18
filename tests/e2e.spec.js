@@ -114,4 +114,106 @@ test.describe('Portfolio E2E', () => {
 
     await expect.poll(async () => (await html.getAttribute('data-theme')) || '').not.toBe(initial);
   });
+
+  // ── New tests ─────────────────────────────────────────────────────────────
+
+  test('Section Navigation: About -> Back to Home', async ({ page }) => {
+    // Click the About nav button on the home screen
+    await page.locator('#about').click();
+
+    // About section must be visible and home must be hidden
+    await expect(page.locator('#about_scroll')).toBeVisible();
+    await expect(page.locator('#index')).toBeHidden();
+
+    // Click the "Back to home" link inside the About section
+    await page.locator('#about_scroll a[href="#index"]').click();
+
+    // Home returns, About section hides
+    await expect(page.locator('#index')).toBeVisible();
+    await expect(page.locator('#about_scroll')).toBeHidden();
+  });
+
+  test('Easter Egg: show Where To Find Me and return to Resources', async ({ page }) => {
+    // Step 1 — navigate to Resources first (Easter egg trigger lives there)
+    await page.locator('#resources').click();
+    await expect(page.locator('#resources_scroll')).toBeVisible();
+
+    // Step 2 — click the Easter egg trigger button inside Resources
+    await page.locator('#where-to-find-me').click();
+
+    // Easter egg section should now be visible; Resources scroll should hide
+    await expect(page.locator('#where_to_find_me')).toBeVisible();
+    await expect(page.locator('#resources_scroll')).toBeHidden();
+
+    // Step 3 — click the "Back to Resources" button inside the Easter egg section
+    await page.locator('#back-to-resources').click();
+
+    // Resources section returns; Easter egg section hides
+    await expect(page.locator('#resources_scroll')).toBeVisible();
+    await expect(page.locator('#where_to_find_me')).toBeHidden();
+  });
+
+  test('Contact form: rejects empty submission and marks fields invalid', async ({ page }) => {
+    // Navigate to the Contact section
+    await page.locator('#contact').click();
+    await expect(page.locator('#contact_scroll')).toBeVisible();
+
+    // Disable native HTML5 validation so our custom JS validation in handleSubmit runs
+    await page.evaluate(() => {
+      document.getElementById('contactForm').setAttribute('novalidate', '');
+    });
+
+    // Click submit without filling any fields
+    await page.locator('#contactForm button[type="submit"]').click();
+
+    // At least the first required input should be marked invalid by our JS validation
+    const firstRequired = page
+      .locator('#contactForm input[required], #contactForm textarea[required]')
+      .first();
+    await expect(firstRequired).toHaveAttribute('aria-invalid', 'true');
+    await expect(firstRequired).toHaveClass(/is-invalid/);
+  });
+
+  test('Contact form: rejects invalid email format', async ({ page }) => {
+    // Navigate to the Contact section
+    await page.locator('#contact').click();
+    await expect(page.locator('#contact_scroll')).toBeVisible();
+
+    // Disable native HTML5 validation so our custom JS email validation runs
+    await page.evaluate(() => {
+      document.getElementById('contactForm').setAttribute('novalidate', '');
+    });
+
+    // Fill name and message (valid), but enter a bad email
+    await page
+      .locator('#contactForm input[name="name"], #contactForm input[type="text"]')
+      .first()
+      .fill('Test User');
+    await page.locator('#contactForm input[type="email"]').fill('notanemail');
+    await page.locator('#contactForm textarea').fill('Hello world');
+
+    // Submit the form
+    await page.locator('#contactForm button[type="submit"]').click();
+
+    // Email input should be flagged as invalid by our isValidEmail() function
+    const emailInput = page.locator('#contactForm input[type="email"]');
+    await expect(emailInput).toHaveAttribute('aria-invalid', 'true');
+    await expect(emailInput).toHaveClass(/is-invalid/);
+  });
+
+  test('Theme toggle persists theme choice to localStorage', async ({ page }) => {
+    const html = page.locator('html');
+    const initial = await html.getAttribute('data-theme');
+    const expected = initial === 'dark' ? 'light' : 'dark';
+
+    // Click the theme toggle button
+    await page.locator('.theme-toggle').click();
+
+    // Verify the DOM attribute flipped
+    await expect(html).toHaveAttribute('data-theme', expected);
+
+    // Verify localStorage was updated to match
+    const stored = await page.evaluate(() => localStorage.getItem('theme'));
+    expect(stored).toBe(expected);
+  });
 });
