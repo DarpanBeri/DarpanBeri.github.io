@@ -308,11 +308,25 @@ function createJQueryStub() {
       hide: () => chain,
       show: () => chain,
       addClass: (cls) => {
-        if (el) el.classList.add(cls);
+        if (el && cls) {
+          cls
+            .trim()
+            .split(/\s+/)
+            .forEach((c) => {
+              if (c) el.classList.add(c);
+            });
+        }
         return chain;
       },
       removeClass: (cls) => {
-        if (el) el.classList.remove(cls);
+        if (el && cls) {
+          cls
+            .trim()
+            .split(/\s+/)
+            .forEach((c) => {
+              if (c) el.classList.remove(c);
+            });
+        }
         return chain;
       },
       on: (type, handler) => {
@@ -341,6 +355,7 @@ function createJQueryStub() {
         if (el && t !== undefined) el.textContent = String(t);
         return chain;
       },
+      data: () => null,
       trigger: () => chain,
       focus: () => {
         if (el?.focus) el.focus();
@@ -384,6 +399,39 @@ function createJQueryStub() {
   };
   $stub.fn = {};
   return $stub;
+}
+
+// Enhanced jQuery stub: adds real DOM delegation for $(document).on(type, selector, fn)
+function createJQueryStubWithDelegation() {
+  const base = createJQueryStub();
+  const enhanced = (arg) => {
+    if (arg?.nodeType === 9) {
+      return {
+        ready: (fn) => {
+          if (fn !== undefined) fn();
+        },
+        on: (type, selectorOrFn, handler) => {
+          if (typeof selectorOrFn === 'string' && typeof handler === 'function') {
+            // Attach a real delegated listener so clicking child elements triggers the handler
+            document.addEventListener(type, (e) => {
+              const selectors = selectorOrFn.split(',').map((s) => s.trim());
+              const matched = selectors.some((sel) => {
+                try {
+                  return e.target.matches(sel) || !!e.target.closest(sel);
+                } catch (_) {
+                  return false;
+                }
+              });
+              if (matched) handler.call(e.target, e);
+            });
+          }
+        },
+      };
+    }
+    return base(arg);
+  };
+  enhanced.fn = base.fn;
+  return enhanced;
 }
 
 describe('Runtime interactions: theme toggle and contact form', () => {
@@ -505,6 +553,14 @@ describe('Runtime interactions: theme toggle and contact form', () => {
     expect(sr.textContent).toMatch(/Switch to light mode/i);
   });
 
+  test('theme toggle: second click reverts back to light', () => {
+    const toggle = document.querySelector('.theme-toggle');
+    toggle.click(); // light → dark
+    toggle.click(); // dark → light
+    expect(document.documentElement.dataset.theme).toBe('light');
+    expect(toggle.getAttribute('aria-checked')).toBe('false');
+  });
+
   test('contact form submit adds and removes loading state and calls fetch', async () => {
     const form = document.getElementById('contactForm');
     const submitBtn = form.querySelector('button[type="submit"]');
@@ -535,5 +591,258 @@ describe('Runtime interactions: theme toggle and contact form', () => {
     expect(submitBtn.classList.contains('btn-loading')).toBe(false);
 
     delete globalThis.fetch;
+  });
+});
+
+describe('Runtime interactions: navigation, form validation, and utilities', () => {
+  const FULL_DOM = `
+    <a class="skip-to-main" href="#index">Skip</a>
+    <button class="theme-toggle" aria-pressed="false">
+      <i class="fa fa-moon-o"></i><span class="sr-only">Switch to dark mode</span>
+    </button>
+    <div id="index" class="pages">
+      <button id="about" class="btn btn-rabbit">About</button>
+      <button id="work" class="btn btn-rabbit">Work</button>
+      <button id="resources" class="btn btn-rabbit">Resources</button>
+      <button id="contact" class="btn btn-rabbit">Contact</button>
+    </div>
+    <div id="about_scroll" class="pages" style="display:none">
+      <div id="about_left"></div><div id="about_right"></div>
+      <a href="#index">Back</a>
+    </div>
+    <div id="work_scroll" class="pages" style="display:none">
+      <div id="work_left"></div><div id="work_right"></div>
+      <div id="owl-demo"></div>
+      <a href="#index">Back</a>
+    </div>
+    <div id="resources_scroll" class="pages" style="display:none">
+      <button id="where-to-find-me">Easter Egg</button>
+      <a href="#index">Back</a>
+    </div>
+    <div id="contact_scroll" class="pages" style="display:none">
+      <div id="contact_left"></div><div id="contact_right"></div>
+      <a href="#index">Back</a>
+    </div>
+    <div id="where_to_find_me" class="pages" style="display:none">
+      <button id="back-to-resources">Back to Resources</button>
+    </div>
+    <div id="form-status" class="alert" style="display:none"></div>
+    <form id="contactForm" action="https://formspree.io/f/xkgrwpbr" method="POST">
+      <input type="text" name="name" required />
+      <input type="email" name="email" required />
+      <textarea name="message" required></textarea>
+      <button type="submit">Send</button>
+    </form>
+  `;
+
+  let origSetTimeout, origSetInterval, origClearInterval, origAddEventListener;
+  // Track document-level listeners attached by each loadScript() call so we can
+  // remove them in afterEach and prevent handler accumulation across tests.
+  let addedDocListeners, origDocAddEventListener;
+
+  beforeEach(() => {
+    document.body.innerHTML = FULL_DOM;
+    document.documentElement.dataset.theme = 'light';
+
+    origSetTimeout = globalThis.setTimeout;
+    origSetInterval = globalThis.setInterval;
+    origClearInterval = globalThis.clearInterval;
+    origAddEventListener = globalThis.addEventListener;
+
+    // Intercept document.addEventListener so we can undo all delegated listeners in afterEach
+    addedDocListeners = [];
+    origDocAddEventListener = document.addEventListener.bind(document);
+    document.addEventListener = (type, fn, options) => {
+      addedDocListeners.push([type, fn]);
+      origDocAddEventListener(type, fn, options);
+    };
+
+    // Suppress noisy global listeners (orientation, resize) attached by the script
+    globalThis.addEventListener = (type, fn, ...rest) => {
+      if (type === 'orientationchange' || type === 'resize') return;
+      origAddEventListener.call(globalThis, type, fn, ...rest);
+    };
+    globalThis.setInterval = jest.fn(() => 0);
+    globalThis.clearInterval = jest.fn();
+    // Execute timeout callbacks immediately so polling/animation guards don't stall tests
+    globalThis.setTimeout = (cb, _ms) => {
+      try {
+        if (cb) cb();
+      } catch (_) {
+        // swallow errors from callbacks (e.g. focus on detached nodes)
+      }
+      return 0;
+    };
+    globalThis.scrollTo = jest.fn();
+    globalThis.innerWidth = 1024;
+
+    try {
+      jest.spyOn(globalThis.history, 'pushState').mockImplementation(() => {});
+    } catch (_) {}
+
+    globalThis.$ = createJQueryStubWithDelegation();
+    jest.resetModules();
+  });
+
+  afterEach(() => {
+    // Remove all document-level listeners added during this test (prevents cross-test leakage)
+    addedDocListeners.forEach(([type, fn]) => document.removeEventListener(type, fn));
+    document.addEventListener = origDocAddEventListener;
+
+    globalThis.setTimeout = origSetTimeout;
+    globalThis.setInterval = origSetInterval;
+    globalThis.clearInterval = origClearInterval;
+    globalThis.addEventListener = origAddEventListener;
+    delete globalThis.scrollTo;
+    delete globalThis.fetch;
+    delete globalThis.gtag;
+    delete globalThis.goToHome;
+    delete globalThis.$;
+    jest.restoreAllMocks();
+  });
+
+  // Re-requires script.js to execute the guarded runtime block with the current DOM + stub
+  function loadScript() {
+    jest.isolateModules(() => {
+      require('./script.js');
+    });
+  }
+
+  // ─── Navigation ───────────────────────────────────────────────────────────
+
+  test('#about click adds animation classes to left/right panels', () => {
+    loadScript();
+    document.getElementById('about').click();
+    expect(document.getElementById('about_left').classList.contains('animated')).toBe(true);
+    expect(document.getElementById('about_right').classList.contains('animated')).toBe(true);
+  });
+
+  test('#resources click does not throw', () => {
+    loadScript();
+    expect(() => document.getElementById('resources').click()).not.toThrow();
+  });
+
+  test('#contact click adds animation classes to left/right panels', () => {
+    loadScript();
+    document.getElementById('contact').click();
+    expect(document.getElementById('contact_left').classList.contains('animated')).toBe(true);
+    expect(document.getElementById('contact_right').classList.contains('animated')).toBe(true);
+  });
+
+  // ─── Back-to-home handler (both branches) ─────────────────────────────────
+
+  test('back-home link calls globalThis.goToHome when it is defined', () => {
+    const goToHomeMock = jest.fn();
+    globalThis.goToHome = goToHomeMock;
+    loadScript();
+    document.querySelector('#about_scroll a[href="#index"]').click();
+    expect(goToHomeMock).toHaveBeenCalledTimes(1);
+  });
+
+  test('back-home link uses DOM fallback when globalThis.goToHome is undefined', () => {
+    delete globalThis.goToHome;
+    loadScript();
+    expect(() =>
+      document.querySelector('#resources_scroll a[href="#index"]').click()
+    ).not.toThrow();
+  });
+
+  // ─── handleSubmit: validation failures ────────────────────────────────────
+
+  test('form submit with all empty fields marks inputs as invalid and skips fetch', async () => {
+    const fetchMock = jest.fn();
+    globalThis.fetch = fetchMock;
+    loadScript();
+
+    const form = document.getElementById('contactForm');
+    // All inputs start empty (no value attribute in FULL_DOM)
+    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    await Promise.resolve();
+
+    expect(form.querySelectorAll('[aria-invalid="true"]').length).toBeGreaterThan(0);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  test('form submit with invalid email marks email input as invalid and skips fetch', async () => {
+    const fetchMock = jest.fn();
+    globalThis.fetch = fetchMock;
+    loadScript();
+
+    const form = document.getElementById('contactForm');
+    form.querySelector('input[type="text"]').value = 'Alice';
+    form.querySelector('input[type="email"]').value = 'not-an-email';
+    form.querySelector('textarea').value = 'Hello';
+    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    await Promise.resolve();
+
+    expect(form.querySelector('input[type="email"]').getAttribute('aria-invalid')).toBe('true');
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  // ─── handleSubmit: fetch paths ────────────────────────────────────────────
+
+  test('form submit with valid data calls fetch and resets the form on success', async () => {
+    const fetchMock = jest.fn().mockResolvedValue({ ok: true, json: async () => ({}) });
+    globalThis.fetch = fetchMock;
+    loadScript();
+
+    const form = document.getElementById('contactForm');
+    form.querySelector('input[type="text"]').value = 'Alice';
+    form.querySelector('input[type="email"]').value = 'alice@example.com';
+    form.querySelector('textarea').value = 'Hello';
+    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+
+    // Drain microtask queue (fetch mock + response processing + finally)
+    for (let i = 0; i < 5; i++) await Promise.resolve();
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(form.querySelector('input[type="text"]').value).toBe('');
+  });
+
+  test('form submit shows server error message when fetch returns non-ok response', async () => {
+    const fetchMock = jest.fn().mockResolvedValue({
+      ok: false,
+      json: async () => ({ errors: [{ message: 'Bad request' }] }),
+    });
+    globalThis.fetch = fetchMock;
+    loadScript();
+
+    const form = document.getElementById('contactForm');
+    form.querySelector('input[type="text"]').value = 'Alice';
+    form.querySelector('input[type="email"]').value = 'alice@example.com';
+    form.querySelector('textarea').value = 'Hello';
+    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+
+    for (let i = 0; i < 5; i++) await Promise.resolve();
+
+    expect(document.getElementById('form-status').innerHTML).toContain('Bad request');
+  });
+
+  test('form submit shows generic error when fetch throws a network error', async () => {
+    const fetchMock = jest.fn().mockRejectedValue(new Error('Network failure'));
+    globalThis.fetch = fetchMock;
+    loadScript();
+
+    const form = document.getElementById('contactForm');
+    form.querySelector('input[type="text"]').value = 'Alice';
+    form.querySelector('input[type="email"]').value = 'alice@example.com';
+    form.querySelector('textarea').value = 'Hello';
+    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+
+    for (let i = 0; i < 5; i++) await Promise.resolve();
+
+    expect(document.getElementById('form-status').innerHTML).toContain('problem submitting');
+  });
+
+  // ─── Easter egg ───────────────────────────────────────────────────────────
+
+  test('#where-to-find-me click shows easter egg section without throwing', () => {
+    loadScript();
+    expect(() => document.getElementById('where-to-find-me').click()).not.toThrow();
+  });
+
+  test('#back-to-resources click does not throw', () => {
+    loadScript();
+    expect(() => document.getElementById('back-to-resources').click()).not.toThrow();
   });
 });
