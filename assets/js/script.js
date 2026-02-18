@@ -88,7 +88,7 @@ if (
     function destroyOwlIfNeeded() {
       try {
         const $owl = $('#owl-demo');
-        if ($owl && $owl.data('owl.carousel')) {
+        if ($owl?.data('owl.carousel')) {
           $owl.trigger('destroy.owl.carousel');
         }
       } catch (error) {
@@ -97,44 +97,6 @@ if (
       owl = null;
       owlInitialized = false;
     }
-    // OwlCarousel initialization [DISABLED for isolation]
-    // if ($.fn && $.fn.owlCarousel && $('#owl-demo').length) {
-    //   owl = $('#owl-demo').owlCarousel({
-    //     items: 1,
-    //     loop: false, // Disable loop to prevent loading issues
-    //     margin: 0,
-    //     nav: true,
-    //     navText: ['<i class="fa fa-angle-left"></i>', '<i class="fa fa-angle-right"></i>'],
-    //     dots: true,
-    //     dotsData: true,
-    //     autoplay: false, // Disable autoplay
-    //     lazyLoad: false, // Disable lazy loading
-    //     smartSpeed: 450,
-    //     responsiveClass: true,
-    //     onInitialized: function () {
-    //       labelCarouselDots();
-    //     },
-    //     onRefreshed: function () {
-    //       labelCarouselDots();
-    //     },
-    //     onChanged: function () {
-    //       labelCarouselDots();
-    //     },
-    //     responsive: {
-    //       0: {
-    //         items: 1,
-    //         nav: false,
-    //       },
-    //       768: {
-    //         items: 1,
-    //         nav: true,
-    //       },
-    //     },
-    //   });
-    // } else {
-    //   console.warn('OwlCarousel not available or #owl-demo missing; skipping initialization.');
-    // }
-
     // Accessibility: add labels for carousel dots (ensure after Owl initializes)
     function labelCarouselDots() {
       $('#owl-demo .owl-dot').each(function (index) {
@@ -285,52 +247,10 @@ if (
       }
     });
 
-    // Keyboard navigation for carousel [DISABLED for isolation]
-    // $(document).keydown(function (e) {
-    //   if ($('#work_scroll').is(':visible')) {
-    //     if (e.keyCode === 37) {
-    //       // Left arrow
-    //       $('#owl-demo').trigger('prev.owl.carousel');
-    //     } else if (e.keyCode === 39) {
-    //       // Right arrow
-    //       $('#owl-demo').trigger('next.owl.carousel');
-    //     }
-    //   }
-    // });
-
     $('#about_scroll').fadeOut();
     $('#work_scroll').fadeOut();
     $('#resources_scroll').fadeOut();
     $('#contact_scroll').fadeOut();
-
-    // Section navigation with keyboard [DISABLED for isolation]
-    // $(document).keydown(function (e) {
-    //   if (e.keyCode === 27) {
-    //     // ESC key
-    //     $('.pages').fadeOut();
-    //     $('#index').fadeIn();
-    //     $('#index_left').addClass('animated slideInLeft');
-    //     $('#index_right').addClass('animated slideInRight');
-    //   }
-    //
-    //   // Number keys for navigation (1-4)
-    //   if ($('#index').is(':visible')) {
-    //     switch (e.keyCode) {
-    //       case 49: // 1 key
-    //         $('#about').click();
-    //         break;
-    //       case 50: // 2 key
-    //         $('#work').click();
-    //         break;
-    //       case 51: // 3 key
-    //         $('#resources').click();
-    //         break;
-    //       case 52: // 4 key
-    //         $('#contact').click();
-    //         break;
-    //     }
-    //   }
-    // });
 
     $('#about').click(function () {
       if ($('#work_scroll').is(':visible')) {
@@ -370,43 +290,19 @@ if (
     $(document).on('click', 'a[href="#index"], .go-back-home', function (e) {
       e.preventDefault();
       destroyOwlIfNeeded();
-      if (globalThis.goToHome !== undefined) {
+      if (globalThis.goToHome === undefined) {
+        // Fallback: mimic goToHome if function is unavailable
+        $('.pages').hide();
+        $('#index').show();
+        globalThis.scrollTo(0, 0);
+      } else {
         try {
           globalThis.goToHome();
         } catch (error) {
           console.error('Error calling goToHome:', error);
         }
-      } else {
-        // Fallback: mimic goToHome if function is unavailable
-        $('.pages').hide();
-        $('#index').show();
-        globalThis.scrollTo(0, 0);
       }
     });
-
-    // Add touch event handling for mobile [DISABLED for isolation]
-    // let touchStartY;
-    //
-    // $(document).on('touchstart', function (e) {
-    //   touchStartY = e.originalEvent.touches[0].clientY;
-    // });
-    //
-    // $(document).on('touchend', function (e) {
-    //   if (isAnimating) return;
-    //
-    //   const touchEndY = e.originalEvent.changedTouches[0].clientY;
-    //   const deltaY = touchEndY - touchStartY;
-    //
-    //   // If significant vertical swipe
-    //   if (Math.abs(deltaY) > 50) {
-    //     const $currentSection = $('.pages:visible');
-    //
-    //     // Swipe up - go to next section
-    //     if (deltaY < 0 && $currentSection.is('#index')) {
-    //       $('#about').click();
-    //     }
-    //   }
-    // });
 
     // Handle orientation change
     globalThis.addEventListener('orientationchange', function () {

@@ -1,54 +1,49 @@
+'use strict';
+
 const js = require('@eslint/js');
 const globals = require('globals');
+const pluginPromise = require('eslint-plugin-promise');
 
 module.exports = [
-  // Global ignores — replaces the now-unsupported .eslintignore
+  // 1. Global ignores — replaces .eslintignore
   {
-    ignores: [
-      'node_modules/**',
-      'coverage/**',
-      'test-results/**',
-      'assets/js/*.min.js',
-      'assets/js/bootstrap.min.js',
-    ],
+    ignores: ['assets/js/*.min.js', 'assets/js/bootstrap.min.js', 'coverage/**', 'node_modules/**'],
   },
 
-  // ESLint recommended rules
+  // 2. eslint:recommended baseline for all linted files
   js.configs.recommended,
 
-  // ── All JS files ──────────────────────────────────────────────────────────
-  // Include Node globals so that module.exports / require in script.js are valid
-  // (mirrors the original .eslintrc.json overrides["*.js"].env.node = true behaviour)
+  // 3. Base rules + browser globals applied to all JS
   {
     files: ['**/*.js'],
+    plugins: { promise: pluginPromise },
     languageOptions: {
       ecmaVersion: 2021,
       sourceType: 'script',
       globals: {
         ...globals.browser,
         ...globals.jquery,
-        ...globals.node,
         gtag: 'readonly',
       },
     },
     rules: {
-      'no-unused-vars': [
-        'warn',
-        {
-          argsIgnorePattern: '^_',
-          varsIgnorePattern: '^_',
-          caughtErrorsIgnorePattern: '^_',
-        },
-      ],
+      'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
       'no-undef': 'warn',
       eqeqeq: 'error',
-      // Allow empty catch blocks used for intentional swallowing
-      'no-empty': ['error', { allowEmptyCatch: true }],
     },
   },
 
-  // ── Jest unit test files ──────────────────────────────────────────────────
-  // Kept separate from Playwright e2e tests to avoid no-redeclare conflicts
+  // 4. script.js uses `module.exports` at the bottom for Jest compatibility
+  {
+    files: ['assets/js/script.js'],
+    languageOptions: {
+      globals: {
+        ...globals.commonjs,
+      },
+    },
+  },
+
+  // 5a. Jest unit test files
   {
     files: ['**/*.test.js', '**/__tests__/**/*.js'],
     languageOptions: {
@@ -59,23 +54,17 @@ module.exports = [
     },
   },
 
-  // ── Playwright e2e tests ──────────────────────────────────────────────────
-  // test/expect come from @playwright/test imports, not Jest globals
+  // 5b. Playwright E2E test files — Node only (test/expect come from require('@playwright/test'))
   {
     files: ['tests/**/*.js'],
     languageOptions: {
-      sourceType: 'module',
       globals: {
         ...globals.node,
       },
     },
-    rules: {
-      // Playwright imports resolve test/expect; disable undef for this dir
-      'no-undef': 'off',
-    },
   },
 
-  // ── Tooling / config files ────────────────────────────────────────────────
+  // 6. Tooling/config files — Node.js environment
   {
     files: ['jest.config.js', 'playwright.config.js', 'eslint.config.js'],
     languageOptions: {
