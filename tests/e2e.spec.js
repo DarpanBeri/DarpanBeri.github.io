@@ -217,3 +217,26 @@ test.describe('Portfolio E2E', () => {
     expect(stored).toBe(expected);
   });
 });
+
+test.describe('Issue #19: debug scaffolding removed', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto(fileUrl, { waitUntil: 'load' });
+  });
+
+  test('no diagnostic HUD overlay is present on load', async ({ page }) => {
+    // The HUD builds itself over ~6s via setInterval; give it time, then assert absence.
+    await page.waitForTimeout(1000);
+    await expect(page.locator('#diag-hud')).toHaveCount(0);
+  });
+
+  test('no inline goToHome onclick handlers remain', async ({ page }) => {
+    await expect(page.locator('[onclick]')).toHaveCount(0);
+  });
+
+  test('persistent "Go Back to Home" button still returns to #index', async ({ page }) => {
+    await page.locator('#work').click();
+    await expect(page.locator('#work_scroll')).toBeVisible();
+    await page.locator('.go-back-home').click();
+    await expect(page.locator('#index')).toBeVisible();
+  });
+});
