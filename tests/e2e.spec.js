@@ -239,4 +239,8 @@ test.describe('Issue #19: debug scaffolding removed', () => {
     await page.locator('.go-back-home').click();
     await expect(page.locator('#index')).toBeVisible();
   });
+
+  test('no SAFE-MODE Content-Security-Policy meta is present', async ({ page }) => {
+    await expect(page.locator('meta[http-equiv="Content-Security-Policy"]')).toHaveCount(0);
+  });
 });
