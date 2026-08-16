@@ -249,4 +249,16 @@ test.describe('Issue #19: debug scaffolding removed', () => {
     const hasGtag = await page.evaluate(() => typeof window.gtag !== 'undefined');
     expect(hasGtag).toBe(false);
   });
+
+  test('all target="_blank" links carry rel="noopener noreferrer"', async ({ page }) => {
+    const unhardened = await page.$$eval(
+      'a[target="_blank"]',
+      (links) =>
+        links.filter((a) => {
+          const rel = (a.getAttribute('rel') || '').toLowerCase();
+          return !(rel.includes('noopener') && rel.includes('noreferrer'));
+        }).length
+    );
+    expect(unhardened).toBe(0);
+  });
 });
