@@ -243,4 +243,10 @@ test.describe('Issue #19: debug scaffolding removed', () => {
   test('no SAFE-MODE Content-Security-Policy meta is present', async ({ page }) => {
     await expect(page.locator('meta[http-equiv="Content-Security-Policy"]')).toHaveCount(0);
   });
+
+  test('Google Analytics is not loaded', async ({ page }) => {
+    await expect(page.locator('script[src*="googletagmanager.com"]')).toHaveCount(0);
+    const hasGtag = await page.evaluate(() => typeof window.gtag !== 'undefined');
+    expect(hasGtag).toBe(false);
+  });
 });
