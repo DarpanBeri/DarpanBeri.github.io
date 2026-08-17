@@ -182,6 +182,40 @@ test.describe('Portfolio E2E', () => {
     await expect(page.locator('#where_to_find_me')).toBeHidden();
   });
 
+  test('Easter Egg: Escape returns to Resources (regression)', async ({ page }) => {
+    await page.locator('#resources').click();
+    await expect(page.locator('#resources_scroll')).toBeVisible();
+    await page.locator('#where-to-find-me').click();
+    await expect(page.locator('#where_to_find_me')).toBeVisible();
+
+    // Press Escape (bound on document, so focus location doesn't matter)
+    await page.keyboard.press('Escape');
+
+    // Returns to Resources, and the two sections are not both visible
+    await expect(page.locator('#resources_scroll')).toBeVisible();
+    await expect(page.locator('#where_to_find_me')).toBeHidden();
+  });
+
+  test('Navigation resets scroll to top of the new section (regression)', async ({ page }) => {
+    // Scroll the desktop scroll container (.container.main) down, then navigate
+    await page.evaluate(() => {
+      const c = document.querySelector('.container.main');
+      if (c) c.scrollTop = 300;
+      window.scrollTo(0, 300);
+    });
+    await page.locator('#about').click();
+    await expect(page.locator('#about_scroll')).toBeVisible();
+
+    // Both the container and the window should be reset to the top so the
+    // section's "Back to home" link is in view.
+    const scrolls = await page.evaluate(() => ({
+      container: document.querySelector('.container.main')?.scrollTop ?? 0,
+      window: window.scrollY,
+    }));
+    expect(scrolls.container).toBe(0);
+    expect(scrolls.window).toBe(0);
+  });
+
   test('Contact form: rejects empty submission and marks fields invalid', async ({ page }) => {
     // Navigate to the Contact section
     await page.locator('#contact').click();
@@ -228,6 +262,27 @@ test.describe('Portfolio E2E', () => {
     const emailInput = page.locator('#contactForm input[type="email"]');
     await expect(emailInput).toHaveAttribute('aria-invalid', 'true');
     await expect(emailInput).toHaveClass(/is-invalid/);
+  });
+
+  test('Contact form: Send button is not locked after an invalid-email submit (regression)', async ({
+    page,
+  }) => {
+    await page.locator('#contact').click();
+    await expect(page.locator('#contact_scroll')).toBeVisible();
+    await page.evaluate(() =>
+      document.getElementById('contactForm').setAttribute('novalidate', '')
+    );
+
+    // "foo@bar" passes native HTML5 email validation but fails isValidEmail()
+    await page.locator('#contactForm input[type="email"]').fill('foo@bar');
+    const submit = page.locator('#contactForm button[type="submit"]');
+    await submit.click();
+
+    // The button must stay interactive — not stuck in the .btn-loading (pointer-events:none) state
+    await expect(submit).not.toHaveClass(/btn-loading/);
+    await expect(submit).toBeEnabled();
+    const pe = await submit.evaluate((el) => getComputedStyle(el).pointerEvents);
+    expect(pe).not.toBe('none');
   });
 
   test('Theme toggle persists theme choice to localStorage', async ({ page }) => {

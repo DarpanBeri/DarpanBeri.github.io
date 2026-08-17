@@ -199,6 +199,16 @@ if (
     // Prevent scroll leaking between sections
     let isAnimating = false;
 
+    // Reset scroll to the top of the newly shown section. On desktop the scroll
+    // container is `.container.main` (height:100vh; overflow-y:auto), not the
+    // window — reset both so the section's top controls (e.g. "Back to home")
+    // are in view after navigating, on every viewport.
+    function scrollToTop() {
+      globalThis.scrollTo(0, 0);
+      const container = document.querySelector('.container.main');
+      if (container) container.scrollTop = 0;
+    }
+
     function switchSection(hideSel, showSel, onShown) {
       if (isAnimating) return;
       isAnimating = true;
@@ -213,10 +223,8 @@ if (
       fade(hideEl, 'out', function () {
         fade(showEl, 'in', function () {
           isAnimating = false;
-          // Scroll to top of new section on mobile
-          if (globalThis.innerWidth <= 767) {
-            globalThis.scrollTo(0, 0);
-          }
+          // Scroll to top of the newly shown section (all viewports)
+          scrollToTop();
           // Optional callback after section is shown
           if (onShown !== undefined) {
             try {
@@ -241,12 +249,6 @@ if (
       } else {
         img.addEventListener('load', () => handleImageLoad(img));
       }
-    });
-
-    // Add loading state to form submit button
-    const contactFormEl = document.querySelector('#contactForm');
-    contactFormEl?.addEventListener('submit', () => {
-      contactFormEl.querySelector('button[type="submit"]')?.classList.add('btn-loading');
     });
 
     // Theme toggle functionality with keyboard and ARIA support
@@ -336,7 +338,7 @@ if (
           index.hidden = false;
           index.style.display = '';
         }
-        globalThis.scrollTo(0, 0);
+        scrollToTop();
       } else {
         try {
           globalThis.goToHome();
@@ -552,10 +554,8 @@ if (
         // Show the Easter egg section with proper animation
         fade(eggEl, 'in', function () {
           isAnimating = false;
-          // Scroll to top of new section on mobile
-          if (globalThis.innerWidth <= 767) {
-            globalThis.scrollTo(0, 0);
-          }
+          // Scroll to top of the newly shown section (all viewports)
+          scrollToTop();
         });
 
         history.pushState(null, '', '#where_to_find_me');
@@ -571,11 +571,13 @@ if (
       }
     });
 
-    // Add keyboard navigation for Easter Egg section
-    document.querySelector('#where_to_find_me')?.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') {
-        // ESC key
-        document.querySelector('#resources')?.click();
+    // Keyboard: Escape returns from the Easter egg to Resources.
+    // Bound on document (not the section) so it works regardless of focus, and
+    // only acts while the egg is visible. Transitions egg -> resources directly.
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && isVisible(document.querySelector('#where_to_find_me'))) {
+        switchSection('#where_to_find_me', '#resources_scroll');
+        history.pushState(null, '', '#resources_scroll');
       }
     });
 
