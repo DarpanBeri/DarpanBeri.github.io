@@ -33,6 +33,14 @@ test.describe('Portfolio E2E', () => {
     await expect(page.locator('#index')).toBeVisible();
   });
 
+  test('form-status starts hidden via CSS, without an inline style attribute', async ({ page }) => {
+    const status = page.locator('#form-status');
+    // A strict style-src blocks inline `style="..."` attributes, so there must be none.
+    expect(await status.getAttribute('style')).toBeNull();
+    // It must still be hidden on load (now enforced by a CSS rule, not the attribute).
+    await expect(status).toBeHidden();
+  });
+
   test('Section Navigation: Work -> Back to Home', async ({ page }) => {
     // Navigate to Work
     await page.locator('#work').click();
@@ -371,8 +379,15 @@ test.describe('Issue #19: debug scaffolding removed', () => {
     await expect(page.locator('#index')).toBeVisible();
   });
 
-  test('no SAFE-MODE Content-Security-Policy meta is present', async ({ page }) => {
-    await expect(page.locator('meta[http-equiv="Content-Security-Policy"]')).toHaveCount(0);
+  test('an intentional CSP meta is present (replaces the removed #19 SAFE-MODE policy)', async ({
+    page,
+  }) => {
+    const meta = page.locator('meta[http-equiv="Content-Security-Policy"]');
+    await expect(meta).toHaveCount(1);
+    const content = (await meta.getAttribute('content')) || '';
+    // The #19 bug was a script-src that failed to allow the app's own origin.
+    // The replacement policy must always permit same-origin scripts.
+    expect(content).toMatch(/script-src 'self'/);
   });
 
   test('Google Analytics is not loaded', async ({ page }) => {
@@ -493,5 +508,68 @@ test.describe('SEO & head assets', () => {
   test('sitemap.xml lists the canonical URL', () => {
     const sitemap = fs.readFileSync(path.join(repoRoot, 'sitemap.xml'), 'utf8');
     expect(sitemap).toContain('<loc>https://darpanberi.github.io/</loc>');
+  });
+});
+
+test.describe('Content-Security-Policy', () => {
+  test('policy is hardened and correctly scoped to real dependencies', async ({ page }) => {
+    await page.goto(fileUrl, { waitUntil: 'load' });
+    const meta = page.locator('meta[http-equiv="Content-Security-Policy"]');
+    await expect(meta).toHaveCount(1);
+    const content = (await meta.getAttribute('content')) || '';
+
+    // No inline/eval escape hatches anywhere in the policy.
+    expect(content).not.toContain('unsafe-inline');
+    expect(content).not.toContain('unsafe-eval');
+
+    // Scripts: same-origin only (script.js). This is the exact #19 fix.
+    expect(content).toMatch(/script-src 'self'/);
+
+    // Styles: self + the two CSS origins actually loaded (animate.css/Font Awesome, Google Fonts).
+    expect(content).toMatch(/style-src[^;]*'self'/);
+    expect(content).toMatch(/style-src[^;]*https:\/\/cdnjs\.cloudflare\.com/);
+    expect(content).toMatch(/style-src[^;]*https:\/\/fonts\.googleapis\.com/);
+
+    // Fonts: Font Awesome webfonts (cdnjs) + Google woff2 (gstatic).
+    expect(content).toMatch(/font-src[^;]*https:\/\/cdnjs\.cloudflare\.com/);
+    expect(content).toMatch(/font-src[^;]*https:\/\/fonts\.gstatic\.com/);
+
+    // Contact form endpoint must be reachable via fetch and native submit.
+    expect(content).toMatch(/connect-src[^;]*https:\/\/formspree\.io/);
+    expect(content).toMatch(/form-action[^;]*https:\/\/formspree\.io/);
+
+    // Lockdown backstops.
+    expect(content).toMatch(/object-src 'none'/);
+    expect(content).toMatch(/base-uri 'self'/);
+  });
+
+  test('no CSP violations fire during a full interaction pass', async ({ page }) => {
+    // NOTE: the e2e suite runs via file://, where browsers enforce CSP unreliably,
+    // so this is a best-effort safety net — the authoritative runtime check is the
+    // served-origin chrome-devtools pass in Task 3. Listeners must attach before goto.
+    const violations = [];
+    page.on('console', (msg) => {
+      const t = msg.text();
+      if (/Content Security Policy|Refused to (load|apply|execute|connect|create)/i.test(t)) {
+        violations.push(t);
+      }
+    });
+    page.on('pageerror', (err) => {
+      if (/Content Security Policy/i.test(err.message)) violations.push(err.message);
+    });
+
+    await page.goto(fileUrl, { waitUntil: 'load' });
+
+    // Exercise fade()/element.style writes + CDN-backed assets.
+    await page.locator('#work').click();
+    await expect(page.locator('#work_scroll')).toBeVisible();
+    await page.locator('#owl-demo .carousel__dot').nth(1).click();
+    await page.locator('.go-back-home').click();
+    await expect(page.locator('#index')).toBeVisible();
+    await page.locator('.theme-toggle').click();
+    await page.locator('#contact').click();
+    await expect(page.locator('#contact_scroll')).toBeVisible();
+
+    expect(violations).toEqual([]);
   });
 });

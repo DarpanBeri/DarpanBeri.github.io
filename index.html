@@ -2,6 +2,10 @@
 <html lang="en" data-theme="light">
   <head>
     <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self'; connect-src 'self' https://formspree.io; form-action 'self' https://formspree.io; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests"
+    />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -86,7 +90,7 @@
       integrity="sha512-TyUaMbYrKFZfQfp+9nQGOEt+vGu4nKzLk0KaV3nFifL3K8n7lzb8DayTzLOK0pNyzxGJzGRSw78e8xqJhURJ3Q=="
       crossorigin="anonymous"
     />
-    <link href="assets/css/main.css?v=1786930002" rel="stylesheet" />
+    <link href="assets/css/main.css?v=1786944935" rel="stylesheet" />
   </head>
 
   <body>
@@ -640,7 +644,7 @@
               collaborations.
             </p>
             <!-- Add a single form status element -->
-            <div id="form-status" class="alert" style="display: none"></div>
+            <div id="form-status" class="alert"></div>
 
             <!-- Updated minimalist contact form -->
             <form id="contactForm" action="https://formspree.io/f/xkgrwpbr" method="POST">
