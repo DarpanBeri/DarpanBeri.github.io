@@ -9,6 +9,7 @@
     "unrecognized-char-ref": "warn",
     "no-implicit-button-type": "warn",
     "no-redundant-role": "warn",
+    "no-autoplay": ["error", { "exclude": ["video"] }],
     "prefer-native-element": "off",
     "wcag/h63": "warn"
   }
