@@ -76,7 +76,7 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow: auto;
+  overflow: auto !important;
   overscroll-behavior-y: none;
   -webkit-overflow-scrolling: touch;
 }
@@ -1146,8 +1146,8 @@ ul li {
   bottom: 20px;
   right: 20px;
   z-index: 1000;
-  background-color: var(--accent-color);
-  color: white;
+  background-color: #8e7150;
+  color: #fff;
   padding: 10px 20px;
   border-radius: 50px;
   font-size: 16px;
