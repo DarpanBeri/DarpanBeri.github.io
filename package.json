@@ -2,6 +2,10 @@
   "name": "darpanberi.github.io",
   "version": "0.0.0",
   "private": true,
+  "engines": {
+    "node": ">=20",
+    "npm": ">=10"
+  },
   "scripts": {
     "prepare": "husky",
     "format": "prettier --write .",
