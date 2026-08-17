@@ -393,8 +393,13 @@ ul li {
   font-size: 12px;
 }
 
-.logo h4 {
+.logo-title {
   font-family: 'Josefin Sans', Arial, sans-serif;
+  font-size: 18px;
+  color: var(--heading-color);
+  font-weight: 700;
+  line-height: 1em;
+  margin: 0 0 0.5625em;
 }
 
 .logo img {
@@ -875,7 +880,7 @@ ul li {
   left: 50%;
   transform: translateX(-50%);
   background: var(--accent-color);
-  color: white;
+  color: #222;
   padding: 10px 20px;
   z-index: 1000;
   transition: top 0.3s ease;

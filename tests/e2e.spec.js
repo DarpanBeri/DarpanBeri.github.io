@@ -262,3 +262,27 @@ test.describe('Issue #19: debug scaffolding removed', () => {
     expect(unhardened).toBe(0);
   });
 });
+
+test.describe('accessibility landmarks', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto(fileUrl, { waitUntil: 'load' });
+  });
+
+  test('page has exactly one level-one heading with the site name', async ({ page }) => {
+    await expect(page.locator('h1')).toHaveCount(1);
+    await expect(page.locator('h1')).toHaveText('Darpan Beri');
+  });
+
+  test('top controls live inside a header landmark', async ({ page }) => {
+    await expect(page.locator('header')).toHaveCount(1);
+    await expect(page.locator('header .theme-toggle')).toHaveCount(1);
+    await expect(page.locator('header a.skip-to-main')).toHaveCount(1);
+  });
+
+  test('skip link is focusable and targets main', async ({ page }) => {
+    const skip = page.locator('a.skip-to-main');
+    await expect(skip).toHaveAttribute('href', '#index');
+    await skip.focus();
+    await expect(skip).toBeFocused();
+  });
+});
