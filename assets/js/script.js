@@ -48,28 +48,47 @@ function fade(el, dir, onDone) {
   if (el) {
     if (dir === 'in') {
       el.hidden = false;
-      el.style.display = '';
+      // Explicit block (not '') so it overrides CSS rules like `.pages { display: none }`,
+      // matching jQuery fadeIn which set an inline display value.
+      el.style.display = 'block';
       el.style.opacity = '1';
     } else {
       el.style.opacity = '0';
+      // Explicit display:none (not just the hidden attr) so it overrides author CSS
+      // like `#index { display: block }`, matching jQuery fadeOut.
+      el.style.display = 'none';
       el.hidden = true;
     }
   }
   if (onDone) onDone();
 }
 
-// Wrap all browser-specific code to avoid executing in Node/Jest
+// Wrap all browser-specific code to avoid executing in Node/Jest.
+// Runs in a real browser (no CommonJS `module`), or when a test explicitly
+// opts in by defining globalThis.$ (a test-only signal — no runtime jQuery dep).
 if (
   globalThis.window !== undefined &&
   globalThis.document !== undefined &&
-  globalThis.$ !== undefined
+  (typeof module === 'undefined' || globalThis.$ !== undefined)
 ) {
   // Initialize theme handling before DOM ready
   initializeTheme();
 
-  $(document).ready(function () {
+  const onReady = function () {
     // Hide all pages except index initially
-    $('#about_scroll, #work_scroll, #resources_scroll, #contact_scroll, #where_to_find_me').hide();
+    [
+      '#about_scroll',
+      '#work_scroll',
+      '#resources_scroll',
+      '#contact_scroll',
+      '#where_to_find_me',
+    ].forEach((sel) => {
+      const el = document.querySelector(sel);
+      if (el) {
+        el.hidden = true;
+        el.style.display = 'none';
+      }
+    });
 
     // Vanilla scroll-snap carousel (replaces Owl). Framework-free by design.
     function initCarousel(root) {
@@ -156,7 +175,7 @@ if (
     // Prevent scroll leaking between sections
     let isAnimating = false;
 
-    function switchSection($hideSection, $showSection, onShown) {
+    function switchSection(hideSel, showSel, onShown) {
       if (isAnimating) return;
       isAnimating = true;
       // Fail-safe: ensure interaction cannot be blocked if callbacks are missed
@@ -164,8 +183,11 @@ if (
         isAnimating = false;
       }, 1000);
 
-      $hideSection.fadeOut(400, function () {
-        $showSection.fadeIn(400, function () {
+      const hideEl = typeof hideSel === 'string' ? document.querySelector(hideSel) : hideSel;
+      const showEl = typeof showSel === 'string' ? document.querySelector(showSel) : showSel;
+
+      fade(hideEl, 'out', function () {
+        fade(showEl, 'in', function () {
           isAnimating = false;
           // Scroll to top of new section on mobile
           if (globalThis.innerWidth <= 767) {
@@ -185,107 +207,111 @@ if (
 
     // Basic image loading handler
     function handleImageLoad(img) {
-      const $img = $(img);
-      if (!$img.hasClass('loaded')) {
-        $img.addClass('loaded');
-      }
+      img.classList.add('loaded');
     }
 
     // Initialize all images
-    $('.img-rabbit').each(function () {
-      if (this.complete) {
-        handleImageLoad(this);
+    document.querySelectorAll('.img-rabbit').forEach((img) => {
+      if (img.complete) {
+        handleImageLoad(img);
       } else {
-        $(this).on('load', function () {
-          handleImageLoad(this);
-        });
+        img.addEventListener('load', () => handleImageLoad(img));
       }
     });
 
     // Add loading state to form submit button
-    $('#contactForm').on('submit', function () {
-      const $submitBtn = $(this).find('button[type="submit"]');
-      $submitBtn.addClass('btn-loading');
+    const contactFormEl = document.querySelector('#contactForm');
+    contactFormEl?.addEventListener('submit', () => {
+      contactFormEl.querySelector('button[type="submit"]')?.classList.add('btn-loading');
     });
 
     // Theme toggle functionality with keyboard and ARIA support
     const themeToggle = document.querySelector('.theme-toggle');
-    const themeIcon = themeToggle.querySelector('i');
+    if (themeToggle) {
+      const themeIcon = themeToggle.querySelector('i');
 
-    // Theme toggle handler
-    function toggleTheme() {
+      // Theme toggle handler
+      const toggleTheme = function () {
+        const currentTheme = document.documentElement.dataset.theme || 'light';
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+        document.documentElement.dataset.theme = newTheme;
+        localStorage.setItem('theme', newTheme);
+
+        // Update icon and ARIA attributes
+        const iconClass = newTheme === 'dark' ? 'fa fa-sun-o' : 'fa fa-moon-o';
+        if (themeIcon) themeIcon.className = iconClass;
+        themeToggle.setAttribute('aria-checked', newTheme === 'dark');
+        const srText = newTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+        const srEl = themeToggle.querySelector('.sr-only');
+        if (srEl) srEl.textContent = srText;
+
+        // Track theme change if GA is available
+        trackEvent('theme_toggle', { theme: newTheme });
+      };
+
+      // Initialize theme toggle state
       const currentTheme = document.documentElement.dataset.theme || 'light';
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      const initialIconClass = currentTheme === 'dark' ? 'fa fa-sun-o' : 'fa fa-moon-o';
+      if (themeIcon) themeIcon.className = initialIconClass;
+      themeToggle.setAttribute('aria-checked', currentTheme === 'dark');
+      const initialSrText =
+        currentTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+      const initialSrEl = themeToggle.querySelector('.sr-only');
+      if (initialSrEl) initialSrEl.textContent = initialSrText;
 
-      document.documentElement.dataset.theme = newTheme;
-      localStorage.setItem('theme', newTheme);
-
-      // Update icon and ARIA attributes
-      const iconClass = newTheme === 'dark' ? 'fa fa-sun-o' : 'fa fa-moon-o';
-      themeIcon.className = iconClass;
-      themeToggle.setAttribute('aria-checked', newTheme === 'dark');
-      const srText = newTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
-      themeToggle.querySelector('.sr-only').textContent = srText;
-
-      // Track theme change if GA is available
-      if (typeof gtag === 'function') {
-        gtag('event', 'theme_toggle', {
-          theme: newTheme,
-        });
-      }
+      // Add theme toggle event listeners
+      themeToggle.addEventListener('click', toggleTheme);
+      themeToggle.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggleTheme();
+        }
+      });
     }
 
-    // Initialize theme toggle state
-    const currentTheme = document.documentElement.dataset.theme || 'light';
-    const initialIconClass = currentTheme === 'dark' ? 'fa fa-sun-o' : 'fa fa-moon-o';
-    themeIcon.className = initialIconClass;
-    themeToggle.setAttribute('aria-checked', currentTheme === 'dark');
-    const initialSrText = currentTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
-    themeToggle.querySelector('.sr-only').textContent = initialSrText;
+    ['#about_scroll', '#work_scroll', '#resources_scroll', '#contact_scroll'].forEach((sel) =>
+      fade(document.querySelector(sel), 'out')
+    );
 
-    // Add theme toggle event listeners
-    themeToggle.addEventListener('click', toggleTheme);
-    themeToggle.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        toggleTheme();
-      }
+    document.querySelector('#about')?.addEventListener('click', () => {
+      switchSection('#index', '#about_scroll');
+      document.querySelector('#about_left')?.classList.add('animated', 'slideInLeft');
+      document.querySelector('#about_right')?.classList.add('animated', 'slideInRight');
     });
 
-    $('#about_scroll').fadeOut();
-    $('#work_scroll').fadeOut();
-    $('#resources_scroll').fadeOut();
-    $('#contact_scroll').fadeOut();
-
-    $('#about').click(function () {
-      switchSection($('#index'), $('#about_scroll'));
-      $('#about_left').addClass('animated slideInLeft');
-      $('#about_right').addClass('animated slideInRight');
+    document.querySelector('#work')?.addEventListener('click', () => {
+      switchSection('#index', '#work_scroll');
+      document.querySelector('#work_left')?.classList.add('animated', 'slideInLeft');
+      document.querySelector('#work_right')?.classList.add('animated', 'slideInRight');
     });
 
-    $('#work').click(function () {
-      switchSection($('#index'), $('#work_scroll'));
-      $('#work_left').addClass('animated slideInLeft');
-      $('#work_right').addClass('animated slideInRight');
+    document.querySelector('#resources')?.addEventListener('click', () => {
+      switchSection('#index', '#resources_scroll');
     });
 
-    $('#resources').click(function () {
-      switchSection($('#index'), $('#resources_scroll'));
-    });
-
-    $('#contact').click(function () {
-      switchSection($('#index'), $('#contact_scroll'));
-      $('#contact_left').addClass('animated slideInLeft');
-      $('#contact_right').addClass('animated slideInRight');
+    document.querySelector('#contact')?.addEventListener('click', () => {
+      switchSection('#index', '#contact_scroll');
+      document.querySelector('#contact_left')?.classList.add('animated', 'slideInLeft');
+      document.querySelector('#contact_right')?.classList.add('animated', 'slideInRight');
     });
 
     // "Back to home" controls (links or persistent bar)
-    $(document).on('click', 'a[href="#index"], .go-back-home', function (e) {
+    document.addEventListener('click', (e) => {
+      const trigger = e.target.closest('a[href="#index"], .go-back-home');
+      if (!trigger) return;
       e.preventDefault();
       if (globalThis.goToHome === undefined) {
         // Fallback: mimic goToHome if function is unavailable
-        $('.pages').hide();
-        $('#index').show();
+        document.querySelectorAll('.pages').forEach((p) => {
+          p.hidden = true;
+          p.style.display = 'none';
+        });
+        const index = document.querySelector('#index');
+        if (index) {
+          index.hidden = false;
+          index.style.display = '';
+        }
         globalThis.scrollTo(0, 0);
       } else {
         try {
@@ -296,17 +322,23 @@ if (
       }
     });
 
+    // Force a redraw of the currently-visible page section (orientation/resize)
+    function forceRedrawVisibleSection() {
+      document.querySelectorAll('.pages').forEach((el) => {
+        if (isVisible(el)) {
+          el.style.display = 'none';
+          void el.offsetHeight; // reflow
+          el.style.display = '';
+        }
+      });
+    }
+
     // Handle orientation change
     globalThis.addEventListener('orientationchange', function () {
       // Wait for orientation change to complete
       setTimeout(function () {
-        // Reset any ongoing animations
         isAnimating = false;
-
-        // Force redraw of current section
-        const $currentSection = $('.pages:visible');
-        $currentSection.hide().show(0);
-
+        forceRedrawVisibleSection();
         // Ensure proper scroll position
         globalThis.scrollTo(0, 0);
       }, 200);
@@ -314,37 +346,27 @@ if (
 
     // Handle window resize
     let resizeTimer;
-    $(globalThis).on('resize', function () {
+    globalThis.addEventListener('resize', function () {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(function () {
-        // Reset any ongoing animations
         isAnimating = false;
-
-        // Force redraw of current section
-        const $currentSection = $('.pages:visible');
-        $currentSection.hide().show(0);
+        forceRedrawVisibleSection();
       }, 250);
     });
 
     // Helper function to show form status
     function showFormStatus(message, type) {
-      const statusDiv = $('#form-status');
-      let alertClass;
-      if (type === 'success') {
-        alertClass = 'alert-success';
-      } else if (type === 'error') {
-        alertClass = 'alert-danger';
-      } else {
-        alertClass = 'alert-info';
-      }
-      statusDiv
-        .removeClass('alert-success alert-danger alert-info')
-        .addClass(alertClass)
-        .html(message)
-        .fadeIn();
+      const statusDiv = document.querySelector('#form-status');
+      if (!statusDiv) return;
+      const alertClass =
+        type === 'success' ? 'alert-success' : type === 'error' ? 'alert-danger' : 'alert-info';
+      statusDiv.classList.remove('alert-success', 'alert-danger', 'alert-info');
+      statusDiv.classList.add(alertClass);
+      statusDiv.innerHTML = message;
+      fade(statusDiv, 'in');
 
       if (type === 'success' || type === 'error') {
-        setTimeout(() => statusDiv.fadeOut(), 5000);
+        setTimeout(() => fade(statusDiv, 'out'), 5000);
       }
     }
 
@@ -446,43 +468,44 @@ if (
     });
 
     // Skip to main content functionality
-    $('.skip-to-main').on('click', function (e) {
+    document.querySelector('.skip-to-main')?.addEventListener('click', function (e) {
       e.preventDefault();
-      const mainContent = $('#index');
-      mainContent.attr('tabindex', '-1');
+      const mainContent = document.querySelector('#index');
+      if (!mainContent) return;
+      mainContent.setAttribute('tabindex', '-1');
       mainContent.focus();
 
       // Ensure the main content is visible
-      $('.pages').fadeOut();
-      mainContent.fadeIn();
-      $('#index_left').addClass('animated slideInLeft');
-      $('#index_right').addClass('animated slideInRight');
+      document.querySelectorAll('.pages').forEach((p) => fade(p, 'out'));
+      fade(mainContent, 'in');
+      document.querySelector('#index_left')?.classList.add('animated', 'slideInLeft');
+      document.querySelector('#index_right')?.classList.add('animated', 'slideInRight');
 
       // Remove tabindex after focus
       setTimeout(() => {
-        mainContent.removeAttr('tabindex');
+        mainContent.removeAttribute('tabindex');
       }, 100);
     });
 
     // Document downloads tracking
-    $('.docs-buttons a, .resources-list a').on('click', function (_e) {
-      const docName = $(this).text().trim();
-      trackEvent('document_download', {
-        document_name: docName,
-        document_url: $(this).attr('href'),
+    document.querySelectorAll('.docs-buttons a, .resources-list a').forEach((a) => {
+      a.addEventListener('click', () => {
+        trackEvent('document_download', {
+          document_name: a.textContent.trim(),
+          document_url: a.getAttribute('href'),
+        });
       });
     });
 
     // Navigation tracking
-    $('#about, #work, #resources, #contact').click(function () {
-      const section = $(this).attr('id');
-      trackEvent('navigation', {
-        section: section,
+    ['#about', '#work', '#resources', '#contact'].forEach((sel) => {
+      document.querySelector(sel)?.addEventListener('click', function () {
+        trackEvent('navigation', { section: this.id });
       });
     });
 
     // Easter egg button functionality - updated to use consistent animation patterns
-    $('#where-to-find-me').click(function (e) {
+    document.querySelector('#where-to-find-me')?.addEventListener('click', function (e) {
       e.preventDefault();
       e.stopPropagation(); // Prevent event bubbling
 
@@ -491,16 +514,19 @@ if (
       });
 
       // Use the same switchSection pattern as other navigation
-      const isEasterEggVisible = $('#where_to_find_me').is(':visible');
-      if (isEasterEggVisible) {
-        switchSection($('#where_to_find_me'), $('#resources_scroll'));
+      const eggEl = document.querySelector('#where_to_find_me');
+      if (isVisible(eggEl)) {
+        switchSection('#where_to_find_me', '#resources_scroll');
         history.pushState(null, '', '#resources_scroll');
       } else {
         // Hide all pages first to avoid conflicts
-        $('.pages').hide();
+        document.querySelectorAll('.pages').forEach((p) => {
+          p.hidden = true;
+          p.style.display = 'none';
+        });
 
         // Show the Easter egg section with proper animation
-        $('#where_to_find_me').fadeIn(400, function () {
+        fade(eggEl, 'in', function () {
           isAnimating = false;
           // Scroll to top of new section on mobile
           if (globalThis.innerWidth <= 767) {
@@ -512,36 +538,43 @@ if (
 
         // Set focus to the section for accessibility
         setTimeout(() => {
-          $('#where_to_find_me').attr('tabindex', '-1').focus();
+          eggEl?.setAttribute('tabindex', '-1');
+          eggEl?.focus();
           setTimeout(() => {
-            $('#where_to_find_me').removeAttr('tabindex');
+            eggEl?.removeAttribute('tabindex');
           }, 100);
         }, 500);
       }
     });
 
     // Add keyboard navigation for Easter Egg section
-    $('#where_to_find_me').on('keydown', function (e) {
+    document.querySelector('#where_to_find_me')?.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') {
         // ESC key
-        $('#resources').click();
+        document.querySelector('#resources')?.click();
       }
     });
 
     // Back to Resources button from Easter egg section
-    $('#back-to-resources').click(function (e) {
+    document.querySelector('#back-to-resources')?.addEventListener('click', function (e) {
       e.preventDefault();
 
       // Use the same switchSection pattern for consistent animations
-      switchSection($('#where_to_find_me'), $('#resources_scroll'));
+      switchSection('#where_to_find_me', '#resources_scroll');
       history.pushState(null, '', '#resources_scroll');
 
       // Set focus back to the where-to-find-me button for accessibility
       setTimeout(() => {
-        $('#where-to-find-me').focus();
+        document.querySelector('#where-to-find-me')?.focus();
       }, 500);
     });
-  });
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', onReady);
+  } else {
+    onReady();
+  }
 }
 
 // Export for Node/CommonJS (Jest)
