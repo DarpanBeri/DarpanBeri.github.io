@@ -573,3 +573,31 @@ test.describe('Content-Security-Policy', () => {
     expect(violations).toEqual([]);
   });
 });
+
+test.describe('Image optimization', () => {
+  test('contact uses an autoplay muted loop video, not the old GIF', async ({ page }) => {
+    await page.goto(fileUrl, { waitUntil: 'load' });
+
+    const video = page.locator('#contact_left video');
+    await expect(video).toHaveCount(1);
+    await expect(video).toHaveAttribute('autoplay', '');
+    await expect(video).toHaveAttribute('muted', '');
+    await expect(video).toHaveAttribute('loop', '');
+    await expect(video).toHaveAttribute('playsinline', '');
+    await expect(video).toHaveAttribute('poster', /contact-poster\.jpg/);
+
+    // Must offer an MP4 source (the guaranteed-support path).
+    await expect(page.locator('#contact_left video source[type="video/mp4"]')).toHaveCount(1);
+
+    // The old animated GIF must be gone from the DOM entirely.
+    const html = await page.content();
+    expect(html).not.toContain('contact.GIF');
+  });
+
+  test('CSP explicitly allows self-hosted media', async ({ page }) => {
+    await page.goto(fileUrl, { waitUntil: 'load' });
+    const meta = page.locator('meta[http-equiv="Content-Security-Policy"]');
+    const content = (await meta.getAttribute('content')) || '';
+    expect(content).toMatch(/media-src 'self'/);
+  });
+});

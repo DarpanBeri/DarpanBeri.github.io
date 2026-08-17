@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; style-src 'self' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self'; connect-src 'self' https://formspree.io; form-action 'self' https://formspree.io; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests"
+      content="default-src 'self'; script-src 'self'; style-src 'self' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self'; media-src 'self'; connect-src 'self' https://formspree.io; form-action 'self' https://formspree.io; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests"
     />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -628,7 +628,19 @@
       <section id="contact_scroll" class="pages" aria-labelledby="contact-title">
         <div class="row">
           <div class="col-md-6 left" id="contact_left">
-            <img src="assets/images/contact.GIF" alt="Contact Me" class="img-rabbit" />
+            <video
+              class="img-rabbit"
+              autoplay
+              muted
+              loop
+              playsinline
+              poster="assets/images/contact-poster.jpg"
+              width="300"
+              height="224"
+              aria-label="Contact Me"
+            >
+              <source src="assets/images/contact.mp4" type="video/mp4" />
+            </video>
           </div>
 
           <div class="col-md-6 right" id="contact_right">
