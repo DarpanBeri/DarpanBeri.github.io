@@ -1,4 +1,4 @@
-const { isValidEmail, initializeTheme } = require('./script.js');
+const { isValidEmail, initializeTheme, isVisible, fade } = require('./script.js');
 
 describe('Email Validation', () => {
   test('returns true for valid email addresses', () => {
@@ -163,6 +163,49 @@ describe('Theme Initialization', () => {
     initializeTheme();
     expect(globalThis.document.documentElement.dataset.theme).toBe('light');
     globalThis.localStorage = origStorage;
+  });
+});
+
+describe('isVisible', () => {
+  test('returns false for display:none elements', () => {
+    document.body.innerHTML = '<div id="x" style="display:none">hi</div>';
+    expect(isVisible(document.getElementById('x'))).toBe(false);
+  });
+  test('returns false for hidden elements', () => {
+    document.body.innerHTML = '<div id="h" hidden>hi</div>';
+    expect(isVisible(document.getElementById('h'))).toBe(false);
+  });
+  test('returns true for shown elements', () => {
+    document.body.innerHTML = '<div id="y">hi</div>';
+    expect(isVisible(document.getElementById('y'))).toBe(true);
+  });
+  test('returns false for null', () => {
+    expect(isVisible(null)).toBe(false);
+  });
+});
+
+describe('fade', () => {
+  test('fade in makes an element visible and fires callback', () => {
+    document.body.innerHTML = '<div id="f" hidden style="display:none">hi</div>';
+    const el = document.getElementById('f');
+    const cb = jest.fn();
+    fade(el, 'in', cb);
+    expect(el.hidden).toBe(false);
+    expect(el.style.display).not.toBe('none');
+    expect(cb).toHaveBeenCalledTimes(1);
+  });
+  test('fade out hides an element and fires callback', () => {
+    document.body.innerHTML = '<div id="g">hi</div>';
+    const el = document.getElementById('g');
+    const cb = jest.fn();
+    fade(el, 'out', cb);
+    expect(el.hidden).toBe(true);
+    expect(cb).toHaveBeenCalledTimes(1);
+  });
+  test('tolerates a null element and still fires callback', () => {
+    const cb = jest.fn();
+    expect(() => fade(null, 'in', cb)).not.toThrow();
+    expect(cb).toHaveBeenCalledTimes(1);
   });
 });
 

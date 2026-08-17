@@ -30,6 +30,34 @@ function initializeTheme() {
   return theme;
 }
 
+// Visibility check (replaces jQuery :visible). jsdom-safe.
+function isVisible(el) {
+  if (!el) return false;
+  if (el.hidden) return false;
+  if (el.style && el.style.display === 'none') return false;
+  const cs = globalThis.getComputedStyle?.(el);
+  if (cs && cs.display === 'none') return false;
+  return true;
+}
+
+// Fade helper (replaces jQuery fadeIn/fadeOut). Synchronous show/hide that
+// preserves the final visibility state and fires the optional callback in the
+// same order the old fadeIn(400, cb)/fadeOut(400, cb) did. (Animation is
+// cosmetic; correctness depends only on end state + callback ordering.)
+function fade(el, dir, onDone) {
+  if (el) {
+    if (dir === 'in') {
+      el.hidden = false;
+      el.style.display = '';
+      el.style.opacity = '1';
+    } else {
+      el.style.opacity = '0';
+      el.hidden = true;
+    }
+  }
+  if (onDone) onDone();
+}
+
 // Wrap all browser-specific code to avoid executing in Node/Jest
 if (
   globalThis.window !== undefined &&
@@ -518,5 +546,5 @@ if (
 
 // Export for Node/CommonJS (Jest)
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { isValidEmail, initializeTheme };
+  module.exports = { isValidEmail, initializeTheme, isVisible, fade };
 }
