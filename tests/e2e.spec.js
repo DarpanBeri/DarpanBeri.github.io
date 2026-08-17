@@ -630,4 +630,16 @@ test.describe('Image optimization', () => {
     // Above-the-fold hero art must NOT be lazy (protects LCP).
     expect(await page.locator('#index_left img').getAttribute('loading')).not.toBe('lazy');
   });
+
+  test('reduced-motion visitors are not autoplayed the contact video', async ({ browser }) => {
+    const context = await browser.newContext({ reducedMotion: 'reduce' });
+    const page = await context.newPage();
+    await page.goto(fileUrl, { waitUntil: 'load' });
+
+    const video = page.locator('#contact_left video');
+    // With reduced motion, the script pauses the video so the poster stays shown.
+    await expect.poll(async () => video.evaluate((v) => v.paused)).toBe(true);
+
+    await context.close();
+  });
 });
