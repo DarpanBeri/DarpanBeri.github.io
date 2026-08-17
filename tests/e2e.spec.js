@@ -224,7 +224,7 @@ test.describe('Issue #19: debug scaffolding removed', () => {
   });
 
   test('no diagnostic HUD overlay is present on load', async ({ page }) => {
-    // The HUD builds itself over ~6s via setInterval; give it time, then assert absence.
+    // The HUD is fully removed; wait a beat to also catch any late/async re-injection, then assert absence.
     await page.waitForTimeout(1000);
     await expect(page.locator('#diag-hud')).toHaveCount(0);
   });
