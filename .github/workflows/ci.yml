@@ -48,11 +48,8 @@ jobs:
       - name: Run E2E Tests
         run: npm run test:e2e
 
-      - name: Setup Chrome + ChromeDriver
-        uses: browser-actions/setup-chrome@v2
-        with:
-          chrome-version: stable
-          install-chromedriver: true
+      - name: Install matched Chrome + ChromeDriver for axe
+        run: npx browser-driver-manager install chrome
 
       - name: Run Accessibility Audit
         run: npm run check:a11y
