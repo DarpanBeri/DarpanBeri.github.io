@@ -600,4 +600,34 @@ test.describe('Image optimization', () => {
     const content = (await meta.getAttribute('content')) || '';
     expect(content).toMatch(/media-src 'self'/);
   });
+
+  test('home image now points at the JPEG, not the PNG', async ({ page }) => {
+    await page.goto(fileUrl, { waitUntil: 'load' });
+    const home = page.locator('#index_left img');
+    await expect(home).toHaveAttribute('src', /home\.jpg/);
+    const html = await page.content();
+    expect(html).not.toContain('home.png');
+  });
+
+  test('every content image has intrinsic width/height; below-the-fold images lazy-load', async ({
+    page,
+  }) => {
+    await page.goto(fileUrl, { waitUntil: 'load' });
+
+    // All content <img> declare width + height (no layout shift).
+    const imgs = page.locator('img');
+    const count = await imgs.count();
+    for (let i = 0; i < count; i++) {
+      const img = imgs.nth(i);
+      expect(await img.getAttribute('width'), `img #${i} width`).not.toBeNull();
+      expect(await img.getAttribute('height'), `img #${i} height`).not.toBeNull();
+    }
+
+    // Below-the-fold images lazy-load.
+    await expect(page.locator('#about_left img')).toHaveAttribute('loading', 'lazy');
+    await expect(page.locator('.item img').first()).toHaveAttribute('loading', 'lazy');
+
+    // Above-the-fold hero art must NOT be lazy (protects LCP).
+    expect(await page.locator('#index_left img').getAttribute('loading')).not.toBe('lazy');
+  });
 });
