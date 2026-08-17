@@ -449,12 +449,25 @@ test.describe('SEO & head assets', () => {
   });
 
   test('preconnect hints for CDN and font origins are present', async ({ page }) => {
-    for (const href of [
-      'https://cdnjs.cloudflare.com',
-      'https://fonts.googleapis.com',
-      'https://fonts.gstatic.com',
-    ]) {
+    // cdnjs (SRI stylesheets) and fonts.gstatic (CORS font fetches) are requested
+    // cross-origin, so their preconnect must carry `crossorigin`; fonts.googleapis
+    // (a plain CSS request) must NOT — a mismatch opens a wasteful second connection.
+    const crossorigin = ['https://cdnjs.cloudflare.com', 'https://fonts.gstatic.com'];
+    const sameorigin = ['https://fonts.googleapis.com'];
+
+    for (const href of [...crossorigin, ...sameorigin]) {
       await expect(page.locator(`link[rel="preconnect"][href="${href}"]`)).toHaveCount(1);
+    }
+    for (const href of crossorigin) {
+      await expect(page.locator(`link[rel="preconnect"][href="${href}"]`)).toHaveAttribute(
+        'crossorigin',
+        ''
+      );
+    }
+    for (const href of sameorigin) {
+      expect(
+        await page.locator(`link[rel="preconnect"][href="${href}"]`).getAttribute('crossorigin')
+      ).toBeNull();
     }
   });
 
