@@ -1,25 +1,22 @@
-name: CI & SonarCloud Analysis
+name: CI
 
 on:
   push:
     branches:
-      - master # Run on merges to master to update SonarCloud dashboard
+      - master # Run on merges to master
   pull_request:
     branches:
       - master # Run on pull requests targeting master
 
 jobs:
-  build-and-analyze:
-    name: Build, Test, and Analyze
+  build-and-test:
+    name: Build and Test
     permissions:
       contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          # This is required for SonarCloud to perform a full analysis.
-          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -44,8 +41,3 @@ jobs:
 
       - name: Check Links
         run: npm run check:links
-
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v6
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

@@ -217,3 +217,48 @@ test.describe('Portfolio E2E', () => {
     expect(stored).toBe(expected);
   });
 });
+
+test.describe('Issue #19: debug scaffolding removed', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto(fileUrl, { waitUntil: 'load' });
+  });
+
+  test('no diagnostic HUD overlay is present on load', async ({ page }) => {
+    // The HUD is fully removed; wait a beat to also catch any late/async re-injection, then assert absence.
+    await page.waitForTimeout(1000);
+    await expect(page.locator('#diag-hud')).toHaveCount(0);
+  });
+
+  test('no inline goToHome onclick handlers remain', async ({ page }) => {
+    await expect(page.locator('[onclick]')).toHaveCount(0);
+  });
+
+  test('persistent "Go Back to Home" button still returns to #index', async ({ page }) => {
+    await page.locator('#work').click();
+    await expect(page.locator('#work_scroll')).toBeVisible();
+    await page.locator('.go-back-home').click();
+    await expect(page.locator('#index')).toBeVisible();
+  });
+
+  test('no SAFE-MODE Content-Security-Policy meta is present', async ({ page }) => {
+    await expect(page.locator('meta[http-equiv="Content-Security-Policy"]')).toHaveCount(0);
+  });
+
+  test('Google Analytics is not loaded', async ({ page }) => {
+    await expect(page.locator('script[src*="googletagmanager.com"]')).toHaveCount(0);
+    const hasGtag = await page.evaluate(() => typeof window.gtag !== 'undefined');
+    expect(hasGtag).toBe(false);
+  });
+
+  test('all target="_blank" links carry rel="noopener noreferrer"', async ({ page }) => {
+    const unhardened = await page.$$eval(
+      'a[target="_blank"]',
+      (links) =>
+        links.filter((a) => {
+          const rel = (a.getAttribute('rel') || '').toLowerCase();
+          return !(rel.includes('noopener') && rel.includes('noreferrer'));
+        }).length
+    );
+    expect(unhardened).toBe(0);
+  });
+});

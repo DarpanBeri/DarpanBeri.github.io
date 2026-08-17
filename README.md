@@ -1,7 +1,6 @@
 # Darpan Beri — Portfolio Website
 
 [![CI](https://github.com/DarpanBeri/DarpanBeri.github.io/actions/workflows/ci.yml/badge.svg)](https://github.com/DarpanBeri/DarpanBeri.github.io/actions/workflows/ci.yml)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=DarpanBeri_DarpanBeri.github.io&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=DarpanBeri_DarpanBeri.github.io)
 
 ## Description
 
@@ -105,7 +104,6 @@ The GitHub Actions workflow (`.github/workflows/ci.yml`) runs on every push and 
 3. Unit tests with coverage
 4. HTML validation
 5. Link check
-6. SonarCloud static analysis
 
 ## Resources
 

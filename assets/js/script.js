@@ -49,7 +49,7 @@ if (
 
     function initOwlIfNeeded() {
       if (owlInitialized) return;
-      if ($.fn?.owlCarousel?.() && $('#owl-demo').length) {
+      if ($.fn?.owlCarousel && $('#owl-demo').length) {
         owl = $('#owl-demo').owlCarousel({
           items: 1,
           loop: true,
