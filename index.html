@@ -55,36 +55,9 @@
     <meta name="theme-color" content="#bb9e7d" />
 
     <!-- Dependencies -->
-    <script
-      src="https://code.jquery.com/jquery-3.7.1.min.js"
-      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"
-      integrity="sha512-oBTprMeNEKCnqfuqKd6sbvFzmFQtlXS3e0C/RGFV0hD6QzhHV+ODfaQbAlmY6/q0ubbwlAM/nCJjkrgA3waLzg=="
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"
-      integrity="sha512-bPs7Ae6pVvhOSiIcyUClR7/q2OAsRiovw4vAkX+zJbw3ShAeeqezq50RIIcIURq7Oa20rW2n2q+fyXBNcU9lrw=="
-      crossorigin="anonymous"
-    ></script>
-    <script defer src="assets/js/script.js?v=1786928923"></script>
+    <script defer src="assets/js/script.js?v=1786930004"></script>
 
     <!-- Styles -->
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha512-Dop/vW3iOtayerlYAqCgkVr2aTr2ErwwTYOvRFUpzl2VhCMJyjQF0Q9TjUXIo6JhuM/3i0vVEt2e/7QQmnHQqw=="
-      crossorigin="anonymous"
-    />
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap-theme.min.css"
-      rel="stylesheet"
-      integrity="sha512-iy8EXLW01a00b26BaqJWaCmk9fJ4PsMdgNRqV96KwMPSH+blO82OHzisF/zQbRIIi8m0PiO10dpS0QxrcXsisw=="
-      crossorigin="anonymous"
-    />
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
       rel="stylesheet"
@@ -100,40 +73,12 @@
       rel="stylesheet"
     />
     <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css"
-      rel="stylesheet"
-      integrity="sha512-tS3S5qG0BlhnQROyJXvNjeEM4UpMXHrQfTGmbQ1gKmelCxlSEBUaxhRBj/EFTzpbP4RVSrpEikbmdJobCvhE3g=="
-      crossorigin="anonymous"
-    />
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css"
-      rel="stylesheet"
-      integrity="sha512-sMXtMNL1zRzolHYKEujM2AqCLUR9F2C4/05cdbxjjLSRvMQIciEPCQZo++nk7go3BtSuK9kfa/s+a4f4i5pLkw=="
-      crossorigin="anonymous"
-    />
-    <link
       href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css"
       rel="stylesheet"
       integrity="sha512-TyUaMbYrKFZfQfp+9nQGOEt+vGu4nKzLk0KaV3nFifL3K8n7lzb8DayTzLOK0pNyzxGJzGRSw78e8xqJhURJ3Q=="
       crossorigin="anonymous"
     />
-    <link href="assets/css/main.css?v=1786928923" rel="stylesheet" />
-    <style>
-      .go-back-home {
-        background-color: #8e7150;
-        color: #fff;
-      }
-
-      /* Moved from body to satisfy HTML validation */
-      html,
-      body {
-        overflow: auto !important;
-      }
-      .container.main {
-        height: auto !important;
-        overflow: visible !important;
-      }
-    </style>
+    <link href="assets/css/main.css?v=1786930002" rel="stylesheet" />
   </head>
 
   <body>
@@ -301,57 +246,80 @@
           <div class="col-md-6" id="work_left">
             <section
               id="owl-demo"
-              class="owl-carousel owl-theme"
+              class="carousel"
               aria-label="Work portfolio images"
+              aria-roledescription="carousel"
             >
-              <div
-                class="item"
-                role="tabpanel"
-                aria-label="Capstone Poster Session"
-                data-dot="Capstone poster slide"
-              >
-                <div class="img-container">
-                  <img
-                    src="assets/images/work_pic_1.jpg"
-                    alt="Work Example 1"
-                    class="img-rabbit"
-                    width="800"
-                    height="600"
-                  />
+              <div class="carousel__viewport">
+                <div class="carousel__track">
+                  <div
+                    class="item"
+                    role="group"
+                    aria-roledescription="slide"
+                    aria-label="Capstone Poster Session"
+                    data-dot="Capstone poster slide"
+                  >
+                    <div class="img-container">
+                      <img
+                        src="assets/images/work_pic_1.jpg"
+                        alt="Work Example 1"
+                        class="img-rabbit"
+                        width="800"
+                        height="600"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    class="item"
+                    role="group"
+                    aria-roledescription="slide"
+                    aria-label="SANDAG Workspace"
+                    data-dot="SANDAG workspace slide"
+                  >
+                    <div class="img-container">
+                      <img
+                        src="assets/images/work_pic_2.jpg"
+                        alt="Work Example 2"
+                        class="img-rabbit"
+                        width="800"
+                        height="600"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    class="item"
+                    role="group"
+                    aria-roledescription="slide"
+                    aria-label="Conference with Colleagues"
+                    data-dot="Conference slide"
+                  >
+                    <div class="img-container">
+                      <img
+                        src="assets/images/work_pic_3.jpg"
+                        alt="Work Example 3"
+                        class="img-rabbit"
+                        width="800"
+                        height="600"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div
-                class="item"
-                role="tabpanel"
-                aria-label="SANDAG Workspace"
-                data-dot="SANDAG workspace slide"
+              <button
+                type="button"
+                class="carousel__arrow carousel__arrow--prev"
+                aria-label="Previous slide"
               >
-                <div class="img-container">
-                  <img
-                    src="assets/images/work_pic_2.jpg"
-                    alt="Work Example 2"
-                    class="img-rabbit"
-                    width="800"
-                    height="600"
-                  />
-                </div>
-              </div>
-              <div
-                class="item"
-                role="tabpanel"
-                aria-label="Conference with Colleagues"
-                data-dot="Conference slide"
+                <i class="fa fa-angle-left" aria-hidden="true"></i>
+              </button>
+              <button
+                type="button"
+                class="carousel__arrow carousel__arrow--next"
+                aria-label="Next slide"
               >
-                <div class="img-container">
-                  <img
-                    src="assets/images/work_pic_3.jpg"
-                    alt="Work Example 3"
-                    class="img-rabbit"
-                    width="800"
-                    height="600"
-                  />
-                </div>
-              </div>
+                <i class="fa fa-angle-right" aria-hidden="true"></i>
+              </button>
+              <div class="carousel__dots" role="group" aria-label="Choose slide"></div>
             </section>
           </div>
 

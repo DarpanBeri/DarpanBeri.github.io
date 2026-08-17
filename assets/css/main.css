@@ -76,7 +76,7 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow: auto;
+  overflow: auto !important;
   overscroll-behavior-y: none;
   -webkit-overflow-scrolling: touch;
 }
@@ -258,16 +258,6 @@ body {
   backface-visibility: hidden;
   perspective: 1000px;
   transform: translate3d(0, 0, 0);
-}
-
-/* Prevent image flicker */
-.owl-carousel .img-rabbit {
-  opacity: 0;
-}
-
-/* Ensure active slide image is visible (robust against OwlCarousel clones) */
-.owl-carousel .owl-item.active .img-rabbit {
-  opacity: 1;
 }
 
 /* Remove margin for contact image */
@@ -524,34 +514,6 @@ ul li {
   display: block;
   width: 100%;
   height: auto;
-}
-
-/* Re-enable pointer events for owl dots as well */
-#owl-demo .owl-dots,
-#owl-demo .owl-dot {
-  pointer-events: auto;
-}
-
-#owl-demo .owl-dots {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-#owl-demo .owl-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #cfcfcf;
-  border: 1px solid var(--border-color);
-  display: inline-block;
-  overflow: hidden;
-}
-
-#owl-demo .owl-dot > span {
-  display: none !important;
 }
 
 @media (width <= 1024px) and (orientation: landscape) {
@@ -1146,8 +1108,8 @@ ul li {
   bottom: 20px;
   right: 20px;
   z-index: 1000;
-  background-color: var(--accent-color);
-  color: white;
+  background-color: #8e7150;
+  color: #fff;
   padding: 10px 20px;
   border-radius: 50px;
   font-size: 16px;
@@ -1168,4 +1130,241 @@ ul li {
 .go-back-home:focus {
   outline: 3px solid white;
   outline-offset: 2px;
+}
+
+/* Carousel (vanilla scroll-snap replacement for Owl) */
+.carousel {
+  position: relative;
+}
+
+.carousel__viewport {
+  overflow: hidden;
+}
+
+.carousel__track {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* Firefox */
+}
+
+.carousel__track::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+.carousel__track .item {
+  flex: 0 0 100%;
+  scroll-snap-align: center;
+}
+
+.carousel__arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  border: none;
+  background: rgb(0 0 0 / 40%);
+  color: #fff;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel__arrow--prev {
+  left: 8px;
+}
+
+.carousel__arrow--next {
+  right: 8px;
+}
+
+.carousel__arrow:focus {
+  outline: 3px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+.carousel__dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.carousel__dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  background: rgb(0 0 0 / 25%);
+  cursor: pointer;
+}
+
+.carousel__dot[aria-current='true'] {
+  background: var(--accent-color);
+}
+
+.carousel__dot:focus {
+  outline: 3px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+/* Hide arrows on mobile (Owl responsive.0.nav:false parity) */
+@media (width <= 767px) {
+  .carousel__arrow {
+    display: none;
+  }
+}
+
+/* Respect reduced-motion: disable smooth scroll (autoplay disabled in JS) */
+@media (prefers-reduced-motion: reduce) {
+  .carousel__track {
+    scroll-behavior: auto;
+  }
+}
+
+/* Bootstrap subset (self-hosted — replaces bootstrap.min.css) */
+.container {
+  margin-right: auto;
+  margin-left: auto;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+/* Bootstrap 3 fixed container widths per breakpoint (preserves centered desktop layout) */
+@media (width >= 768px) {
+  .container {
+    width: 750px;
+  }
+}
+
+@media (width >= 992px) {
+  .container {
+    width: 970px;
+  }
+}
+
+@media (width >= 1200px) {
+  .container {
+    width: 1170px;
+  }
+}
+
+.row {
+  margin-left: -15px;
+  margin-right: -15px;
+}
+
+.row::before,
+.row::after {
+  content: ' ';
+  display: table;
+}
+
+.row::after {
+  clear: both;
+}
+
+[class^='col-md-'] {
+  position: relative;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+@media (width >= 768px) {
+  [class^='col-md-'] {
+    float: left;
+  }
+
+  .col-md-6 {
+    width: 50%;
+  }
+
+  .col-md-12 {
+    width: 100%;
+  }
+}
+
+.btn {
+  display: inline-block;
+  padding: 6px 12px;
+  margin-bottom: 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.4286;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  user-select: none;
+}
+
+.btn-group {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.btn-group-vertical {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.btn-group-vertical > .btn {
+  display: block;
+  float: none;
+  width: 100%;
+  max-width: 100%;
+}
+
+.btn-group-vertical > .btn + .btn {
+  margin-top: -1px;
+  margin-left: 0;
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  height: 34px;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.4286;
+  color: #555;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.alert {
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+
+.alert-success {
+  color: #3c763d;
+  background-color: #dff0d8;
+  border-color: #d6e9c6;
+}
+
+.alert-danger {
+  color: #a94442;
+  background-color: #f2dede;
+  border-color: #ebccd1;
+}
+
+.alert-info {
+  color: #31708f;
+  background-color: #d9edf7;
+  border-color: #bce8f1;
 }

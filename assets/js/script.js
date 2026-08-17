@@ -30,128 +30,190 @@ function initializeTheme() {
   return theme;
 }
 
-// Wrap all browser-specific code to avoid executing in Node/Jest
+// Visibility check (replaces jQuery :visible). jsdom-safe.
+function isVisible(el) {
+  if (!el) return false;
+  if (el.hidden) return false;
+  if (el.style && el.style.display === 'none') return false;
+  const cs = globalThis.getComputedStyle?.(el);
+  if (cs && cs.display === 'none') return false;
+  return true;
+}
+
+// Fade helper (replaces jQuery fadeIn/fadeOut). Synchronous show/hide that
+// preserves the final visibility state and fires the optional callback in the
+// same order the old fadeIn(400, cb)/fadeOut(400, cb) did. (Animation is
+// cosmetic; correctness depends only on end state + callback ordering.)
+function fade(el, dir, onDone) {
+  if (el) {
+    if (dir === 'in') {
+      el.hidden = false;
+      // Explicit block (not '') so it overrides CSS rules like `.pages { display: none }`,
+      // matching jQuery fadeIn which set an inline display value.
+      el.style.display = 'block';
+      el.style.opacity = '1';
+    } else {
+      el.style.opacity = '0';
+      // Explicit display:none (not just the hidden attr) so it overrides author CSS
+      // like `#index { display: block }`, matching jQuery fadeOut.
+      el.style.display = 'none';
+      el.hidden = true;
+    }
+  }
+  if (onDone) onDone();
+}
+
+// Wrap all browser-specific code to avoid executing in Node/Jest.
+// Runs in a real browser (no CommonJS `module`), or when a test explicitly
+// opts in by defining globalThis.$ (a test-only signal — no runtime jQuery dep).
 if (
   globalThis.window !== undefined &&
   globalThis.document !== undefined &&
-  globalThis.$ !== undefined
+  (typeof module === 'undefined' || globalThis.$ !== undefined)
 ) {
   // Initialize theme handling before DOM ready
   initializeTheme();
 
-  $(document).ready(function () {
+  const onReady = function () {
     // Hide all pages except index initially
-    $('#about_scroll, #work_scroll, #resources_scroll, #contact_scroll, #where_to_find_me').hide();
-
-    // Initialize Owl Carousel first (guarded)
-    let owl = null;
-    let owlInitialized = false;
-
-    function initOwlIfNeeded() {
-      if (owlInitialized) return;
-      if ($.fn?.owlCarousel && $('#owl-demo').length) {
-        owl = $('#owl-demo').owlCarousel({
-          items: 1,
-          loop: true,
-          margin: 0,
-          nav: true,
-          navText: ['<i class="fa fa-angle-left"></i>', '<i class="fa fa-angle-right"></i>'],
-          dots: true,
-          dotsData: true,
-          autoplay: true,
-          autoplayTimeout: 3500,
-          autoplayHoverPause: true,
-          autoplaySpeed: 600,
-          lazyLoad: false,
-          smartSpeed: 450,
-          responsiveClass: true,
-          onInitialized: function () {
-            labelCarouselDots();
-          },
-          onRefreshed: function () {
-            labelCarouselDots();
-          },
-          onChanged: function () {
-            labelCarouselDots();
-          },
-          responsive: {
-            0: { items: 1, nav: false },
-            768: { items: 1, nav: true },
-          },
-        });
-        owlInitialized = true;
-      } else {
-        console.warn('OwlCarousel not available or #owl-demo missing; skipping initialization.');
+    [
+      '#about_scroll',
+      '#work_scroll',
+      '#resources_scroll',
+      '#contact_scroll',
+      '#where_to_find_me',
+    ].forEach((sel) => {
+      const el = document.querySelector(sel);
+      if (el) {
+        el.hidden = true;
+        el.style.display = 'none';
       }
-    }
+    });
 
-    function destroyOwlIfNeeded() {
-      try {
-        const $owl = $('#owl-demo');
-        if ($owl?.data('owl.carousel')) {
-          $owl.trigger('destroy.owl.carousel');
-        }
-      } catch (error) {
-        console.error('Error destroying owl carousel:', error);
-      }
-      owl = null;
-      owlInitialized = false;
-    }
-    // Accessibility: add labels for carousel dots (ensure after Owl initializes)
-    function labelCarouselDots() {
-      $('#owl-demo .owl-dot').each(function (index) {
-        const label = 'Go to slide ' + (index + 1);
-        // Provide multiple naming mechanisms recognized by accessibility APIs
-        $(this).attr('aria-label', label);
-        $(this).attr('title', label);
-        // Ensure element content exists (Pa11y considers element text as a valid accessible name)
-        let span = $(this).find('span');
-        if (span.length === 0) {
-          span = $('<span></span>').appendTo($(this));
-        }
-        span.text('Slide ' + (index + 1)).attr('aria-hidden', 'true');
+    // Vanilla scroll-snap carousel (replaces Owl). Framework-free by design.
+    function initCarousel(root) {
+      if (!root) return;
+      const track = root.querySelector('.carousel__track');
+      const slides = Array.from(root.querySelectorAll('.item'));
+      const dotsWrap = root.querySelector('.carousel__dots');
+      const prev = root.querySelector('.carousel__arrow--prev');
+      const next = root.querySelector('.carousel__arrow--next');
+      if (!track || slides.length === 0) return;
+
+      const reduceMotion = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+      let current = 0;
+
+      // Build dots from each slide's data-dot label
+      const dots = slides.map((slide, i) => {
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'carousel__dot';
+        const label = slide.getAttribute('data-dot') || `Slide ${i + 1}`;
+        dot.setAttribute('aria-label', label);
+        dot.setAttribute('aria-current', i === 0 ? 'true' : 'false');
+        dot.addEventListener('click', () => goTo(i));
+        dotsWrap?.appendChild(dot);
+        return dot;
       });
-    }
-    // Label when carousel is initialized, refreshed, or changed
-    $('#owl-demo').on(
-      'initialized.owl.carousel refreshed.owl.carousel changed.owl.carousel',
-      function () {
-        labelCarouselDots();
-      }
-    );
-    // In case dots are already rendered, schedule a microtask to label them
-    setTimeout(labelCarouselDots, 0);
 
-    // MutationObserver fallback to ensure labels are present whenever dots are rendered/updated
-    (function ensureDotLabelsWithMutationObserver() {
-      const dotsContainer = document.querySelector('#owl-demo .owl-dots');
-      if (dotsContainer && typeof MutationObserver !== 'undefined') {
-        const observer = new MutationObserver(function () {
-          labelCarouselDots();
+      function setActive(i) {
+        current = i;
+        dots.forEach((d, di) => d.setAttribute('aria-current', di === i ? 'true' : 'false'));
+        trackEvent('carousel_slide', { slide_index: i });
+      }
+
+      function goTo(i) {
+        const clamped = (i + slides.length) % slides.length; // loop
+        // Scroll the track only (not the page) — each slide is 100% of track width.
+        track.scrollTo({
+          left: clamped * track.clientWidth,
+          behavior: reduceMotion ? 'auto' : 'smooth',
         });
-        observer.observe(dotsContainer, { childList: true, subtree: true });
-        // Initial label attempt in case observer starts after render
-        labelCarouselDots();
+        setActive(clamped);
       }
-    })();
 
-    // Polling fallback: repeatedly attempt to label dots for a short time window
-    (function pollDotLabels() {
-      let tries = 0;
-      const maxTries = 50; // ~5 seconds at 100ms intervals
-      const interval = setInterval(function () {
-        labelCarouselDots();
-        tries++;
-        if (tries >= maxTries) {
-          clearInterval(interval);
+      prev?.addEventListener('click', () => goTo(current - 1));
+      next?.addEventListener('click', () => goTo(current + 1));
+
+      // Sync active dot with the actually-visible slide
+      if ('IntersectionObserver' in globalThis) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                const idx = slides.indexOf(entry.target);
+                if (idx !== -1 && idx !== current) setActive(idx);
+              }
+            });
+          },
+          { root: track, threshold: 0.6 }
+        );
+        slides.forEach((s) => io.observe(s));
+      }
+
+      // Autoplay every 3500ms. Runs only while the carousel is on screen and the
+      // tab is visible; pauses on hover (Owl parity). Gating on visibility prevents
+      // the active dot from drifting while the Work section is hidden.
+      let timer = null;
+      let onScreen = false;
+      let hovering = false;
+      function start() {
+        if (reduceMotion || timer || !onScreen || hovering || document.hidden) return;
+        timer = setInterval(() => goTo(current + 1), 3500);
+      }
+      function stop() {
+        if (timer) {
+          clearInterval(timer);
+          timer = null;
         }
-      }, 100);
-    })();
+      }
+      root.addEventListener('mouseenter', () => {
+        hovering = true;
+        stop();
+      });
+      root.addEventListener('mouseleave', () => {
+        hovering = false;
+        start();
+      });
+      document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
+
+      // Start/stop autoplay based on whether the carousel is actually on screen
+      if ('IntersectionObserver' in globalThis) {
+        const visObserver = new IntersectionObserver(
+          (entries) => {
+            onScreen = entries[0]?.isIntersecting ?? false;
+            if (onScreen) start();
+            else stop();
+          },
+          { threshold: 0.3 }
+        );
+        visObserver.observe(root);
+      } else {
+        onScreen = true;
+        start();
+      }
+    }
+
+    initCarousel(document.querySelector('#owl-demo'));
 
     // Prevent scroll leaking between sections
     let isAnimating = false;
 
-    function switchSection($hideSection, $showSection, onShown) {
+    // Reset scroll to the top of the newly shown section so its top controls
+    // (e.g. the "Back to home" link) are in view after navigating. The actual
+    // scroll container here is <body> (main.css: `body { overflow: auto !important }`,
+    // and `.container.main` is forced `overflow: visible !important` so it never
+    // scrolls). Reset every plausible scroller to be robust across viewports/CSS.
+    function scrollToTop() {
+      globalThis.scrollTo(0, 0);
+      if (document.scrollingElement) document.scrollingElement.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      const container = document.querySelector('.container.main');
+      if (container) container.scrollTop = 0;
+    }
+
+    function switchSection(hideSel, showSel, onShown) {
       if (isAnimating) return;
       isAnimating = true;
       // Fail-safe: ensure interaction cannot be blocked if callbacks are missed
@@ -159,13 +221,14 @@ if (
         isAnimating = false;
       }, 1000);
 
-      $hideSection.fadeOut(400, function () {
-        $showSection.fadeIn(400, function () {
+      const hideEl = typeof hideSel === 'string' ? document.querySelector(hideSel) : hideSel;
+      const showEl = typeof showSel === 'string' ? document.querySelector(showSel) : showSel;
+
+      fade(hideEl, 'out', function () {
+        fade(showEl, 'in', function () {
           isAnimating = false;
-          // Scroll to top of new section on mobile
-          if (globalThis.innerWidth <= 767) {
-            globalThis.scrollTo(0, 0);
-          }
+          // Scroll to top of the newly shown section (all viewports)
+          scrollToTop();
           // Optional callback after section is shown
           if (onShown !== undefined) {
             try {
@@ -180,121 +243,105 @@ if (
 
     // Basic image loading handler
     function handleImageLoad(img) {
-      const $img = $(img);
-      if (!$img.hasClass('loaded')) {
-        $img.addClass('loaded');
-      }
+      img.classList.add('loaded');
     }
 
     // Initialize all images
-    $('.img-rabbit').each(function () {
-      if (this.complete) {
-        handleImageLoad(this);
+    document.querySelectorAll('.img-rabbit').forEach((img) => {
+      if (img.complete) {
+        handleImageLoad(img);
       } else {
-        $(this).on('load', function () {
-          handleImageLoad(this);
-        });
+        img.addEventListener('load', () => handleImageLoad(img));
       }
-    });
-
-    // Add loading state to form submit button
-    $('#contactForm').on('submit', function () {
-      const $submitBtn = $(this).find('button[type="submit"]');
-      $submitBtn.addClass('btn-loading');
     });
 
     // Theme toggle functionality with keyboard and ARIA support
     const themeToggle = document.querySelector('.theme-toggle');
-    const themeIcon = themeToggle.querySelector('i');
+    if (themeToggle) {
+      const themeIcon = themeToggle.querySelector('i');
 
-    // Theme toggle handler
-    function toggleTheme() {
+      // Theme toggle handler
+      const toggleTheme = function () {
+        const currentTheme = document.documentElement.dataset.theme || 'light';
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+        document.documentElement.dataset.theme = newTheme;
+        localStorage.setItem('theme', newTheme);
+
+        // Update icon and ARIA attributes
+        const iconClass = newTheme === 'dark' ? 'fa fa-sun-o' : 'fa fa-moon-o';
+        if (themeIcon) themeIcon.className = iconClass;
+        themeToggle.setAttribute('aria-checked', newTheme === 'dark');
+        const srText = newTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+        const srEl = themeToggle.querySelector('.sr-only');
+        if (srEl) srEl.textContent = srText;
+
+        // Track theme change if GA is available
+        trackEvent('theme_toggle', { theme: newTheme });
+      };
+
+      // Initialize theme toggle state
       const currentTheme = document.documentElement.dataset.theme || 'light';
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      const initialIconClass = currentTheme === 'dark' ? 'fa fa-sun-o' : 'fa fa-moon-o';
+      if (themeIcon) themeIcon.className = initialIconClass;
+      themeToggle.setAttribute('aria-checked', currentTheme === 'dark');
+      const initialSrText =
+        currentTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+      const initialSrEl = themeToggle.querySelector('.sr-only');
+      if (initialSrEl) initialSrEl.textContent = initialSrText;
 
-      document.documentElement.dataset.theme = newTheme;
-      localStorage.setItem('theme', newTheme);
-
-      // Update icon and ARIA attributes
-      const iconClass = newTheme === 'dark' ? 'fa fa-sun-o' : 'fa fa-moon-o';
-      themeIcon.className = iconClass;
-      themeToggle.setAttribute('aria-checked', newTheme === 'dark');
-      const srText = newTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
-      themeToggle.querySelector('.sr-only').textContent = srText;
-
-      // Track theme change if GA is available
-      if (typeof gtag === 'function') {
-        gtag('event', 'theme_toggle', {
-          theme: newTheme,
-        });
-      }
+      // Add theme toggle event listeners
+      themeToggle.addEventListener('click', toggleTheme);
+      themeToggle.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggleTheme();
+        }
+      });
     }
 
-    // Initialize theme toggle state
-    const currentTheme = document.documentElement.dataset.theme || 'light';
-    const initialIconClass = currentTheme === 'dark' ? 'fa fa-sun-o' : 'fa fa-moon-o';
-    themeIcon.className = initialIconClass;
-    themeToggle.setAttribute('aria-checked', currentTheme === 'dark');
-    const initialSrText = currentTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
-    themeToggle.querySelector('.sr-only').textContent = initialSrText;
+    ['#about_scroll', '#work_scroll', '#resources_scroll', '#contact_scroll'].forEach((sel) =>
+      fade(document.querySelector(sel), 'out')
+    );
 
-    // Add theme toggle event listeners
-    themeToggle.addEventListener('click', toggleTheme);
-    themeToggle.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        toggleTheme();
-      }
+    document.querySelector('#about')?.addEventListener('click', () => {
+      switchSection('#index', '#about_scroll');
+      document.querySelector('#about_left')?.classList.add('animated', 'slideInLeft');
+      document.querySelector('#about_right')?.classList.add('animated', 'slideInRight');
     });
 
-    $('#about_scroll').fadeOut();
-    $('#work_scroll').fadeOut();
-    $('#resources_scroll').fadeOut();
-    $('#contact_scroll').fadeOut();
-
-    $('#about').click(function () {
-      if ($('#work_scroll').is(':visible')) {
-        destroyOwlIfNeeded();
-      }
-      switchSection($('#index'), $('#about_scroll'));
-      $('#about_left').addClass('animated slideInLeft');
-      $('#about_right').addClass('animated slideInRight');
+    document.querySelector('#work')?.addEventListener('click', () => {
+      switchSection('#index', '#work_scroll');
+      document.querySelector('#work_left')?.classList.add('animated', 'slideInLeft');
+      document.querySelector('#work_right')?.classList.add('animated', 'slideInRight');
     });
 
-    $('#work').click(function () {
-      switchSection($('#index'), $('#work_scroll'), function () {
-        initOwlIfNeeded();
-        owl?.trigger('refresh.owl.carousel');
-      });
-      $('#work_left').addClass('animated slideInLeft');
-      $('#work_right').addClass('animated slideInRight');
+    document.querySelector('#resources')?.addEventListener('click', () => {
+      switchSection('#index', '#resources_scroll');
     });
 
-    $('#resources').click(function () {
-      if ($('#work_scroll').is(':visible')) {
-        destroyOwlIfNeeded();
-      }
-      switchSection($('#index'), $('#resources_scroll'));
+    document.querySelector('#contact')?.addEventListener('click', () => {
+      switchSection('#index', '#contact_scroll');
+      document.querySelector('#contact_left')?.classList.add('animated', 'slideInLeft');
+      document.querySelector('#contact_right')?.classList.add('animated', 'slideInRight');
     });
 
-    $('#contact').click(function () {
-      if ($('#work_scroll').is(':visible')) {
-        destroyOwlIfNeeded();
-      }
-      switchSection($('#index'), $('#contact_scroll'));
-      $('#contact_left').addClass('animated slideInLeft');
-      $('#contact_right').addClass('animated slideInRight');
-    });
-
-    // Ensure Owl is destroyed when using "Back to home" controls (links or persistent bar)
-    $(document).on('click', 'a[href="#index"], .go-back-home', function (e) {
+    // "Back to home" controls (links or persistent bar)
+    document.addEventListener('click', (e) => {
+      const trigger = e.target.closest('a[href="#index"], .go-back-home');
+      if (!trigger) return;
       e.preventDefault();
-      destroyOwlIfNeeded();
       if (globalThis.goToHome === undefined) {
         // Fallback: mimic goToHome if function is unavailable
-        $('.pages').hide();
-        $('#index').show();
-        globalThis.scrollTo(0, 0);
+        document.querySelectorAll('.pages').forEach((p) => {
+          p.hidden = true;
+          p.style.display = 'none';
+        });
+        // Use fade('in') so opacity is restored to 1 — a prior fade('out') of
+        // #index during navigation leaves inline opacity:0, and setting display
+        // alone would show a fully transparent (blank) home page.
+        fade(document.querySelector('#index'), 'in');
+        scrollToTop();
       } else {
         try {
           globalThis.goToHome();
@@ -304,17 +351,23 @@ if (
       }
     });
 
+    // Force a redraw of the currently-visible page section (orientation/resize)
+    function forceRedrawVisibleSection() {
+      document.querySelectorAll('.pages').forEach((el) => {
+        if (isVisible(el)) {
+          el.style.display = 'none';
+          void el.offsetHeight; // reflow
+          el.style.display = '';
+        }
+      });
+    }
+
     // Handle orientation change
     globalThis.addEventListener('orientationchange', function () {
       // Wait for orientation change to complete
       setTimeout(function () {
-        // Reset any ongoing animations
         isAnimating = false;
-
-        // Force redraw of current section
-        const $currentSection = $('.pages:visible');
-        $currentSection.hide().show(0);
-
+        forceRedrawVisibleSection();
         // Ensure proper scroll position
         globalThis.scrollTo(0, 0);
       }, 200);
@@ -322,37 +375,27 @@ if (
 
     // Handle window resize
     let resizeTimer;
-    $(globalThis).on('resize', function () {
+    globalThis.addEventListener('resize', function () {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(function () {
-        // Reset any ongoing animations
         isAnimating = false;
-
-        // Force redraw of current section
-        const $currentSection = $('.pages:visible');
-        $currentSection.hide().show(0);
+        forceRedrawVisibleSection();
       }, 250);
     });
 
     // Helper function to show form status
     function showFormStatus(message, type) {
-      const statusDiv = $('#form-status');
-      let alertClass;
-      if (type === 'success') {
-        alertClass = 'alert-success';
-      } else if (type === 'error') {
-        alertClass = 'alert-danger';
-      } else {
-        alertClass = 'alert-info';
-      }
-      statusDiv
-        .removeClass('alert-success alert-danger alert-info')
-        .addClass(alertClass)
-        .html(message)
-        .fadeIn();
+      const statusDiv = document.querySelector('#form-status');
+      if (!statusDiv) return;
+      const alertClass =
+        type === 'success' ? 'alert-success' : type === 'error' ? 'alert-danger' : 'alert-info';
+      statusDiv.classList.remove('alert-success', 'alert-danger', 'alert-info');
+      statusDiv.classList.add(alertClass);
+      statusDiv.innerHTML = message;
+      fade(statusDiv, 'in');
 
       if (type === 'success' || type === 'error') {
-        setTimeout(() => statusDiv.fadeOut(), 5000);
+        setTimeout(() => fade(statusDiv, 'out'), 5000);
       }
     }
 
@@ -454,50 +497,44 @@ if (
     });
 
     // Skip to main content functionality
-    $('.skip-to-main').on('click', function (e) {
+    document.querySelector('.skip-to-main')?.addEventListener('click', function (e) {
       e.preventDefault();
-      const mainContent = $('#index');
-      mainContent.attr('tabindex', '-1');
+      const mainContent = document.querySelector('#index');
+      if (!mainContent) return;
+      mainContent.setAttribute('tabindex', '-1');
       mainContent.focus();
 
       // Ensure the main content is visible
-      $('.pages').fadeOut();
-      mainContent.fadeIn();
-      $('#index_left').addClass('animated slideInLeft');
-      $('#index_right').addClass('animated slideInRight');
+      document.querySelectorAll('.pages').forEach((p) => fade(p, 'out'));
+      fade(mainContent, 'in');
+      document.querySelector('#index_left')?.classList.add('animated', 'slideInLeft');
+      document.querySelector('#index_right')?.classList.add('animated', 'slideInRight');
 
       // Remove tabindex after focus
       setTimeout(() => {
-        mainContent.removeAttr('tabindex');
+        mainContent.removeAttribute('tabindex');
       }, 100);
     });
 
     // Document downloads tracking
-    $('.docs-buttons a, .resources-list a').on('click', function (_e) {
-      const docName = $(this).text().trim();
-      trackEvent('document_download', {
-        document_name: docName,
-        document_url: $(this).attr('href'),
+    document.querySelectorAll('.docs-buttons a, .resources-list a').forEach((a) => {
+      a.addEventListener('click', () => {
+        trackEvent('document_download', {
+          document_name: a.textContent.trim(),
+          document_url: a.getAttribute('href'),
+        });
       });
     });
 
     // Navigation tracking
-    $('#about, #work, #resources, #contact').click(function () {
-      const section = $(this).attr('id');
-      trackEvent('navigation', {
-        section: section,
-      });
-    });
-
-    // Carousel interaction tracking
-    $('#owl-demo').on('changed.owl.carousel', function (event) {
-      trackEvent('carousel_slide', {
-        slide_index: event.item.index,
+    ['#about', '#work', '#resources', '#contact'].forEach((sel) => {
+      document.querySelector(sel)?.addEventListener('click', function () {
+        trackEvent('navigation', { section: this.id });
       });
     });
 
     // Easter egg button functionality - updated to use consistent animation patterns
-    $('#where-to-find-me').click(function (e) {
+    document.querySelector('#where-to-find-me')?.addEventListener('click', function (e) {
       e.preventDefault();
       e.stopPropagation(); // Prevent event bubbling
 
@@ -506,60 +543,70 @@ if (
       });
 
       // Use the same switchSection pattern as other navigation
-      const isEasterEggVisible = $('#where_to_find_me').is(':visible');
-      if (isEasterEggVisible) {
-        switchSection($('#where_to_find_me'), $('#resources_scroll'));
+      const eggEl = document.querySelector('#where_to_find_me');
+      if (isVisible(eggEl)) {
+        switchSection('#where_to_find_me', '#resources_scroll');
         history.pushState(null, '', '#resources_scroll');
       } else {
         // Hide all pages first to avoid conflicts
-        $('.pages').hide();
+        document.querySelectorAll('.pages').forEach((p) => {
+          p.hidden = true;
+          p.style.display = 'none';
+        });
 
         // Show the Easter egg section with proper animation
-        $('#where_to_find_me').fadeIn(400, function () {
+        fade(eggEl, 'in', function () {
           isAnimating = false;
-          // Scroll to top of new section on mobile
-          if (globalThis.innerWidth <= 767) {
-            globalThis.scrollTo(0, 0);
-          }
+          // Scroll to top of the newly shown section (all viewports)
+          scrollToTop();
         });
 
         history.pushState(null, '', '#where_to_find_me');
 
         // Set focus to the section for accessibility
         setTimeout(() => {
-          $('#where_to_find_me').attr('tabindex', '-1').focus();
+          eggEl?.setAttribute('tabindex', '-1');
+          eggEl?.focus();
           setTimeout(() => {
-            $('#where_to_find_me').removeAttr('tabindex');
+            eggEl?.removeAttribute('tabindex');
           }, 100);
         }, 500);
       }
     });
 
-    // Add keyboard navigation for Easter Egg section
-    $('#where_to_find_me').on('keydown', function (e) {
-      if (e.key === 'Escape') {
-        // ESC key
-        $('#resources').click();
+    // Keyboard: Escape returns from the Easter egg to Resources.
+    // Bound on document (not the section) so it works regardless of focus, and
+    // only acts while the egg is visible. Transitions egg -> resources directly.
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && isVisible(document.querySelector('#where_to_find_me'))) {
+        switchSection('#where_to_find_me', '#resources_scroll');
+        history.pushState(null, '', '#resources_scroll');
       }
     });
 
     // Back to Resources button from Easter egg section
-    $('#back-to-resources').click(function (e) {
+    document.querySelector('#back-to-resources')?.addEventListener('click', function (e) {
       e.preventDefault();
 
       // Use the same switchSection pattern for consistent animations
-      switchSection($('#where_to_find_me'), $('#resources_scroll'));
+      switchSection('#where_to_find_me', '#resources_scroll');
       history.pushState(null, '', '#resources_scroll');
 
       // Set focus back to the where-to-find-me button for accessibility
       setTimeout(() => {
-        $('#where-to-find-me').focus();
+        document.querySelector('#where-to-find-me')?.focus();
       }, 500);
     });
-  });
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', onReady);
+  } else {
+    onReady();
+  }
 }
 
 // Export for Node/CommonJS (Jest)
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { isValidEmail, initializeTheme };
+  module.exports = { isValidEmail, initializeTheme, isVisible, fade };
 }

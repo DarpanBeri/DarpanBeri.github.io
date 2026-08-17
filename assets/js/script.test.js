@@ -1,4 +1,4 @@
-const { isValidEmail, initializeTheme } = require('./script.js');
+const { isValidEmail, initializeTheme, isVisible, fade } = require('./script.js');
 
 describe('Email Validation', () => {
   test('returns true for valid email addresses', () => {
@@ -166,9 +166,53 @@ describe('Theme Initialization', () => {
   });
 });
 
+describe('isVisible', () => {
+  test('returns false for display:none elements', () => {
+    document.body.innerHTML = '<div id="x" style="display:none">hi</div>';
+    expect(isVisible(document.getElementById('x'))).toBe(false);
+  });
+  test('returns false for hidden elements', () => {
+    document.body.innerHTML = '<div id="h" hidden>hi</div>';
+    expect(isVisible(document.getElementById('h'))).toBe(false);
+  });
+  test('returns true for shown elements', () => {
+    document.body.innerHTML = '<div id="y">hi</div>';
+    expect(isVisible(document.getElementById('y'))).toBe(true);
+  });
+  test('returns false for null', () => {
+    expect(isVisible(null)).toBe(false);
+  });
+});
+
+describe('fade', () => {
+  test('fade in makes an element visible and fires callback', () => {
+    document.body.innerHTML = '<div id="f" hidden style="display:none">hi</div>';
+    const el = document.getElementById('f');
+    const cb = jest.fn();
+    fade(el, 'in', cb);
+    expect(el.hidden).toBe(false);
+    expect(el.style.display).not.toBe('none');
+    expect(cb).toHaveBeenCalledTimes(1);
+  });
+  test('fade out hides an element and fires callback', () => {
+    document.body.innerHTML = '<div id="g">hi</div>';
+    const el = document.getElementById('g');
+    const cb = jest.fn();
+    fade(el, 'out', cb);
+    expect(el.hidden).toBe(true);
+    expect(cb).toHaveBeenCalledTimes(1);
+  });
+  test('tolerates a null element and still fires callback', () => {
+    const cb = jest.fn();
+    expect(() => fade(null, 'in', cb)).not.toThrow();
+    expect(cb).toHaveBeenCalledTimes(1);
+  });
+});
+
 // Runtime smoke test to execute guarded jQuery-dependent block in script.js
 describe('Runtime block smoke test (jQuery guarded)', () => {
   let handlers;
+  let smokeAddedDocListeners, smokeOrigDocAdd;
   const makeChain = (sel) => {
     // Chainable no-op function
     const chain = () => chain;
@@ -222,6 +266,14 @@ describe('Runtime block smoke test (jQuery guarded)', () => {
     // Minimal DOM required by runtime code
     document.body.innerHTML =
       '<button id="work" class="btn btn-rabbit">Work</button><button class="theme-toggle" aria-pressed="false"><i class="fa fa-moon-o"></i><span class="sr-only">Switch to dark mode</span></button><div id="owl-demo"></div>';
+    // Track document-level listeners registered by the runtime block so they can
+    // be removed after the test (the block now uses native addEventListener).
+    smokeAddedDocListeners = [];
+    smokeOrigDocAdd = document.addEventListener.bind(document);
+    document.addEventListener = (type, fn, options) => {
+      smokeAddedDocListeners.push([type, fn]);
+      smokeOrigDocAdd(type, fn, options);
+    };
     // Event handler registry
     handlers = {};
     // Minimal $ stub
@@ -259,18 +311,21 @@ describe('Runtime block smoke test (jQuery guarded)', () => {
   });
 
   afterEach(() => {
+    smokeAddedDocListeners.forEach(([type, fn]) => document.removeEventListener(type, fn));
+    document.addEventListener = smokeOrigDocAdd;
     delete globalThis.$;
     jest.resetModules();
   });
 
-  test('executes guarded code without throwing and initializes owlCarousel upon Work click', () => {
+  test('executes guarded runtime block without throwing', () => {
     // Re-require module so guarded block executes with stubbed $
-    jest.isolateModules(() => {
-      require('./script.js');
-    });
-    // Simulate clicking Work to trigger lazy init; ensure no errors and plugin available
-    $('#work').click();
-    expect(typeof $.fn.owlCarousel).toBe('function');
+    expect(() =>
+      jest.isolateModules(() => {
+        require('./script.js');
+      })
+    ).not.toThrow();
+    // A native Work click should not throw now that the block is wired up
+    expect(() => document.getElementById('work').click()).not.toThrow();
   });
 });
 

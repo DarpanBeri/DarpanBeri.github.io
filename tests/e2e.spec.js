@@ -7,8 +7,8 @@ const fileUrl = pathToFileURL(path.resolve(__dirname, '../index.html')).toString
 
 // Helpers
 async function activeDotIndex(page) {
-  return page.$$eval('#owl-demo .owl-dot', (dots) =>
-    dots.findIndex((d) => d.classList.contains('active'))
+  return page.$$eval('#owl-demo .carousel__dot', (dots) =>
+    dots.findIndex((d) => d.getAttribute('aria-current') === 'true')
   );
 }
 
@@ -72,32 +72,61 @@ test.describe('Portfolio E2E', () => {
   test('Carousel Functionality in Work', async ({ page }) => {
     await page.locator('#work').click();
 
-    // Wait for Work section and carousel to initialize
+    // Wait for Work section and carousel to be visible
     await expect(page.locator('#work_scroll')).toBeVisible();
     await expect(page.locator('#owl-demo')).toBeVisible();
 
-    // Wait for nav to appear (lazy init)
-    const nextArrow = page.locator('#owl-demo .owl-next');
-    const prevArrow = page.locator('#owl-demo .owl-prev');
+    // Prev/next arrows exist (visible on desktop viewport)
+    const nextArrow = page.locator('#owl-demo .carousel__arrow--next');
+    const prevArrow = page.locator('#owl-demo .carousel__arrow--prev');
     await expect(nextArrow).toBeVisible();
     await expect(prevArrow).toBeVisible();
 
-    // Assert currently active slide's image is visible
-    const activeSlide = page.locator('#owl-demo .owl-item.active');
-    await expect(activeSlide).toBeVisible();
-    const activeImg = activeSlide.locator('img.img-rabbit').first();
-    await expect(activeImg).toBeVisible();
+    // Dots are rendered, one per slide, first is current
+    const dots = page.locator('#owl-demo .carousel__dot');
+    await expect(dots).not.toHaveCount(0);
+
+    // A carousel image is visible
+    await expect(page.locator('#owl-demo img.img-rabbit').first()).toBeVisible();
 
     // Capture active dot index, click next, and verify it changed
     const before = await activeDotIndex(page);
     await nextArrow.click();
     await expect.poll(() => activeDotIndex(page)).not.toBe(before);
+  });
 
-    // Assert new active slide's image is visible
-    const newActiveSlide = page.locator('#owl-demo .owl-item.active');
-    await expect(newActiveSlide).toBeVisible();
-    const newActiveImg = newActiveSlide.locator('img.img-rabbit').first();
-    await expect(newActiveImg).toBeVisible();
+  test('Carousel: one labeled dot per slide from data-dot', async ({ page }) => {
+    await page.locator('#work').click();
+    await expect(page.locator('#owl-demo')).toBeVisible();
+
+    const slideCount = await page.locator('#owl-demo .carousel__track .item').count();
+    const dots = page.locator('#owl-demo .carousel__dot');
+    await expect(dots).toHaveCount(slideCount);
+
+    // Each dot's accessible name comes from its slide's data-dot attribute
+    const dotLabels = await dots.evaluateAll((els) => els.map((e) => e.getAttribute('aria-label')));
+    const slideDots = await page
+      .locator('#owl-demo .carousel__track .item')
+      .evaluateAll((els) => els.map((e) => e.getAttribute('data-dot')));
+    expect(dotLabels).toEqual(slideDots);
+    // Exactly one dot is current
+    const currentCount = await dots.evaluateAll(
+      (els) => els.filter((e) => e.getAttribute('aria-current') === 'true').length
+    );
+    expect(currentCount).toBe(1);
+  });
+
+  test('Carousel: prev arrow navigates to a different slide', async ({ page }) => {
+    await page.locator('#work').click();
+    await expect(page.locator('#owl-demo')).toBeVisible();
+
+    const prevArrow = page.locator('#owl-demo .carousel__arrow--prev');
+    await expect(prevArrow).toBeVisible();
+
+    const before = await activeDotIndex(page);
+    await prevArrow.click();
+    // prev from slide 0 wraps to the last slide; any change confirms navigation
+    await expect.poll(() => activeDotIndex(page)).not.toBe(before);
   });
 
   test('Theme Toggle switches data-theme', async ({ page }) => {
@@ -153,6 +182,85 @@ test.describe('Portfolio E2E', () => {
     await expect(page.locator('#where_to_find_me')).toBeHidden();
   });
 
+  test('Easter Egg: Escape returns to Resources (regression)', async ({ page }) => {
+    await page.locator('#resources').click();
+    await expect(page.locator('#resources_scroll')).toBeVisible();
+    await page.locator('#where-to-find-me').click();
+    await expect(page.locator('#where_to_find_me')).toBeVisible();
+
+    // Press Escape (bound on document, so focus location doesn't matter)
+    await page.keyboard.press('Escape');
+
+    // Returns to Resources, and the two sections are not both visible
+    await expect(page.locator('#resources_scroll')).toBeVisible();
+    await expect(page.locator('#where_to_find_me')).toBeHidden();
+  });
+
+  test('Navigation resets scroll to top of the new section (regression)', async ({ page }) => {
+    // The real scroll container here is <body> (body{overflow:auto}); scroll it down.
+    await page.evaluate(() => {
+      document.body.scrollTop = 300;
+      document.documentElement.scrollTop = 300;
+      window.scrollTo(0, 300);
+    });
+    await page.locator('#about').click();
+    await expect(page.locator('#about_scroll')).toBeVisible();
+
+    // The actual scroller (body) must be reset so the section top is in view.
+    const scrolls = await page.evaluate(() => ({
+      body: document.body.scrollTop,
+      docEl: document.documentElement.scrollTop,
+      window: window.scrollY,
+    }));
+    expect(scrolls.body).toBe(0);
+    expect(scrolls.docEl).toBe(0);
+    expect(scrolls.window).toBe(0);
+  });
+
+  test('Back to home from a scrolled section shows home content, not an empty page (regression)', async ({
+    page,
+  }) => {
+    // Short viewport guarantees content overflows so <body> is actually scrollable
+    await page.setViewportSize({ width: 1280, height: 500 });
+    await page.locator('#work').click();
+    await expect(page.locator('#work_scroll')).toBeVisible();
+    const scrolledTo = await page.evaluate(() => {
+      document.body.scrollTop = 400;
+      document.documentElement.scrollTop = 400;
+      window.scrollTo(0, 400);
+      return Math.max(document.body.scrollTop, document.documentElement.scrollTop, window.scrollY);
+    });
+    // Precondition: the page really did scroll (otherwise the test is meaningless)
+    expect(scrolledTo).toBeGreaterThan(0);
+
+    // Use the persistent fixed button (needs no scroll-into-view — the clean repro)
+    await page.locator('.go-back-home').click();
+
+    await expect(page.locator('#index')).toBeVisible();
+    // Home must render at the top: its first content is within the viewport, not scrolled away
+    const state = await page.evaluate(() => {
+      const idx = document.querySelector('#index');
+      const rect = idx.getBoundingClientRect();
+      const center = document.elementFromPoint(window.innerWidth / 2, window.innerHeight / 2);
+      return {
+        bodyScroll: Math.max(
+          document.body.scrollTop,
+          document.documentElement.scrollTop,
+          window.scrollY
+        ),
+        indexTop: Math.round(rect.top),
+        centerInsideIndex: !!(center && center.closest('#index')),
+        opacity: getComputedStyle(idx).opacity,
+      };
+    });
+    expect(state.bodyScroll).toBe(0);
+    expect(state.indexTop).toBeGreaterThanOrEqual(0);
+    expect(state.centerInsideIndex).toBe(true); // viewport center is inside home content, not blank
+    // Home must be actually painted — a prior fade('out') left opacity:0, which
+    // toBeVisible()/elementFromPoint do NOT catch. This is the real "empty page" guard.
+    expect(state.opacity).toBe('1');
+  });
+
   test('Contact form: rejects empty submission and marks fields invalid', async ({ page }) => {
     // Navigate to the Contact section
     await page.locator('#contact').click();
@@ -199,6 +307,27 @@ test.describe('Portfolio E2E', () => {
     const emailInput = page.locator('#contactForm input[type="email"]');
     await expect(emailInput).toHaveAttribute('aria-invalid', 'true');
     await expect(emailInput).toHaveClass(/is-invalid/);
+  });
+
+  test('Contact form: Send button is not locked after an invalid-email submit (regression)', async ({
+    page,
+  }) => {
+    await page.locator('#contact').click();
+    await expect(page.locator('#contact_scroll')).toBeVisible();
+    await page.evaluate(() =>
+      document.getElementById('contactForm').setAttribute('novalidate', '')
+    );
+
+    // "foo@bar" passes native HTML5 email validation but fails isValidEmail()
+    await page.locator('#contactForm input[type="email"]').fill('foo@bar');
+    const submit = page.locator('#contactForm button[type="submit"]');
+    await submit.click();
+
+    // The button must stay interactive — not stuck in the .btn-loading (pointer-events:none) state
+    await expect(submit).not.toHaveClass(/btn-loading/);
+    await expect(submit).toBeEnabled();
+    const pe = await submit.evaluate((el) => getComputedStyle(el).pointerEvents);
+    expect(pe).not.toBe('none');
   });
 
   test('Theme toggle persists theme choice to localStorage', async ({ page }) => {
@@ -248,6 +377,24 @@ test.describe('Issue #19: debug scaffolding removed', () => {
     await expect(page.locator('script[src*="googletagmanager.com"]')).toHaveCount(0);
     const hasGtag = await page.evaluate(() => typeof window.gtag !== 'undefined');
     expect(hasGtag).toBe(false);
+  });
+
+  test('no jQuery or Bootstrap JavaScript is loaded', async ({ page }) => {
+    // No <script> should reference bootstrap*.js or jquery*.js
+    const libScripts = await page.$$eval('script[src]', (els) =>
+      els
+        .map((e) => e.getAttribute('src'))
+        .filter((s) => /(bootstrap|jquery)[^/]*\.js/i.test(s || ''))
+    );
+    expect(libScripts).toEqual([]);
+    // jQuery global must be absent (removed during modernization)
+    const hasJQuery = await page.evaluate(() => typeof window.jQuery !== 'undefined');
+    expect(hasJQuery).toBe(false);
+    // The only runtime script is the app's own script.js
+    const cdnScripts = await page.$$eval('script[src]', (els) =>
+      els.map((e) => e.getAttribute('src')).filter((s) => /^https?:/i.test(s || ''))
+    );
+    expect(cdnScripts).toEqual([]);
   });
 
   test('all target="_blank" links carry rel="noopener noreferrer"', async ({ page }) => {
