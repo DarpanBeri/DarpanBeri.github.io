@@ -245,15 +245,22 @@ test.describe('Issue #19: debug scaffolding removed', () => {
     expect(hasGtag).toBe(false);
   });
 
-  test('Bootstrap JavaScript is not loaded', async ({ page }) => {
-    // No <script> should reference bootstrap*.js
-    const bootstrapScripts = await page.$$eval('script[src]', (els) =>
-      els.map((e) => e.getAttribute('src')).filter((s) => /bootstrap[^/]*\.js/i.test(s || ''))
+  test('no jQuery or Bootstrap JavaScript is loaded', async ({ page }) => {
+    // No <script> should reference bootstrap*.js or jquery*.js
+    const libScripts = await page.$$eval('script[src]', (els) =>
+      els
+        .map((e) => e.getAttribute('src'))
+        .filter((s) => /(bootstrap|jquery)[^/]*\.js/i.test(s || ''))
     );
-    expect(bootstrapScripts).toEqual([]);
-    // jQuery must still be present (Phase A keeps it)
-    const hasJQuery = await page.evaluate(() => typeof window.jQuery === 'function');
-    expect(hasJQuery).toBe(true);
+    expect(libScripts).toEqual([]);
+    // jQuery global must be absent (removed during modernization)
+    const hasJQuery = await page.evaluate(() => typeof window.jQuery !== 'undefined');
+    expect(hasJQuery).toBe(false);
+    // The only runtime script is the app's own script.js
+    const cdnScripts = await page.$$eval('script[src]', (els) =>
+      els.map((e) => e.getAttribute('src')).filter((s) => /^https?:/i.test(s || ''))
+    );
+    expect(cdnScripts).toEqual([]);
   });
 
   test('all target="_blank" links carry rel="noopener noreferrer"', async ({ page }) => {
