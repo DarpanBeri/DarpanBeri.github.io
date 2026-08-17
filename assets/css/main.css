@@ -544,6 +544,12 @@ ul li {
   border-radius: 4px;
 }
 
+/* Contact form status box: hidden until JS reveals it via el.style.display.
+   Kept in CSS (not an inline style attr) so a strict CSP style-src needs no 'unsafe-inline'. */
+#form-status {
+  display: none;
+}
+
 .alert-success {
   color: #3c763d;
   background-color: #dff0d8;

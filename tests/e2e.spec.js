@@ -33,6 +33,14 @@ test.describe('Portfolio E2E', () => {
     await expect(page.locator('#index')).toBeVisible();
   });
 
+  test('form-status starts hidden via CSS, without an inline style attribute', async ({ page }) => {
+    const status = page.locator('#form-status');
+    // A strict style-src blocks inline `style="..."` attributes, so there must be none.
+    expect(await status.getAttribute('style')).toBeNull();
+    // It must still be hidden on load (now enforced by a CSS rule, not the attribute).
+    await expect(status).toBeHidden();
+  });
+
   test('Section Navigation: Work -> Back to Home', async ({ page }) => {
     // Navigate to Work
     await page.locator('#work').click();
