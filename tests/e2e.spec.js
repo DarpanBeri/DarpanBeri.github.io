@@ -197,23 +197,68 @@ test.describe('Portfolio E2E', () => {
   });
 
   test('Navigation resets scroll to top of the new section (regression)', async ({ page }) => {
-    // Scroll the desktop scroll container (.container.main) down, then navigate
+    // The real scroll container here is <body> (body{overflow:auto}); scroll it down.
     await page.evaluate(() => {
-      const c = document.querySelector('.container.main');
-      if (c) c.scrollTop = 300;
+      document.body.scrollTop = 300;
+      document.documentElement.scrollTop = 300;
       window.scrollTo(0, 300);
     });
     await page.locator('#about').click();
     await expect(page.locator('#about_scroll')).toBeVisible();
 
-    // Both the container and the window should be reset to the top so the
-    // section's "Back to home" link is in view.
+    // The actual scroller (body) must be reset so the section top is in view.
     const scrolls = await page.evaluate(() => ({
-      container: document.querySelector('.container.main')?.scrollTop ?? 0,
+      body: document.body.scrollTop,
+      docEl: document.documentElement.scrollTop,
       window: window.scrollY,
     }));
-    expect(scrolls.container).toBe(0);
+    expect(scrolls.body).toBe(0);
+    expect(scrolls.docEl).toBe(0);
     expect(scrolls.window).toBe(0);
+  });
+
+  test('Back to home from a scrolled section shows home content, not an empty page (regression)', async ({
+    page,
+  }) => {
+    // Short viewport guarantees content overflows so <body> is actually scrollable
+    await page.setViewportSize({ width: 1280, height: 500 });
+    await page.locator('#work').click();
+    await expect(page.locator('#work_scroll')).toBeVisible();
+    const scrolledTo = await page.evaluate(() => {
+      document.body.scrollTop = 400;
+      document.documentElement.scrollTop = 400;
+      window.scrollTo(0, 400);
+      return Math.max(document.body.scrollTop, document.documentElement.scrollTop, window.scrollY);
+    });
+    // Precondition: the page really did scroll (otherwise the test is meaningless)
+    expect(scrolledTo).toBeGreaterThan(0);
+
+    // Use the persistent fixed button (needs no scroll-into-view — the clean repro)
+    await page.locator('.go-back-home').click();
+
+    await expect(page.locator('#index')).toBeVisible();
+    // Home must render at the top: its first content is within the viewport, not scrolled away
+    const state = await page.evaluate(() => {
+      const idx = document.querySelector('#index');
+      const rect = idx.getBoundingClientRect();
+      const center = document.elementFromPoint(window.innerWidth / 2, window.innerHeight / 2);
+      return {
+        bodyScroll: Math.max(
+          document.body.scrollTop,
+          document.documentElement.scrollTop,
+          window.scrollY
+        ),
+        indexTop: Math.round(rect.top),
+        centerInsideIndex: !!(center && center.closest('#index')),
+        opacity: getComputedStyle(idx).opacity,
+      };
+    });
+    expect(state.bodyScroll).toBe(0);
+    expect(state.indexTop).toBeGreaterThanOrEqual(0);
+    expect(state.centerInsideIndex).toBe(true); // viewport center is inside home content, not blank
+    // Home must be actually painted — a prior fade('out') left opacity:0, which
+    // toBeVisible()/elementFromPoint do NOT catch. This is the real "empty page" guard.
+    expect(state.opacity).toBe('1');
   });
 
   test('Contact form: rejects empty submission and marks fields invalid', async ({ page }) => {

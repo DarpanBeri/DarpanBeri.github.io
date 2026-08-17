@@ -199,12 +199,16 @@ if (
     // Prevent scroll leaking between sections
     let isAnimating = false;
 
-    // Reset scroll to the top of the newly shown section. On desktop the scroll
-    // container is `.container.main` (height:100vh; overflow-y:auto), not the
-    // window — reset both so the section's top controls (e.g. "Back to home")
-    // are in view after navigating, on every viewport.
+    // Reset scroll to the top of the newly shown section so its top controls
+    // (e.g. the "Back to home" link) are in view after navigating. The actual
+    // scroll container here is <body> (main.css: `body { overflow: auto !important }`,
+    // and `.container.main` is forced `overflow: visible !important` so it never
+    // scrolls). Reset every plausible scroller to be robust across viewports/CSS.
     function scrollToTop() {
       globalThis.scrollTo(0, 0);
+      if (document.scrollingElement) document.scrollingElement.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
       const container = document.querySelector('.container.main');
       if (container) container.scrollTop = 0;
     }
@@ -333,11 +337,10 @@ if (
           p.hidden = true;
           p.style.display = 'none';
         });
-        const index = document.querySelector('#index');
-        if (index) {
-          index.hidden = false;
-          index.style.display = '';
-        }
+        // Use fade('in') so opacity is restored to 1 — a prior fade('out') of
+        // #index during navigation leaves inline opacity:0, and setting display
+        // alone would show a fully transparent (blank) home page.
+        fade(document.querySelector('#index'), 'in');
         scrollToTop();
       } else {
         try {
