@@ -516,34 +516,6 @@ ul li {
   height: auto;
 }
 
-/* Re-enable pointer events for owl dots as well */
-#owl-demo .owl-dots,
-#owl-demo .owl-dot {
-  pointer-events: auto;
-}
-
-#owl-demo .owl-dots {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-#owl-demo .owl-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #cfcfcf;
-  border: 1px solid var(--border-color);
-  display: inline-block;
-  overflow: hidden;
-}
-
-#owl-demo .owl-dot > span {
-  display: none !important;
-}
-
 @media (width <= 1024px) and (orientation: landscape) {
   .main {
     height: auto;
@@ -1262,6 +1234,25 @@ ul li {
   margin-left: auto;
   padding-left: 15px;
   padding-right: 15px;
+}
+
+/* Bootstrap 3 fixed container widths per breakpoint (preserves centered desktop layout) */
+@media (width >= 768px) {
+  .container {
+    width: 750px;
+  }
+}
+
+@media (width >= 992px) {
+  .container {
+    width: 970px;
+  }
+}
+
+@media (width >= 1200px) {
+  .container {
+    width: 1170px;
+  }
 }
 
 .row {

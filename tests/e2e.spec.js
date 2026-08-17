@@ -95,6 +95,40 @@ test.describe('Portfolio E2E', () => {
     await expect.poll(() => activeDotIndex(page)).not.toBe(before);
   });
 
+  test('Carousel: one labeled dot per slide from data-dot', async ({ page }) => {
+    await page.locator('#work').click();
+    await expect(page.locator('#owl-demo')).toBeVisible();
+
+    const slideCount = await page.locator('#owl-demo .carousel__track .item').count();
+    const dots = page.locator('#owl-demo .carousel__dot');
+    await expect(dots).toHaveCount(slideCount);
+
+    // Each dot's accessible name comes from its slide's data-dot attribute
+    const dotLabels = await dots.evaluateAll((els) => els.map((e) => e.getAttribute('aria-label')));
+    const slideDots = await page
+      .locator('#owl-demo .carousel__track .item')
+      .evaluateAll((els) => els.map((e) => e.getAttribute('data-dot')));
+    expect(dotLabels).toEqual(slideDots);
+    // Exactly one dot is current
+    const currentCount = await dots.evaluateAll(
+      (els) => els.filter((e) => e.getAttribute('aria-current') === 'true').length
+    );
+    expect(currentCount).toBe(1);
+  });
+
+  test('Carousel: prev arrow navigates to a different slide', async ({ page }) => {
+    await page.locator('#work').click();
+    await expect(page.locator('#owl-demo')).toBeVisible();
+
+    const prevArrow = page.locator('#owl-demo .carousel__arrow--prev');
+    await expect(prevArrow).toBeVisible();
+
+    const before = await activeDotIndex(page);
+    await prevArrow.click();
+    // prev from slide 0 wraps to the last slide; any change confirms navigation
+    await expect.poll(() => activeDotIndex(page)).not.toBe(before);
+  });
+
   test('Theme Toggle switches data-theme', async ({ page }) => {
     const html = page.locator('html');
     const initial = await html.getAttribute('data-theme');

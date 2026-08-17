@@ -108,7 +108,6 @@ if (
         const dot = document.createElement('button');
         dot.type = 'button';
         dot.className = 'carousel__dot';
-        dot.setAttribute('role', 'tab');
         const label = slide.getAttribute('data-dot') || `Slide ${i + 1}`;
         dot.setAttribute('aria-label', label);
         dot.setAttribute('aria-current', i === 0 ? 'true' : 'false');
@@ -125,10 +124,10 @@ if (
 
       function goTo(i) {
         const clamped = (i + slides.length) % slides.length; // loop
-        slides[clamped].scrollIntoView({
+        // Scroll the track only (not the page) — each slide is 100% of track width.
+        track.scrollTo({
+          left: clamped * track.clientWidth,
           behavior: reduceMotion ? 'auto' : 'smooth',
-          block: 'nearest',
-          inline: 'center',
         });
         setActive(clamped);
       }
@@ -152,10 +151,14 @@ if (
         slides.forEach((s) => io.observe(s));
       }
 
-      // Autoplay every 3500ms, pause on hover / tab hidden (Owl parity)
+      // Autoplay every 3500ms. Runs only while the carousel is on screen and the
+      // tab is visible; pauses on hover (Owl parity). Gating on visibility prevents
+      // the active dot from drifting while the Work section is hidden.
       let timer = null;
+      let onScreen = false;
+      let hovering = false;
       function start() {
-        if (reduceMotion || timer) return;
+        if (reduceMotion || timer || !onScreen || hovering || document.hidden) return;
         timer = setInterval(() => goTo(current + 1), 3500);
       }
       function stop() {
@@ -164,10 +167,31 @@ if (
           timer = null;
         }
       }
-      root.addEventListener('mouseenter', stop);
-      root.addEventListener('mouseleave', start);
+      root.addEventListener('mouseenter', () => {
+        hovering = true;
+        stop();
+      });
+      root.addEventListener('mouseleave', () => {
+        hovering = false;
+        start();
+      });
       document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
-      start();
+
+      // Start/stop autoplay based on whether the carousel is actually on screen
+      if ('IntersectionObserver' in globalThis) {
+        const visObserver = new IntersectionObserver(
+          (entries) => {
+            onScreen = entries[0]?.isIntersecting ?? false;
+            if (onScreen) start();
+            else stop();
+          },
+          { threshold: 0.3 }
+        );
+        visObserver.observe(root);
+      } else {
+        onScreen = true;
+        start();
+      }
     }
 
     initCarousel(document.querySelector('#owl-demo'));
