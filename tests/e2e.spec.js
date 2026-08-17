@@ -250,6 +250,17 @@ test.describe('Issue #19: debug scaffolding removed', () => {
     expect(hasGtag).toBe(false);
   });
 
+  test('Bootstrap JavaScript is not loaded', async ({ page }) => {
+    // No <script> should reference bootstrap*.js
+    const bootstrapScripts = await page.$$eval('script[src]', (els) =>
+      els.map((e) => e.getAttribute('src')).filter((s) => /bootstrap[^/]*\.js/i.test(s || ''))
+    );
+    expect(bootstrapScripts).toEqual([]);
+    // jQuery must still be present (Phase A keeps it)
+    const hasJQuery = await page.evaluate(() => typeof window.jQuery === 'function');
+    expect(hasJQuery).toBe(true);
+  });
+
   test('all target="_blank" links carry rel="noopener noreferrer"', async ({ page }) => {
     const unhardened = await page.$$eval(
       'a[target="_blank"]',
