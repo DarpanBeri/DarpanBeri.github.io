@@ -1,9 +1,11 @@
 const { test, expect } = require('@playwright/test');
 const path = require('node:path');
+const fs = require('node:fs');
 const { pathToFileURL } = require('node:url');
 
 // Build a file:// URL to the local index.html
 const fileUrl = pathToFileURL(path.resolve(__dirname, '../index.html')).toString();
+const repoRoot = path.resolve(__dirname, '..');
 
 // Helpers
 async function activeDotIndex(page) {
@@ -431,5 +433,65 @@ test.describe('accessibility landmarks', () => {
     await expect(skip).toHaveAttribute('href', '#index');
     await skip.focus();
     await expect(skip).toBeFocused();
+  });
+});
+
+test.describe('SEO & head assets', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto(fileUrl, { waitUntil: 'load' });
+  });
+
+  test('SVG favicon is linked in the head', async ({ page }) => {
+    const icon = page.locator('link[rel="icon"]');
+    await expect(icon).toHaveCount(1);
+    await expect(icon).toHaveAttribute('type', 'image/svg+xml');
+    await expect(icon).toHaveAttribute('href', 'favicon.svg');
+  });
+
+  test('preconnect hints for CDN and font origins are present', async ({ page }) => {
+    // cdnjs (SRI stylesheets) and fonts.gstatic (CORS font fetches) are requested
+    // cross-origin, so their preconnect must carry `crossorigin`; fonts.googleapis
+    // (a plain CSS request) must NOT — a mismatch opens a wasteful second connection.
+    const crossorigin = ['https://cdnjs.cloudflare.com', 'https://fonts.gstatic.com'];
+    const sameorigin = ['https://fonts.googleapis.com'];
+
+    for (const href of [...crossorigin, ...sameorigin]) {
+      await expect(page.locator(`link[rel="preconnect"][href="${href}"]`)).toHaveCount(1);
+    }
+    for (const href of crossorigin) {
+      await expect(page.locator(`link[rel="preconnect"][href="${href}"]`)).toHaveAttribute(
+        'crossorigin',
+        ''
+      );
+    }
+    for (const href of sameorigin) {
+      expect(
+        await page.locator(`link[rel="preconnect"][href="${href}"]`).getAttribute('crossorigin')
+      ).toBeNull();
+    }
+  });
+
+  test('canonical link points at the production origin', async ({ page }) => {
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+      'href',
+      'https://darpanberi.github.io'
+    );
+  });
+
+  test('favicon.svg is a valid SVG file', () => {
+    const svg = fs.readFileSync(path.join(repoRoot, 'favicon.svg'), 'utf8');
+    expect(svg).toMatch(/<svg[\s>]/);
+    expect(svg).toContain('viewBox="0 0 64 64"');
+  });
+
+  test('robots.txt allows crawling and references the sitemap', () => {
+    const robots = fs.readFileSync(path.join(repoRoot, 'robots.txt'), 'utf8');
+    expect(robots).toMatch(/^User-agent:\s*\*/m);
+    expect(robots).toContain('Sitemap: https://darpanberi.github.io/sitemap.xml');
+  });
+
+  test('sitemap.xml lists the canonical URL', () => {
+    const sitemap = fs.readFileSync(path.join(repoRoot, 'sitemap.xml'), 'utf8');
+    expect(sitemap).toContain('<loc>https://darpanberi.github.io/</loc>');
   });
 });
