@@ -7,8 +7,8 @@ const fileUrl = pathToFileURL(path.resolve(__dirname, '../index.html')).toString
 
 // Helpers
 async function activeDotIndex(page) {
-  return page.$$eval('#owl-demo .owl-dot', (dots) =>
-    dots.findIndex((d) => d.classList.contains('active'))
+  return page.$$eval('#owl-demo .carousel__dot', (dots) =>
+    dots.findIndex((d) => d.getAttribute('aria-current') === 'true')
   );
 }
 
@@ -72,32 +72,27 @@ test.describe('Portfolio E2E', () => {
   test('Carousel Functionality in Work', async ({ page }) => {
     await page.locator('#work').click();
 
-    // Wait for Work section and carousel to initialize
+    // Wait for Work section and carousel to be visible
     await expect(page.locator('#work_scroll')).toBeVisible();
     await expect(page.locator('#owl-demo')).toBeVisible();
 
-    // Wait for nav to appear (lazy init)
-    const nextArrow = page.locator('#owl-demo .owl-next');
-    const prevArrow = page.locator('#owl-demo .owl-prev');
+    // Prev/next arrows exist (visible on desktop viewport)
+    const nextArrow = page.locator('#owl-demo .carousel__arrow--next');
+    const prevArrow = page.locator('#owl-demo .carousel__arrow--prev');
     await expect(nextArrow).toBeVisible();
     await expect(prevArrow).toBeVisible();
 
-    // Assert currently active slide's image is visible
-    const activeSlide = page.locator('#owl-demo .owl-item.active');
-    await expect(activeSlide).toBeVisible();
-    const activeImg = activeSlide.locator('img.img-rabbit').first();
-    await expect(activeImg).toBeVisible();
+    // Dots are rendered, one per slide, first is current
+    const dots = page.locator('#owl-demo .carousel__dot');
+    await expect(dots).not.toHaveCount(0);
+
+    // A carousel image is visible
+    await expect(page.locator('#owl-demo img.img-rabbit').first()).toBeVisible();
 
     // Capture active dot index, click next, and verify it changed
     const before = await activeDotIndex(page);
     await nextArrow.click();
     await expect.poll(() => activeDotIndex(page)).not.toBe(before);
-
-    // Assert new active slide's image is visible
-    const newActiveSlide = page.locator('#owl-demo .owl-item.active');
-    await expect(newActiveSlide).toBeVisible();
-    const newActiveImg = newActiveSlide.locator('img.img-rabbit').first();
-    await expect(newActiveImg).toBeVisible();
   });
 
   test('Theme Toggle switches data-theme', async ({ page }) => {

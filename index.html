@@ -60,12 +60,7 @@
       integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
       crossorigin="anonymous"
     ></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"
-      integrity="sha512-bPs7Ae6pVvhOSiIcyUClR7/q2OAsRiovw4vAkX+zJbw3ShAeeqezq50RIIcIURq7Oa20rW2n2q+fyXBNcU9lrw=="
-      crossorigin="anonymous"
-    ></script>
-    <script defer src="assets/js/script.js?v=1786930000"></script>
+    <script defer src="assets/js/script.js?v=1786930001"></script>
 
     <!-- Styles -->
     <link
@@ -95,24 +90,12 @@
       rel="stylesheet"
     />
     <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css"
-      rel="stylesheet"
-      integrity="sha512-tS3S5qG0BlhnQROyJXvNjeEM4UpMXHrQfTGmbQ1gKmelCxlSEBUaxhRBj/EFTzpbP4RVSrpEikbmdJobCvhE3g=="
-      crossorigin="anonymous"
-    />
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css"
-      rel="stylesheet"
-      integrity="sha512-sMXtMNL1zRzolHYKEujM2AqCLUR9F2C4/05cdbxjjLSRvMQIciEPCQZo++nk7go3BtSuK9kfa/s+a4f4i5pLkw=="
-      crossorigin="anonymous"
-    />
-    <link
       href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css"
       rel="stylesheet"
       integrity="sha512-TyUaMbYrKFZfQfp+9nQGOEt+vGu4nKzLk0KaV3nFifL3K8n7lzb8DayTzLOK0pNyzxGJzGRSw78e8xqJhURJ3Q=="
       crossorigin="anonymous"
     />
-    <link href="assets/css/main.css?v=1786930000" rel="stylesheet" />
+    <link href="assets/css/main.css?v=1786930001" rel="stylesheet" />
   </head>
 
   <body>
@@ -280,57 +263,80 @@
           <div class="col-md-6" id="work_left">
             <section
               id="owl-demo"
-              class="owl-carousel owl-theme"
+              class="carousel"
               aria-label="Work portfolio images"
+              aria-roledescription="carousel"
             >
-              <div
-                class="item"
-                role="tabpanel"
-                aria-label="Capstone Poster Session"
-                data-dot="Capstone poster slide"
-              >
-                <div class="img-container">
-                  <img
-                    src="assets/images/work_pic_1.jpg"
-                    alt="Work Example 1"
-                    class="img-rabbit"
-                    width="800"
-                    height="600"
-                  />
+              <div class="carousel__viewport">
+                <div class="carousel__track">
+                  <div
+                    class="item"
+                    role="group"
+                    aria-roledescription="slide"
+                    aria-label="Capstone Poster Session"
+                    data-dot="Capstone poster slide"
+                  >
+                    <div class="img-container">
+                      <img
+                        src="assets/images/work_pic_1.jpg"
+                        alt="Work Example 1"
+                        class="img-rabbit"
+                        width="800"
+                        height="600"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    class="item"
+                    role="group"
+                    aria-roledescription="slide"
+                    aria-label="SANDAG Workspace"
+                    data-dot="SANDAG workspace slide"
+                  >
+                    <div class="img-container">
+                      <img
+                        src="assets/images/work_pic_2.jpg"
+                        alt="Work Example 2"
+                        class="img-rabbit"
+                        width="800"
+                        height="600"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    class="item"
+                    role="group"
+                    aria-roledescription="slide"
+                    aria-label="Conference with Colleagues"
+                    data-dot="Conference slide"
+                  >
+                    <div class="img-container">
+                      <img
+                        src="assets/images/work_pic_3.jpg"
+                        alt="Work Example 3"
+                        class="img-rabbit"
+                        width="800"
+                        height="600"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div
-                class="item"
-                role="tabpanel"
-                aria-label="SANDAG Workspace"
-                data-dot="SANDAG workspace slide"
+              <button
+                type="button"
+                class="carousel__arrow carousel__arrow--prev"
+                aria-label="Previous slide"
               >
-                <div class="img-container">
-                  <img
-                    src="assets/images/work_pic_2.jpg"
-                    alt="Work Example 2"
-                    class="img-rabbit"
-                    width="800"
-                    height="600"
-                  />
-                </div>
-              </div>
-              <div
-                class="item"
-                role="tabpanel"
-                aria-label="Conference with Colleagues"
-                data-dot="Conference slide"
+                <i class="fa fa-angle-left" aria-hidden="true"></i>
+              </button>
+              <button
+                type="button"
+                class="carousel__arrow carousel__arrow--next"
+                aria-label="Next slide"
               >
-                <div class="img-container">
-                  <img
-                    src="assets/images/work_pic_3.jpg"
-                    alt="Work Example 3"
-                    class="img-rabbit"
-                    width="800"
-                    height="600"
-                  />
-                </div>
-              </div>
+                <i class="fa fa-angle-right" aria-hidden="true"></i>
+              </button>
+              <div class="carousel__dots" role="tablist" aria-label="Choose slide"></div>
             </section>
           </div>
 
