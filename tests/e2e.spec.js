@@ -614,13 +614,38 @@ test.describe('Image optimization', () => {
   }) => {
     await page.goto(fileUrl, { waitUntil: 'load' });
 
-    // All content <img> declare width + height (no layout shift).
+    // Every content <img> must declare width+height whose ratio matches the
+    // intrinsic (post-EXIF) image ratio. The .img-rabbit / .logo img rules use
+    // height:auto, so the attributes drive the reserved aspect-ratio box; a wrong
+    // ratio causes layout shift on load. Load each src fresh so lazy imgs are covered.
     const imgs = page.locator('img');
-    const count = await imgs.count();
-    for (let i = 0; i < count; i++) {
-      const img = imgs.nth(i);
-      expect(await img.getAttribute('width'), `img #${i} width`).not.toBeNull();
-      expect(await img.getAttribute('height'), `img #${i} height`).not.toBeNull();
+    const metas = await imgs.evaluateAll((els) =>
+      els.map((el) => ({
+        src: el.getAttribute('src'),
+        w: Number(el.getAttribute('width')),
+        h: Number(el.getAttribute('height')),
+      }))
+    );
+    for (const m of metas) {
+      expect(m.w, `${m.src} width`).toBeGreaterThan(0);
+      expect(m.h, `${m.src} height`).toBeGreaterThan(0);
+      const natural = await page.evaluate(
+        (src) =>
+          new Promise((res) => {
+            const im = new Image();
+            im.onload = () => res({ w: im.naturalWidth, h: im.naturalHeight });
+            im.onerror = () => res(null);
+            im.src = src;
+          }),
+        m.src
+      );
+      expect(natural, `${m.src} loads`).not.toBeNull();
+      const declaredRatio = m.w / m.h;
+      const naturalRatio = natural.w / natural.h;
+      expect(
+        Math.abs(declaredRatio - naturalRatio) / naturalRatio,
+        `${m.src} declared ratio ${declaredRatio.toFixed(3)} vs natural ${naturalRatio.toFixed(3)}`
+      ).toBeLessThan(0.02);
     }
 
     // Below-the-fold images lazy-load.
@@ -637,7 +662,11 @@ test.describe('Image optimization', () => {
     await page.goto(fileUrl, { waitUntil: 'load' });
 
     const video = page.locator('#contact_left video');
-    // With reduced motion, the script pauses the video so the poster stays shown.
+    // The guard's observable, environment-independent effect: it strips the
+    // `autoplay` attribute under reduced motion. The default-context test above
+    // asserts `autoplay` is present, so together they prove a real difference
+    // (not a guard that no-ops). It also pauses the video so the poster stays shown.
+    await expect.poll(async () => video.getAttribute('autoplay')).toBeNull();
     await expect.poll(async () => video.evaluate((v) => v.paused)).toBe(true);
 
     await context.close();
