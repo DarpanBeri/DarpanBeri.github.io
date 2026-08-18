@@ -573,3 +573,102 @@ test.describe('Content-Security-Policy', () => {
     expect(violations).toEqual([]);
   });
 });
+
+test.describe('Image optimization', () => {
+  test('contact uses an autoplay muted loop video, not the old GIF', async ({ page }) => {
+    await page.goto(fileUrl, { waitUntil: 'load' });
+
+    const video = page.locator('#contact_left video');
+    await expect(video).toHaveCount(1);
+    await expect(video).toHaveAttribute('autoplay', '');
+    await expect(video).toHaveAttribute('muted', '');
+    await expect(video).toHaveAttribute('loop', '');
+    await expect(video).toHaveAttribute('playsinline', '');
+    await expect(video).toHaveAttribute('poster', /contact-poster\.jpg/);
+
+    // Must offer an MP4 source (the guaranteed-support path).
+    await expect(page.locator('#contact_left video source[type="video/mp4"]')).toHaveCount(1);
+
+    // The old animated GIF must be gone from the DOM entirely.
+    const html = await page.content();
+    expect(html).not.toContain('contact.GIF');
+  });
+
+  test('CSP explicitly allows self-hosted media', async ({ page }) => {
+    await page.goto(fileUrl, { waitUntil: 'load' });
+    const meta = page.locator('meta[http-equiv="Content-Security-Policy"]');
+    const content = (await meta.getAttribute('content')) || '';
+    expect(content).toMatch(/media-src 'self'/);
+  });
+
+  test('home image now points at the JPEG, not the PNG', async ({ page }) => {
+    await page.goto(fileUrl, { waitUntil: 'load' });
+    const home = page.locator('#index_left img');
+    await expect(home).toHaveAttribute('src', /home\.jpg/);
+    const html = await page.content();
+    expect(html).not.toContain('home.png');
+  });
+
+  test('every content image has intrinsic width/height; below-the-fold images lazy-load', async ({
+    page,
+  }) => {
+    await page.goto(fileUrl, { waitUntil: 'load' });
+
+    // Every content <img> must declare width+height whose ratio matches the
+    // intrinsic (post-EXIF) image ratio. The .img-rabbit / .logo img rules use
+    // height:auto, so the attributes drive the reserved aspect-ratio box; a wrong
+    // ratio causes layout shift on load. Load each src fresh so lazy imgs are covered.
+    const imgs = page.locator('img');
+    const metas = await imgs.evaluateAll((els) =>
+      els.map((el) => ({
+        src: el.getAttribute('src'),
+        w: Number(el.getAttribute('width')),
+        h: Number(el.getAttribute('height')),
+      }))
+    );
+    for (const m of metas) {
+      expect(m.w, `${m.src} width`).toBeGreaterThan(0);
+      expect(m.h, `${m.src} height`).toBeGreaterThan(0);
+      const natural = await page.evaluate(
+        (src) =>
+          new Promise((res) => {
+            const im = new Image();
+            im.onload = () => res({ w: im.naturalWidth, h: im.naturalHeight });
+            im.onerror = () => res(null);
+            im.src = src;
+          }),
+        m.src
+      );
+      expect(natural, `${m.src} loads`).not.toBeNull();
+      const declaredRatio = m.w / m.h;
+      const naturalRatio = natural.w / natural.h;
+      expect(
+        Math.abs(declaredRatio - naturalRatio) / naturalRatio,
+        `${m.src} declared ratio ${declaredRatio.toFixed(3)} vs natural ${naturalRatio.toFixed(3)}`
+      ).toBeLessThan(0.02);
+    }
+
+    // Below-the-fold images lazy-load.
+    await expect(page.locator('#about_left img')).toHaveAttribute('loading', 'lazy');
+    await expect(page.locator('.item img').first()).toHaveAttribute('loading', 'lazy');
+
+    // Above-the-fold hero art must NOT be lazy (protects LCP).
+    expect(await page.locator('#index_left img').getAttribute('loading')).not.toBe('lazy');
+  });
+
+  test('reduced-motion visitors are not autoplayed the contact video', async ({ browser }) => {
+    const context = await browser.newContext({ reducedMotion: 'reduce' });
+    const page = await context.newPage();
+    await page.goto(fileUrl, { waitUntil: 'load' });
+
+    const video = page.locator('#contact_left video');
+    // The guard's observable, environment-independent effect: it strips the
+    // `autoplay` attribute under reduced motion. The default-context test above
+    // asserts `autoplay` is present, so together they prove a real difference
+    // (not a guard that no-ops). It also pauses the video so the poster stays shown.
+    await expect.poll(async () => video.getAttribute('autoplay')).toBeNull();
+    await expect.poll(async () => video.evaluate((v) => v.paused)).toBe(true);
+
+    await context.close();
+  });
+});

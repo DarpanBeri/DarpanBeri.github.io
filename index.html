@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; style-src 'self' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self'; connect-src 'self' https://formspree.io; form-action 'self' https://formspree.io; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests"
+      content="default-src 'self'; script-src 'self'; style-src 'self' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self'; media-src 'self'; connect-src 'self' https://formspree.io; form-action 'self' https://formspree.io; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests"
     />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -67,7 +67,7 @@
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
 
     <!-- Dependencies -->
-    <script defer src="assets/js/script.js?v=1786930004"></script>
+    <script defer src="assets/js/script.js?v=1787010232"></script>
 
     <!-- Styles -->
     <link
@@ -115,19 +115,19 @@
           <div id="index_left" class="col-md-6 left">
             <img
               class="img-rabbit"
-              src="assets/images/home.png"
+              src="assets/images/home.jpg"
               alt="Darpan Beri as a child smiling at the camera with his elder sister"
-              width="800"
-              height="600"
+              width="1184"
+              height="1600"
             />
           </div>
           <div id="index_right" class="col-md-6 right text-center">
             <div class="logo">
               <img
-                src="assets/images/avatar.png"
+                src="assets/images/avatar.png?v=1787010232"
                 alt="Darpan Beri's profile"
-                width="200"
-                height="200"
+                width="400"
+                height="355"
               />
               <h1 class="logo-title">Darpan Beri</h1>
             </div>
@@ -180,7 +180,14 @@
       <section id="about_scroll" class="pages" aria-labelledby="about-title">
         <div class="row">
           <div class="col-md-6 left" id="about_left">
-            <img src="assets/images/about.jpg" alt="About Me" class="img-rabbit" />
+            <img
+              src="assets/images/about.jpg?v=1787010232"
+              alt="About Me"
+              class="img-rabbit"
+              width="1279"
+              height="1600"
+              loading="lazy"
+            />
           </div>
           <div class="col-md-6 right" id="about_right">
             <!-- Updated button to use btn-rabbit class -->
@@ -273,11 +280,12 @@
                   >
                     <div class="img-container">
                       <img
-                        src="assets/images/work_pic_1.jpg"
+                        src="assets/images/work_pic_1.jpg?v=1787010232"
                         alt="Work Example 1"
                         class="img-rabbit"
-                        width="800"
-                        height="600"
+                        width="1151"
+                        height="1600"
+                        loading="lazy"
                       />
                     </div>
                   </div>
@@ -290,11 +298,12 @@
                   >
                     <div class="img-container">
                       <img
-                        src="assets/images/work_pic_2.jpg"
+                        src="assets/images/work_pic_2.jpg?v=1787010232"
                         alt="Work Example 2"
                         class="img-rabbit"
-                        width="800"
-                        height="600"
+                        width="1200"
+                        height="1600"
+                        loading="lazy"
                       />
                     </div>
                   </div>
@@ -307,11 +316,12 @@
                   >
                     <div class="img-container">
                       <img
-                        src="assets/images/work_pic_3.jpg"
+                        src="assets/images/work_pic_3.jpg?v=1787010232"
                         alt="Work Example 3"
                         class="img-rabbit"
-                        width="800"
-                        height="600"
+                        width="1137"
+                        height="1600"
+                        loading="lazy"
                       />
                     </div>
                   </div>
@@ -628,7 +638,19 @@
       <section id="contact_scroll" class="pages" aria-labelledby="contact-title">
         <div class="row">
           <div class="col-md-6 left" id="contact_left">
-            <img src="assets/images/contact.GIF" alt="Contact Me" class="img-rabbit" />
+            <video
+              class="img-rabbit"
+              autoplay
+              muted
+              loop
+              playsinline
+              poster="assets/images/contact-poster.jpg"
+              width="300"
+              height="224"
+              aria-hidden="true"
+            >
+              <source src="assets/images/contact.mp4" type="video/mp4" />
+            </video>
           </div>
 
           <div class="col-md-6 right" id="contact_right">

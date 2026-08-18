@@ -196,6 +196,16 @@ if (
 
     initCarousel(document.querySelector('#owl-demo'));
 
+    // Respect reduced-motion: don't autoplay the decorative contact video;
+    // leave its poster shown (mirrors initCarousel's reduced-motion handling).
+    (function respectReducedMotionForContactVideo() {
+      const reduceMotion = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+      const video = document.querySelector('#contact_left video');
+      if (!video || !reduceMotion) return;
+      video.removeAttribute('autoplay');
+      video.pause();
+    })();
+
     // Prevent scroll leaking between sections
     let isAnimating = false;
 
